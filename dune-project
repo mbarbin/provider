@@ -17,7 +17,7 @@
 
 (package
  (name provider)
- (synopsis "Provider")
+ (synopsis "Parametrize your OCaml library with values that behave like objects but aren't")
  (depends
   (ocaml
    (>= 5.1))
