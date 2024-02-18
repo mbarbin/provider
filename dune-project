@@ -41,7 +41,7 @@
 
 (package
  (name provider-test)
- (synopsis "test suite for provider library")
+ (synopsis "Test suite for provider library")
  (depends
   (ocaml
    (>= 5.1))
