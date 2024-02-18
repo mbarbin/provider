@@ -1,5 +1,5 @@
-(** Manipulating values that behave like objects, without using OCaml's built-in
-    object system.
+(** Parametrize your OCaml library with values that behave like objects but
+    aren't.
 
     A "provider" is a construct that implements a set of methods that an
     interface typically needs in order to provide certain functionality to a
