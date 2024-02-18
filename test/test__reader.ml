@@ -1,18 +1,15 @@
-(* For the purpose of our testing scenario here, we've defined two interfaces:
+(* This test demonstrates the use of two interfaces:
 
-   1. one for listing the files present in a directory, and
-   2. one for accessing the contents of a given file.
+   1. An interface for listing the files present in a directory, and
+   2. An interface for accessing the contents of a given file.
 
-   We've then provided two implementations for each interface respectively based
-   on:
+   We have provided two implementations for each interface, one based on [Eio]
+   and one based on [Stdlib.Unix].
 
-   1. Eio
-   2. Stdlib.Unix
-
-   We show how to create the parametrized interface, instantiate them with the
-   actual implementation, and how to call them. Finally we show a case of
-   dynamic lookup showing how you may express behavior that depends on the
-   implementations available in the object provided. *)
+   The test showcases how to create the parametrized interfaces, instantiate
+   them with the actual implementations, and how to call them. It also includes
+   a case of dynamic lookup, demonstrating how you can express behavior that
+   depends on the implementations available in the object provided. *)
 
 let with_temp_dir ~env ~path ~f =
   let cwd = Unix.getcwd () in
@@ -24,6 +21,11 @@ let with_temp_dir ~env ~path ~f =
     ~finally:(fun () -> Eio.Path.rmtree ~missing_ok:true dir)
 ;;
 
+(* This test is focused on the "build class" functionality. We are testing that
+   different ways to create an interface - using 'make', 'extend', 'class
+   implement', or the provider interface supplied maker - all result in equivalent
+   interfaces. This ensures consistency across different methods of interface
+   creation. *)
 let%expect_test "build class" =
   let class1 =
     Provider.Class.implement
@@ -90,73 +92,123 @@ let print_implemented_classes (Provider.T { t = _; interface }) =
   print_s [%sexp (info : Sexp.t list)]
 ;;
 
-let%expect_test "test" =
-  let print_all_text_files t ~path =
-    print_s
-      [%sexp
-        (Interface.Directory_reader.find_files_with_extension t ~path ~ext:".txt"
-         : string list)]
-  in
+let print_implements (Provider.T { t = _; interface }) =
+  let implements class_id = Provider.Interface.implements interface ~class_id in
+  print_s
+    [%sexp
+      { implements =
+          { file_reader =
+              (implements Interface.File_reader.Provider_interface.File_reader : bool)
+          ; directory_reader =
+              (implements Interface.Directory_reader.Provider_interface.Directory_reader
+               : bool)
+          }
+      }]
+;;
+
+(* This test demonstrates how to access information about the classes
+   implemented by a provider at runtime. This is a key aspect of introspection,
+   allowing you to understand the capabilities of a provider dynamically, as the
+   program is running. *)
+let%expect_test "introspection" =
   let unix_reader = Providers.Unix_reader.make () in
   Eio_main.run
   @@ fun env ->
   let eio_reader = Providers.Eio_reader.make ~env in
-  let print_implements (Provider.T { t = _; interface }) =
-    let implements class_id = Provider.Interface.implements interface ~class_id in
-    print_s
-      [%sexp
-        { implements =
-            { file_reader =
-                (implements Interface.File_reader.Provider_interface.File_reader : bool)
-            ; directory_reader =
-                (implements Interface.Directory_reader.Provider_interface.Directory_reader
-                 : bool)
-            }
-        }]
-  in
   print_implements eio_reader;
-  [%expect
-    {|
+  [%expect {|
     ((
       implements (
         (file_reader      true)
         (directory_reader true)))) |}];
   print_implements unix_reader;
-  [%expect
-    {|
+  [%expect {|
     ((
       implements (
         (file_reader      false)
         (directory_reader true)))) |}];
-  let print_all_text_files_with_lines t ~path =
-    List.iter
-      (Interface.Directory_reader.find_files_with_extension t ~path ~ext:".txt")
-      ~f:(fun file ->
-        let lines =
-          let contents = Interface.File_reader.load t ~path:(path ^ "/" ^ file) in
+  let id_mapping = Hashtbl.create (module Int) in
+  let next_id = ref 0 in
+  let sexp_of_id id =
+    let id =
+      match Hashtbl.find id_mapping id with
+      | Some id -> id
+      | None ->
+        let data = !next_id in
+        Int.incr next_id;
+        Hashtbl.set id_mapping ~key:id ~data;
+        data
+    in
+    Sexp.Atom (Int.to_string id)
+  in
+  Ref.set_temporarily Provider.Class_id.Info.sexp_of_id sexp_of_id ~f:(fun () ->
+    print_implemented_classes unix_reader;
+    [%expect {|
+      ((
+        (id 0)
+        (name
+         Provider_test__Interface__Directory_reader.Provider_interface.Directory_reader))) |}];
+    print_implemented_classes eio_reader;
+    [%expect {|
+      (((id 0)
+        (name
+         Provider_test__Interface__Directory_reader.Provider_interface.Directory_reader))
+       ((id 1)
+        (name Provider_test__Interface__File_reader.Provider_interface.File_reader))) |}];
+    ());
+  ()
+;;
+
+(* This function requires the [Directory_reader] capability. *)
+let print_all_text_files t ~path =
+  print_s
+    [%sexp
+      (Interface.Directory_reader.find_files_with_extension t ~path ~ext:".txt"
+       : string list)]
+;;
+
+(* This function requires both [Directory_reader] and [File_reader]
+   capabilities. *)
+let print_all_text_files_with_lines t ~path =
+  List.iter
+    (Interface.Directory_reader.find_files_with_extension t ~path ~ext:".txt")
+    ~f:(fun file ->
+      let lines =
+        let contents = Interface.File_reader.load t ~path:(path ^ "/" ^ file) in
+        List.sum (module Int) (String.split_lines contents) ~f:(Fn.const 1)
+      in
+      print_s [%sexp { file : string; lines : int }])
+;;
+
+(* This is an example of a function that requires the [Directory_reader]
+   capability and use the [File_reader] capability if available, but without
+   requiring it. *)
+let print_all_text_files_with_lines_if_available t ~path =
+  List.iter
+    (Interface.Directory_reader.find_files_with_extension t ~path ~ext:".txt")
+    ~f:(fun file ->
+      let lines =
+        let (Provider.T { t; interface }) = t in
+        match
+          Provider.Interface.lookup_opt
+            interface
+            ~class_id:Interface.File_reader.Provider_interface.File_reader
+        with
+        | None -> "not-available"
+        | Some (module File_reader) ->
+          let contents = File_reader.load t ~path:(path ^ "/" ^ file) in
           List.sum (module Int) (String.split_lines contents) ~f:(Fn.const 1)
-        in
-        print_s [%sexp { file : string; lines : int }])
-  in
-  let print_all_text_files_with_lines_if_available t ~path =
-    List.iter
-      (Interface.Directory_reader.find_files_with_extension t ~path ~ext:".txt")
-      ~f:(fun file ->
-        let lines =
-          let (Provider.T { t; interface }) = t in
-          match
-            Provider.Interface.lookup_opt
-              interface
-              ~class_id:Interface.File_reader.Provider_interface.File_reader
-          with
-          | None -> "not-available"
-          | Some (module File_reader) ->
-            let contents = File_reader.load t ~path:(path ^ "/" ^ file) in
-            List.sum (module Int) (String.split_lines contents) ~f:(Fn.const 1)
-            |> Int.to_string_hum
-        in
-        print_s [%sexp { file : string; lines : string }])
-  in
+          |> Int.to_string_hum
+      in
+      print_s [%sexp { file : string; lines : string }])
+;;
+
+(* Now let's put it all together in a test. *)
+let%expect_test "test" =
+  let unix_reader = Providers.Unix_reader.make () in
+  Eio_main.run
+  @@ fun env ->
+  let eio_reader = Providers.Eio_reader.make ~env in
   with_temp_dir ~env ~path:"test" ~f:(fun dir ->
     print_s
       [%sexp (Interface.Directory_reader.readdir unix_reader ~path:dir : string list)];
@@ -207,36 +259,5 @@ With even more
        (lines 2))
       ((file  b.txt)
        (lines 3)) |}];
-    let id_mapping = Hashtbl.create (module Int) in
-    let next_id = ref 0 in
-    let sexp_of_id id =
-      let id =
-        match Hashtbl.find id_mapping id with
-        | Some id -> id
-        | None ->
-          let data = !next_id in
-          Int.incr next_id;
-          Hashtbl.set id_mapping ~key:id ~data;
-          data
-      in
-      Sexp.Atom (Int.to_string id)
-    in
-    Ref.set_temporarily Provider.Class_id.Info.sexp_of_id sexp_of_id ~f:(fun () ->
-      print_implemented_classes unix_reader;
-      [%expect
-        {|
-        ((
-          (id 0)
-          (name
-           Provider_test__Interface__Directory_reader.Provider_interface.Directory_reader))) |}];
-      print_implemented_classes eio_reader;
-      [%expect
-        {|
-        (((id 0)
-          (name
-           Provider_test__Interface__Directory_reader.Provider_interface.Directory_reader))
-         ((id 1)
-          (name Provider_test__Interface__File_reader.Provider_interface.File_reader))) |}];
-      ());
     ())
 ;;

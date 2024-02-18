@@ -1,5 +1,4 @@
-(* In the next part of the test, we verify that it is possible to override an
-   existing class. *)
+(* Here we verify that it is possible to override an existing class. *)
 
 module Int_hum_printer = struct
   module Impl = struct
@@ -58,6 +57,7 @@ let%expect_test "override" =
        ((id #id)
         (name Provider_test__Interface__Int_printer.Provider_interface.Int_printer))) |}];
   test hum_printer;
+  (* Now there's an additional underscore separator in '1_234'. *)
   [%expect {|
       1_234
       1234.5678 |}];
