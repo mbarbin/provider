@@ -4,7 +4,7 @@ synopsis:
   "Parametrize your OCaml library with values that behave like objects but aren't"
 maintainer: ["Mathieu Barbin"]
 authors: ["Mathieu Barbin"]
-license: "MIT"
+license: "ISC"
 homepage: "https://github.com/mbarbin/provider"
 doc: "https://mbarbin.github.io/provider/"
 bug-reports: "https://github.com/mbarbin/provider/issues"

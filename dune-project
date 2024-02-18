@@ -4,7 +4,7 @@
 
 (generate_opam_files)
 
-(license MIT)
+(license ISC)
 
 (authors "Mathieu Barbin")
 
