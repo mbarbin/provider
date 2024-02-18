@@ -202,7 +202,7 @@ type -'tags t =
       -> 'tags t
 
 module Private : sig
-  (** This module is exported for testing purposes only.contents
+  (** This module is exported for testing purposes only.
 
       Its interface may change in breaking ways without requiring a major
       version of the library to be minted. Use at your own risk. *)
