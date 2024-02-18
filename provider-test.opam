@@ -11,12 +11,15 @@ depends: [
   "dune" {>= "3.14"}
   "ocaml" {>= "5.1"}
   "base" {>= "v0.16" & < "v0.17"}
+  "bisect_ppx" {dev & >= "2.8.3"}
   "command-unix-for-opam" {>= "0.0.2"}
   "core" {>= "v0.16" & < "v0.17"}
-  "expect_test_helpers_core" {with-test & >= "v0.16" & < "v0.17"}
+  "eio" {>= "0.14"}
+  "eio_main" {>= "0.14"}
+  "expect_test_helpers_core" {>= "v0.16" & < "v0.17"}
   "ppx_jane" {>= "v0.16" & < "v0.17"}
   "ppx_js_style" {>= "v0.16" & < "v0.17"}
-  "stdio" {>= "v0.16" & < "v0.17"}
+  "provider" {= version}
   "odoc" {with-doc}
 ]
 build: [

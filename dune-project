@@ -26,26 +26,15 @@
    (and
     (>= v0.16)
     (< v0.17)))
-  (command-unix-for-opam
-   (>= 0.0.2))
-  (core
+  (bisect_ppx
    (and
-    (>= v0.16)
-    (< v0.17)))
-  (expect_test_helpers_core
-   (and
-    :with-test
-    (>= v0.16)
-    (< v0.17)))
+    :dev
+    (>= 2.8.3)))
   (ppx_jane
    (and
     (>= v0.16)
     (< v0.17)))
   (ppx_js_style
-   (and
-    (>= v0.16)
-    (< v0.17)))
-  (stdio
    (and
     (>= v0.16)
     (< v0.17)))))
@@ -60,15 +49,22 @@
    (and
     (>= v0.16)
     (< v0.17)))
+  (bisect_ppx
+   (and
+    :dev
+    (>= 2.8.3)))
   (command-unix-for-opam
    (>= 0.0.2))
   (core
    (and
     (>= v0.16)
     (< v0.17)))
+  (eio
+   (>= 0.14))
+  (eio_main
+   (>= 0.14))
   (expect_test_helpers_core
    (and
-    :with-test
     (>= v0.16)
     (< v0.17)))
   (ppx_jane
@@ -79,7 +75,5 @@
    (and
     (>= v0.16)
     (< v0.17)))
-  (stdio
-   (and
-    (>= v0.16)
-    (< v0.17)))))
+  (provider
+   (= :version))))
