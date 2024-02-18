@@ -66,7 +66,25 @@ module Class_id : sig
   end
 
   val uid : _ t -> Uid.t
+
+  (** {1 Type equal} *)
+
   val same : _ t -> _ t -> bool
+
+  (* CR mbarbin: I haven't thought enough about the type safety implications
+     of exposing the [same_witness*] functions here. The type parameter [t']
+     is not injective in [t] (I don't think?) but still, I wonder whether this
+     creates an issue given the [Obj.magic] in the implementation. Revisit. *)
+  val same_witness
+    :  ('t1, 'implementation1, 'tag1) t
+    -> ('t2, 'implementation2, 'tag2) t
+    -> (('t1, 'implementation1, 'tag1) t, ('t2, 'implementation2, 'tag2) t) Type_equal.t
+         option
+
+  val same_witness_exn
+    :  ('t1, 'implementation1, 'tag1) t
+    -> ('t2, 'implementation2, 'tag2) t
+    -> (('t1, 'implementation1, 'tag1) t, ('t2, 'implementation2, 'tag2) t) Type_equal.t
 end
 
 module Class : sig
