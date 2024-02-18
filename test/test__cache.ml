@@ -39,7 +39,7 @@ let%expect_test "override" =
   (* An empty interface has no cache. *)
   show_cache (Provider.Interface.make []);
   [%expect {| None |}];
-  let (Provider.T { t = _; interface }) = num_printer in
+  let (Provider.T (type a) { t = (_ : a); interface }) = num_printer in
   let int_printer_lookup () =
     (fun (type a) (interface : (a, _) Provider.Interface.t) ->
       ignore
