@@ -82,12 +82,11 @@ module Class : sig
   (** [implement ~class_id (module Impl)] returns a class that uses [Impl] as
       the implementation for [class_id].
 
-      It's important to note that at this stage, the tags associated with the
-      [class_id] are ignored. The handling of the tags happens at the interface
-      level, not at the granularity of each class. This means that the
-      [implement] function focuses solely on creating the class, without
-      considering the tags that indicate which classes are supported by the
-      provider. *)
+      The tags associated with the [class_id] are ignored at this stage. The
+      handling of the tags happens at the interface level, not at the
+      granularity of each class. This means that the [implement] function
+      focuses solely on creating the class, without considering the tags that
+      indicate which classes are supported by the provider. *)
   val implement : class_id:('t, 'implementation, _) Class_id.t -> 'implementation -> 't t
 
   (** {1 Dump & debug} *)
