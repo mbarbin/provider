@@ -75,8 +75,11 @@ let%expect_test "build class" =
    | _ -> assert false);
   let empty = Provider.Interface.make [] in
   require [%here] (Provider.Interface.is_empty empty);
+  require [%here] (List.is_empty (Provider.Interface.classes empty));
   let eio2 = Provider.Interface.make [ class2 ] in
   require [%here] (not (Provider.Interface.is_empty eio2));
+  require [%here] (not (Provider.Private.Interface.same_class_uids empty eio2));
+  [%expect {||}];
   let eio3 = Provider.Interface.make [ class1; class2 ] in
   let eio4 = Provider.Interface.extend eio1 ~with_:(Provider.Interface.classes eio2) in
   require [%here] (Provider.Private.Interface.same_class_uids eio3 eio4);
