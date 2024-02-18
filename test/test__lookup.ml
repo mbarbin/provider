@@ -19,6 +19,8 @@ module type S = sig
 end
 
 module Tag = struct
+  [@@@coverage off]
+
   type t =
     [ `A
     | `B

@@ -3,6 +3,8 @@
    the cache is updated. *)
 
 module Cache_state = struct
+  [@@@coverage off]
+
   type t =
     | None
     | Int_printer
@@ -22,7 +24,7 @@ let%expect_test "override" =
               (Interface.Float_printer.Provider_interface.Float_printer
                |> Provider.Class_id.uid)
     then Cache_state.Float_printer
-    else assert false
+    else assert false [@coverage off]
   in
   let cache_state interface =
     match Provider.Private.Interface.cache interface with
