@@ -108,10 +108,10 @@ module Interface = struct
     then if_not_found ~class_info:(Class_id.info class_id)
     else (
       let mid = (from + to_) / 2 in
-      let (Class.T { class_id = elt; implementation }) = t.(mid) in
+      let (Class.T { class_id = elt; implementation } as class_) = t.(mid) in
       match Class_id.compare_by_uid elt class_id |> Ordering.of_int with
       | Equal ->
-        if update_cache then t.(0) <- t.(mid);
+        if update_cache then t.(0) <- class_;
         if_found (Stdlib.Obj.magic implementation)
       | Less ->
         binary_search
