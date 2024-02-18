@@ -116,13 +116,15 @@ let%expect_test "introspection" =
   @@ fun env ->
   let eio_reader = Providers.Eio_reader.make ~env in
   print_implements eio_reader;
-  [%expect {|
+  [%expect
+    {|
     ((
       implements (
         (file_reader      true)
         (directory_reader true)))) |}];
   print_implements unix_reader;
-  [%expect {|
+  [%expect
+    {|
     ((
       implements (
         (file_reader      false)
@@ -143,13 +145,15 @@ let%expect_test "introspection" =
   in
   Ref.set_temporarily Provider.Class_id.Info.sexp_of_id sexp_of_id ~f:(fun () ->
     print_implemented_classes unix_reader;
-    [%expect {|
+    [%expect
+      {|
       ((
         (id 0)
         (name
          Provider_test__Interface__Directory_reader.Provider_interface.Directory_reader))) |}];
     print_implemented_classes eio_reader;
-    [%expect {|
+    [%expect
+      {|
       (((id 0)
         (name
          Provider_test__Interface__Directory_reader.Provider_interface.Directory_reader))
