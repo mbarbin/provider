@@ -1,9 +1,3 @@
-## Unreleased
+## 0.0.1 (2024-02-18)
 
-### Added
-
-### Changed
-
-### Fixed
-
-### Removed
+- Initial release.
