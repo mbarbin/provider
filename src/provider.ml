@@ -64,7 +64,9 @@ module Interface = struct
     in
     match classes with
     | [] -> [||]
-    | hd :: tl -> Array.of_list (hd :: hd :: tl)
+    | hd :: _ ->
+      (* We initialize the cache arbitrarily with the left most class. *)
+      Array.of_list (hd :: classes)
   ;;
 
   let same_class_uids : type a tags1 tags2. (a, tags1) t -> (a, tags2) t -> bool =
