@@ -15,11 +15,12 @@ let%expect_test "override" =
   let cache_state_of_uid uid =
     if Provider.Class_id.Uid.equal
          uid
-         (Int_printer.Provider_interface.Int_printer |> Provider.Class_id.uid)
+         (Interface.Int_printer.Provider_interface.Int_printer |> Provider.Class_id.uid)
     then Cache_state.Int_printer
     else if Provider.Class_id.Uid.equal
               uid
-              (Float_printer.Provider_interface.Float_printer |> Provider.Class_id.uid)
+              (Interface.Float_printer.Provider_interface.Float_printer
+               |> Provider.Class_id.uid)
     then Cache_state.Float_printer
     else assert false
   in
@@ -42,8 +43,8 @@ let%expect_test "override" =
       ignore
         (Provider.Interface.lookup
            interface
-           ~class_id:Int_printer.Provider_interface.Int_printer
-         : (module Int_printer.Provider_interface.S with type t = a)))
+           ~class_id:Interface.Int_printer.Provider_interface.Int_printer
+         : (module Interface.Int_printer.Provider_interface.S with type t = a)))
       interface;
     require_equal
       [%here]
@@ -56,8 +57,8 @@ let%expect_test "override" =
       ignore
         (Provider.Interface.lookup
            interface
-           ~class_id:Float_printer.Provider_interface.Float_printer
-         : (module Float_printer.Provider_interface.S with type t = a)))
+           ~class_id:Interface.Float_printer.Provider_interface.Float_printer
+         : (module Interface.Float_printer.Provider_interface.S with type t = a)))
       interface;
     require_equal
       [%here]
@@ -71,7 +72,7 @@ let%expect_test "override" =
       (Option.is_some
          (Provider.Interface.lookup_opt
             interface
-            ~class_id:Int_printer.Provider_interface.Int_printer));
+            ~class_id:Interface.Int_printer.Provider_interface.Int_printer));
     require_equal
       [%here]
       (module Cache_state)
@@ -84,7 +85,7 @@ let%expect_test "override" =
       (Option.is_some
          (Provider.Interface.lookup_opt
             interface
-            ~class_id:Float_printer.Provider_interface.Float_printer));
+            ~class_id:Interface.Float_printer.Provider_interface.Float_printer));
     require_equal
       [%here]
       (module Cache_state)
@@ -97,7 +98,7 @@ let%expect_test "override" =
       [%here]
       (Provider.Interface.implements
          interface
-         ~class_id:Int_printer.Provider_interface.Int_printer);
+         ~class_id:Interface.Int_printer.Provider_interface.Int_printer);
     let post_cache_state = cache_state interface in
     require_equal [%here] (module Cache_state) pre_cache_state post_cache_state
   in
@@ -107,7 +108,7 @@ let%expect_test "override" =
       [%here]
       (Provider.Interface.implements
          interface
-         ~class_id:Float_printer.Provider_interface.Float_printer);
+         ~class_id:Interface.Float_printer.Provider_interface.Float_printer);
     let post_cache_state = cache_state interface in
     require_equal [%here] (module Cache_state) pre_cache_state post_cache_state
   in

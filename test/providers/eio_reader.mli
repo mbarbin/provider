@@ -1,8 +1,11 @@
-(** [Eio_reader] is a provider for the {!module:Directory_reader} and
-    {!module:File_reader} interfaces, based on [Eio].
+(** [Eio_reader] is a provider for the {!module:Interface.Directory_reader} and
+    {!module:Interface.File_reader} interfaces, based on [Eio].
 
     It is a thin wrapper around [Eio.Path], meant to demonstrate how to
-    implement a provider for a given interface. *)
+    implement a provider for a given interface.
+
+    {!module:Unix_reader} is another provider for the
+    {!module:Interface.Directory_reader} interface. *)
 
 (** Depending on the needs, the type [t] may be exposed or not. It can be
     anything required by the implementation. *)
@@ -10,12 +13,12 @@ type t
 
 (** Somehow there must be a way exposed to construct a provider, decorated with
     the tags that the provider implements. Here, the construct
-    [[Directory_reader.tag | File_reader.tag ]] means that this provider
-    implements both interfaces: {!module:Directory_reader} and
-    {!module:File_reader}. *)
+    [[ `Directory_reader | `File_reader ]] means that this provider
+    implements both interfaces: {!module:Interface.Directory_reader} and
+    {!module:Interface.File_reader}. *)
 val make
   :  env:< fs : _ Eio.Path.t ; .. >
-  -> [ Directory_reader.tag | File_reader.tag ] Provider.t
+  -> [ Interface.Directory_reader.tag | Interface.File_reader.tag ] Provider.t
 
 (** In this specific example, we chose to expose the signature of the provider's
     implementation. This is not something that is usually required, since
@@ -25,6 +28,6 @@ val make
 module Impl : sig
   type nonrec t = t
 
-  include Directory_reader.Provider_interface.S with type t := t
-  include File_reader.Provider_interface.S with type t := t
+  include Interface.Directory_reader.Provider_interface.S with type t := t
+  include Interface.File_reader.Provider_interface.S with type t := t
 end

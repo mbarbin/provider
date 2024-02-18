@@ -16,7 +16,7 @@ module Int_hum_printer = struct
             Providers.Num_printer.interface
             ~with_:
               [ Provider.Class.implement
-                  ~class_id:Int_printer.Provider_interface.Int_printer
+                  ~class_id:Interface.Int_printer.Provider_interface.Int_printer
                   (module Impl)
               ]
       }
@@ -32,16 +32,18 @@ let%expect_test "override" =
     print_s [%sexp (info : Sexp.t list)]
   in
   let test printer =
-    Int_printer.print printer 1234;
-    Float_printer.print printer 1234.5678
+    Interface.Int_printer.print printer 1234;
+    Interface.Float_printer.print printer 1234.5678
   in
   let num_printer = Providers.Num_printer.make () in
   print_implemented_classes num_printer;
   [%expect
     {|
       (((id #id)
-        (name Provider_test.Float_printer.Provider_interface.Float_printer))
-       ((id #id) (name Provider_test.Int_printer.Provider_interface.Int_printer))) |}];
+        (name
+         Provider_test__Interface__Float_printer.Provider_interface.Float_printer))
+       ((id #id)
+        (name Provider_test__Interface__Int_printer.Provider_interface.Int_printer))) |}];
   test num_printer;
   [%expect {|
       1234
@@ -51,8 +53,10 @@ let%expect_test "override" =
   [%expect
     {|
       (((id #id)
-        (name Provider_test.Float_printer.Provider_interface.Float_printer))
-       ((id #id) (name Provider_test.Int_printer.Provider_interface.Int_printer))) |}];
+        (name
+         Provider_test__Interface__Float_printer.Provider_interface.Float_printer))
+       ((id #id)
+        (name Provider_test__Interface__Int_printer.Provider_interface.Int_printer))) |}];
   test hum_printer;
   [%expect {|
       1_234

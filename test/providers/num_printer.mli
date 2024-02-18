@@ -1,5 +1,5 @@
-(** [Num_printer] is a provider for the {!module:Int_printer} and
-    {!module:Float_printer} interfaces.
+(** [Num_printer] is a provider for the {!module:Interface.Int_printer} and
+    {!module:Interface.Float_printer} interfaces.
 
     The structure of this file is very similar to the [Eio_reader] module, thus
     is not documented in details. Refer to {!Eio_reader} for more. *)
@@ -9,7 +9,8 @@
     interface. See [test__override.ml]. *)
 type t = unit
 
-val interface : (t, [ Int_printer.tag | Float_printer.tag ]) Provider.Interface.t
+val interface
+  : (t, [ Interface.Int_printer.tag | Interface.Float_printer.tag ]) Provider.Interface.t
 
 (** If you simply wish to use this provider without overrides, use [make ()]. *)
-val make : t -> [ Int_printer.tag | Float_printer.tag ] Provider.t
+val make : t -> [ Interface.Int_printer.tag | Interface.Float_printer.tag ] Provider.t

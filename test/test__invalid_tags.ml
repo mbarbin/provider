@@ -3,8 +3,8 @@
    runtime. *)
 
 let%expect_test "invalid tags" =
-  (* [Int_printer] was correctly built. *)
-  let print_42 printer = Int_printer.print printer 42 in
+  (* [Providers.Num_printer] was correctly built. *)
+  let print_42 printer = Interface.Int_printer.print printer 42 in
   print_42 (Providers.Num_printer.make ());
   [%expect {| 42 |}];
   (* Now let's build a provider with an empty interface, that claims however to
@@ -20,6 +20,8 @@ let%expect_test "invalid tags" =
     {|
     ("Class not implemented" ((
       class_info (
-        (id #id) (name Provider_test.Int_printer.Provider_interface.Int_printer))))) |}];
+        (id #id)
+        (name
+         Provider_test__Interface__Int_printer.Provider_interface.Int_printer))))) |}];
   ()
 ;;

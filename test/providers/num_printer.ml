@@ -10,8 +10,10 @@ include Impl
 let interface : (unit, [ `Int_printer | `Float_printer ]) Provider.Interface.t =
   Provider.Interface.make
     (List.concat
-       [ Int_printer.Provider_interface.make (module Impl) |> Provider.Interface.classes
-       ; Float_printer.Provider_interface.make (module Impl) |> Provider.Interface.classes
+       [ Interface.Int_printer.Provider_interface.make (module Impl)
+         |> Provider.Interface.classes
+       ; Interface.Float_printer.Provider_interface.make (module Impl)
+         |> Provider.Interface.classes
        ])
 ;;
 

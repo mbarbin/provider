@@ -5,8 +5,8 @@
     specific provider that this interface needs. *)
 type tag = [ `Directory_reader ]
 
-(** This interface operates on any provider, providing that it provides the
-    tagged interface. That's a lot of providing in one sentence. *)
+(** This interface can operate on any provider, as long as it implements at
+    least the [`Directory_reader] capability. *)
 type 'a t = ([> tag ] as 'a) Provider.t
 
 (** This function will result in calling the method [readdir] implemented by the
@@ -24,8 +24,8 @@ val find_files_with_extension : _ t -> path:string -> ext:string -> string list
 (** {1 Building providers} *)
 
 (** Such abstraction will export a way for implementers (providers) to provide
-    an implementation for that interface. In `Eio` naming conventions, these
-    modules are typically named `Pi`. *)
+    an implementation for that interface. In [Eio] naming conventions, these
+    modules are typically named [Pi]. *)
 module Provider_interface : sig
   module type S = sig
     (** The implementation may be based on any type it wants, that's the whole point. *)

@@ -2,7 +2,7 @@
     aren't.
 
     A "provider" is a construct that implements a set of methods that an
-    interface typically needs in order to provide certain functionality to a
+    library typically needs in order to provide certain functionality to a
     client.
 
     The module is divided into several submodules:
@@ -83,7 +83,7 @@ module Class : sig
       the implementation for [class_id].
 
       The tags associated with the [class_id] are ignored at this stage. The
-      handling of the tags happens at the interface level, not at the
+      handling of the tags happens at the interface building stage, not at the
       granularity of each class. This means that the [implement] function
       focuses solely on creating the class, without considering the tags that
       indicate which classes are supported by the provider. *)
@@ -107,10 +107,9 @@ module Interface : sig
       (one class = one first-class module with type t = 't).
 
       - ['t] is the internal state of the provider.
-      - ['tags] indicate which functionality are supported by the interface. It
+      - ['tags] indicate which functionality are supported by the provider. It
         is a phantom type using polymorphic variants. To give an example, in the
-        tests for this library, we have two interfaces defining each their own
-        tag:
+        tests for this library, we have two modules defining each their own tag:
 
       {[
         module Directory_reader = struct
@@ -123,7 +122,7 @@ module Interface : sig
       ]}
 
       Then, the type of the interface for a provider whose internal state is
-      [state], that would implement both interfaces would be:
+      [state], that would implement both functionalities would be:
 
       {[
         (state, [ Directory_reader.tag | File_reader.tag ]) Provider.Interface.t
@@ -135,8 +134,7 @@ module Interface : sig
   (** [make classes] create a new interface from a list of classes. It only
       keeps the last occurrence of each class. This means that the resulting
       interface will not contain any duplicate classes, and the order of the
-      classes in the input list can affect the contents of the resulting
-      interface. *)
+      classes in the input list can affect its contents. *)
   val make : 't Class.t list -> ('t, _) t
 
   (** [classes t] returns a list of classes that the interface [t]

@@ -14,7 +14,7 @@ let make () : [ `Directory_reader ] Provider.t =
     ; interface =
         Provider.Interface.make
           [ Provider.Class.implement
-              ~class_id:Directory_reader.Provider_interface.Directory_reader
+              ~class_id:Interface.Directory_reader.Provider_interface.Directory_reader
               (module Impl)
           ]
     }

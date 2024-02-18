@@ -27,11 +27,11 @@ let with_temp_dir ~env ~path ~f =
 let%expect_test "build class" =
   let class1 =
     Provider.Class.implement
-      ~class_id:Directory_reader.Provider_interface.Directory_reader
+      ~class_id:Interface.Directory_reader.Provider_interface.Directory_reader
       (module Providers.Eio_reader.Impl)
   in
   let eio1 =
-    Directory_reader.Provider_interface.make (module Providers.Eio_reader.Impl)
+    Interface.Directory_reader.Provider_interface.make (module Providers.Eio_reader.Impl)
   in
   (match class1, List.hd_exn (Provider.Interface.classes eio1) with
    | T t, T t' ->
@@ -40,7 +40,7 @@ let%expect_test "build class" =
      ());
   let class2 =
     Provider.Class.implement
-      ~class_id:File_reader.Provider_interface.File_reader
+      ~class_id:Interface.File_reader.Provider_interface.File_reader
       (module Providers.Eio_reader.Impl)
   in
   (match class1, class2 with
@@ -54,9 +54,11 @@ let%expect_test "build class" =
        {|
        ((class1 (
           (id #id)
-          (name Provider_test.Directory_reader.Provider_interface.Directory_reader)))
+          (name
+           Provider_test__Interface__Directory_reader.Provider_interface.Directory_reader)))
         (class2 (
-          (id #id) (name Provider_test.File_reader.Provider_interface.File_reader)))) |}];
+          (id #id)
+          (name Provider_test__Interface__File_reader.Provider_interface.File_reader)))) |}];
      require [%here] (not (Provider.Class_id.same t1.class_id t2.class_id));
      [%expect {||}];
      ());
@@ -92,7 +94,8 @@ let%expect_test "test" =
   let print_all_text_files t ~path =
     print_s
       [%sexp
-        (Directory_reader.find_files_with_extension t ~path ~ext:".txt" : string list)]
+        (Interface.Directory_reader.find_files_with_extension t ~path ~ext:".txt"
+         : string list)]
   in
   let unix_reader = Providers.Unix_reader.make () in
   Eio_main.run
@@ -103,9 +106,11 @@ let%expect_test "test" =
     print_s
       [%sexp
         { implements =
-            { file_reader = (implements File_reader.Provider_interface.File_reader : bool)
+            { file_reader =
+                (implements Interface.File_reader.Provider_interface.File_reader : bool)
             ; directory_reader =
-                (implements Directory_reader.Provider_interface.Directory_reader : bool)
+                (implements Interface.Directory_reader.Provider_interface.Directory_reader
+                 : bool)
             }
         }]
   in
@@ -125,24 +130,24 @@ let%expect_test "test" =
         (directory_reader true)))) |}];
   let print_all_text_files_with_lines t ~path =
     List.iter
-      (Directory_reader.find_files_with_extension t ~path ~ext:".txt")
+      (Interface.Directory_reader.find_files_with_extension t ~path ~ext:".txt")
       ~f:(fun file ->
         let lines =
-          let contents = File_reader.load t ~path:(path ^ "/" ^ file) in
+          let contents = Interface.File_reader.load t ~path:(path ^ "/" ^ file) in
           List.sum (module Int) (String.split_lines contents) ~f:(Fn.const 1)
         in
         print_s [%sexp { file : string; lines : int }])
   in
   let print_all_text_files_with_lines_if_available t ~path =
     List.iter
-      (Directory_reader.find_files_with_extension t ~path ~ext:".txt")
+      (Interface.Directory_reader.find_files_with_extension t ~path ~ext:".txt")
       ~f:(fun file ->
         let lines =
           let (Provider.T { t; interface }) = t in
           match
             Provider.Interface.lookup_opt
               interface
-              ~class_id:File_reader.Provider_interface.File_reader
+              ~class_id:Interface.File_reader.Provider_interface.File_reader
           with
           | None -> "not-available"
           | Some (module File_reader) ->
@@ -153,9 +158,11 @@ let%expect_test "test" =
         print_s [%sexp { file : string; lines : string }])
   in
   with_temp_dir ~env ~path:"test" ~f:(fun dir ->
-    print_s [%sexp (Directory_reader.readdir unix_reader ~path:dir : string list)];
+    print_s
+      [%sexp (Interface.Directory_reader.readdir unix_reader ~path:dir : string list)];
     [%expect {| () |}];
-    print_s [%sexp (Directory_reader.readdir eio_reader ~path:dir : string list)];
+    print_s
+      [%sexp (Interface.Directory_reader.readdir eio_reader ~path:dir : string list)];
     [%expect {| () |}];
     print_all_text_files unix_reader ~path:dir;
     [%expect {| () |}];
@@ -220,13 +227,16 @@ With even more
         {|
         ((
           (id 0)
-          (name Provider_test.Directory_reader.Provider_interface.Directory_reader))) |}];
+          (name
+           Provider_test__Interface__Directory_reader.Provider_interface.Directory_reader))) |}];
       print_implemented_classes eio_reader;
       [%expect
         {|
         (((id 0)
-          (name Provider_test.Directory_reader.Provider_interface.Directory_reader))
-         ((id 1) (name Provider_test.File_reader.Provider_interface.File_reader))) |}];
+          (name
+           Provider_test__Interface__Directory_reader.Provider_interface.Directory_reader))
+         ((id 1)
+          (name Provider_test__Interface__File_reader.Provider_interface.File_reader))) |}];
       ());
     ())
 ;;
