@@ -90,10 +90,6 @@ module Interface = struct
 
   let extend t ~with_ = make (classes t @ with_)
 
-  let not_implemented ~class_info =
-    raise_s [%sexp "Class not implemented", { class_info : Class_id.Info.t }]
-  ;;
-
   let rec binary_search
     : type a implementation tags b.
       (a, tags) t
@@ -145,27 +141,38 @@ module Interface = struct
       -> b
     =
     fun t ~class_id ~update_cache ~if_not_found ~if_found ->
-    if Array.length t = 0 then not_implemented ~class_info:(Class_id.info class_id);
-    let (Class.T { class_id = cached_id; implementation }) = t.(0) in
-    if Class_id.same class_id cached_id
-    then if_found (Stdlib.Obj.magic implementation)
-    else
-      binary_search
-        t
-        ~class_id
-        ~update_cache
-        ~if_not_found
-        ~if_found
-        ~from:1
-        ~to_:(Array.length t - 1)
+    if Array.length t = 0
+    then if_not_found ~class_info:(Class_id.info class_id)
+    else (
+      let (Class.T { class_id = cached_id; implementation }) = t.(0) in
+      if Class_id.same class_id cached_id
+      then if_found (Stdlib.Obj.magic implementation)
+      else
+        binary_search
+          t
+          ~class_id
+          ~update_cache
+          ~if_not_found
+          ~if_found
+          ~from:1
+          ~to_:(Array.length t - 1))
   ;;
+
+  module If_not_found = struct
+    let raise ~class_info =
+      raise_s [%sexp "Class not implemented", { class_info : Class_id.Info.t }]
+    ;;
+
+    let none ~class_info:_ = None
+    let false_ ~class_info:_ = false
+  end
 
   let lookup t ~class_id =
     make_lookup
       t
       ~class_id
       ~update_cache:true
-      ~if_not_found:not_implemented
+      ~if_not_found:If_not_found.raise
       ~if_found:Fn.id
   ;;
 
@@ -174,7 +181,7 @@ module Interface = struct
       t
       ~class_id
       ~update_cache:true
-      ~if_not_found:(fun ~class_info:_ -> None)
+      ~if_not_found:If_not_found.none
       ~if_found:Option.return
   ;;
 
@@ -185,7 +192,7 @@ module Interface = struct
       t
       ~class_id
       ~update_cache:false
-      ~if_not_found:(fun ~class_info:_ -> false)
+      ~if_not_found:If_not_found.false_
       ~if_found:(Fn.const true)
   ;;
 end
