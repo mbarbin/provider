@@ -28,6 +28,24 @@ module Class_id = struct
 
   let compare_by_uid id1 id2 = Uid.compare (uid id1) (uid id2)
   let same (id1 : _ t) (id2 : _ t) = phys_same id1 id2
+
+  let same_witness_exn (type a b c d e f) (id1 : (a, b, c) t) (id2 : (d, e, f) t)
+    : ((a, b, c) t, (d, e, f) t) Type_equal.t
+    =
+    if same id1 id2
+    then Stdlib.Obj.magic Type_equal.T
+    else
+      raise_s
+        [%sexp
+          "Class_id.same_witness_exn: class ids are not equal"
+          , { i1 = (info id1 : Info.t); i2 = (info id2 : Info.t) }]
+  ;;
+
+  let same_witness (type a b c d e f) (id1 : (a, b, c) t) (id2 : (d, e, f) t)
+    : ((a, b, c) t, (d, e, f) t) Type_equal.t option
+    =
+    if same id1 id2 then Some (Stdlib.Obj.magic Type_equal.T) else None
+  ;;
 end
 
 module Class = struct
@@ -111,28 +129,39 @@ module Interface = struct
     else (
       let mid = (from + to_) / 2 in
       let (Class.T { class_id = elt; implementation } as class_) = t.(mid) in
-      match Class_id.compare_by_uid elt class_id |> Ordering.of_int with
-      | Equal ->
+      match Class_id.same_witness elt class_id with
+      | Some T ->
         if update_cache then t.(0) <- class_;
-        if_found (Stdlib.Obj.magic implementation)
-      | Less ->
-        binary_search
-          t
-          ~class_id
-          ~update_cache
-          ~if_not_found
-          ~if_found
-          ~from:(mid + 1)
-          ~to_
-      | Greater ->
-        binary_search
-          t
-          ~class_id
-          ~update_cache
-          ~if_not_found
-          ~if_found
-          ~from
-          ~to_:(mid - 1))
+        if_found implementation
+      | None ->
+        (match Class_id.compare_by_uid elt class_id |> Ordering.of_int with
+         | Equal ->
+           (* CR mbarbin: I'd like to think a bit more about this case. Granted
+              [same_witness a b => (uid a = uid b)] but I am not sure about the
+              converse. Are there instances of classes ids (c1, c2) with the
+              same uids that are however not physically equal?
+
+              The assert false below assumes that we should't care about such
+              cases. Revisit. *)
+           assert false
+         | Less ->
+           binary_search
+             t
+             ~class_id
+             ~update_cache
+             ~if_not_found
+             ~if_found
+             ~from:(mid + 1)
+             ~to_
+         | Greater ->
+           binary_search
+             t
+             ~class_id
+             ~update_cache
+             ~if_not_found
+             ~if_found
+             ~from
+             ~to_:(mid - 1)))
   ;;
 
   let make_lookup
@@ -147,9 +176,9 @@ module Interface = struct
     fun t ~class_id ~update_cache ~if_not_found ~if_found ->
     if Array.length t = 0 then not_implemented ~class_info:(Class_id.info class_id);
     let (Class.T { class_id = cached_id; implementation }) = t.(0) in
-    if Class_id.same class_id cached_id
-    then if_found (Stdlib.Obj.magic implementation)
-    else
+    match Class_id.same_witness class_id cached_id with
+    | Some T -> if_found implementation
+    | None ->
       binary_search
         t
         ~class_id
