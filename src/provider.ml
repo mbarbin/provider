@@ -145,19 +145,21 @@ module Interface = struct
       -> b
     =
     fun t ~class_id ~update_cache ~if_not_found ~if_found ->
-    if Array.length t = 0 then not_implemented ~class_info:(Class_id.info class_id);
-    let (Class.T { class_id = cached_id; implementation }) = t.(0) in
-    if Class_id.same class_id cached_id
-    then if_found (Stdlib.Obj.magic implementation)
-    else
-      binary_search
-        t
-        ~class_id
-        ~update_cache
-        ~if_not_found
-        ~if_found
-        ~from:1
-        ~to_:(Array.length t - 1)
+    if Array.length t = 0
+    then if_not_found ~class_info:(Class_id.info class_id)
+    else (
+      let (Class.T { class_id = cached_id; implementation }) = t.(0) in
+      if Class_id.same class_id cached_id
+      then if_found (Stdlib.Obj.magic implementation)
+      else
+        binary_search
+          t
+          ~class_id
+          ~update_cache
+          ~if_not_found
+          ~if_found
+          ~from:1
+          ~to_:(Array.length t - 1))
   ;;
 
   let lookup t ~class_id =
