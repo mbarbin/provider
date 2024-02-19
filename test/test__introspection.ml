@@ -26,15 +26,13 @@ let print_implements (Provider.T { t = _; interface }) =
 ;;
 
 let%expect_test "introspection" =
-  require_does_not_raise [%here] (fun () ->
-    print_implements (Provider.T { t = (); interface = Provider.Interface.make [] });
-    [%expect
-      {|
-      ((
-        implements (
-          (file_reader      false)
-          (directory_reader false)))) |}]);
-  [%expect {||}];
+  print_implements (Provider.T { t = (); interface = Provider.Interface.make [] });
+  [%expect
+    {|
+    ((
+      implements (
+        (file_reader      false)
+        (directory_reader false)))) |}];
   let unix_reader = Providers.Unix_reader.make () in
   Eio_main.run
   @@ fun env ->
