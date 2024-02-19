@@ -90,10 +90,6 @@ module Interface = struct
 
   let extend t ~with_ = make (classes t @ with_)
 
-  let not_implemented ~class_info =
-    raise_s [%sexp "Class not implemented", { class_info : Class_id.Info.t }]
-  ;;
-
   let rec binary_search
     : type a implementation tags b.
       (a, tags) t
@@ -162,12 +158,21 @@ module Interface = struct
           ~to_:(Array.length t - 1))
   ;;
 
+  module If_not_found = struct
+    let raise ~class_info =
+      raise_s [%sexp "Class not implemented", { class_info : Class_id.Info.t }]
+    ;;
+
+    let none ~class_info:_ = None
+    let false_ ~class_info:_ = false
+  end
+
   let lookup t ~class_id =
     make_lookup
       t
       ~class_id
       ~update_cache:true
-      ~if_not_found:not_implemented
+      ~if_not_found:If_not_found.raise
       ~if_found:Fn.id
   ;;
 
@@ -176,7 +181,7 @@ module Interface = struct
       t
       ~class_id
       ~update_cache:true
-      ~if_not_found:(fun ~class_info:_ -> None)
+      ~if_not_found:If_not_found.none
       ~if_found:Option.return
   ;;
 
@@ -187,7 +192,7 @@ module Interface = struct
       t
       ~class_id
       ~update_cache:false
-      ~if_not_found:(fun ~class_info:_ -> false)
+      ~if_not_found:If_not_found.false_
       ~if_found:(Fn.const true)
   ;;
 end
