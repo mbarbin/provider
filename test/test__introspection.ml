@@ -26,6 +26,21 @@ let print_implements (Provider.T { t = _; interface }) =
 ;;
 
 let%expect_test "introspection" =
+  require_does_not_raise [%here] (fun () ->
+    print_implements (Provider.T { t = (); interface = Provider.Interface.make [] });
+    [%expect.unreachable]);
+  [%expect
+    {|
+    (* CR require-failed: repo/provider/test/test__introspection.ml:29:25.
+       Do not 'X' this CR; instead make the required property true,
+       which will make the CR disappear.  For more information, see
+       [Expect_test_helpers_base.require]. *)
+    ("unexpectedly raised" (
+      "Class not implemented" ((
+        class_info (
+          (id #id)
+          (name
+           Provider_test__Interface__Directory_reader.Provider_interface.Directory_reader)))))) |}];
   let unix_reader = Providers.Unix_reader.make () in
   Eio_main.run
   @@ fun env ->
