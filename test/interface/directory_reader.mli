@@ -43,10 +43,10 @@ module Provider_interface : sig
       [Directory_reader] below. *)
   val make : (module S with type t = 't) -> ('t, tag) Provider.Interface.t
 
-  (** The actual class id may or may not be exported by the provider interface -
-      either way works. That's left as a programmer's preference depending on
-      the context. When this constructor is exported, you can use it in
-      conjunction with {!Provider.Class.implement}. *)
-  type (_, _, _) Provider.Class_id.t +=
-    | Directory_reader : ('t, (module S with type t = 't), [> tag ]) Provider.Class_id.t
+  (** The actual trait constructor may or may not be exported by the provider
+      interface -- either way works. That's left as a programmer's preference
+      depending on the context. When this constructor is exported, you can use
+      it in conjunction with {!Provider.Trait.implement}. *)
+  type (_, _, _) Provider.Trait.t +=
+    | Directory_reader : ('t, (module S with type t = 't), [> tag ]) Provider.Trait.t
 end

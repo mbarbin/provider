@@ -54,7 +54,7 @@ let print_all_text_files_with_lines_if_available t ~path =
         match
           Provider.Interface.lookup_opt
             interface
-            ~class_id:Interface.File_reader.Provider_interface.File_reader
+            ~trait:Interface.File_reader.Provider_interface.File_reader
         with
         | None -> "not-available"
         | Some (module File_reader) ->

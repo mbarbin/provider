@@ -1,18 +1,18 @@
-(* This test demonstrates how to access information about the classes
-   implemented by a provider at runtime. This is a key aspect of introspection,
-   allowing you to understand the capabilities of a provider dynamically, as the
-   program is running. *)
+(* This test demonstrates how to access information about the traits implemented
+   by a provider at runtime. This is a key aspect of introspection, allowing you
+   to understand the capabilities of a provider dynamically, as the program is
+   running. *)
 
-let print_implemented_classes (Provider.T { t = _; interface }) =
+let print_implemented_traits (Provider.T { t = _; interface }) =
   let info =
-    List.map (Provider.Interface.classes interface) ~f:(fun class_ ->
-      [%sexp (Provider.Class.info class_ : Provider.Class_id.Info.t)])
+    List.map (Provider.Interface.implementations interface) ~f:(fun implementation ->
+      [%sexp (Provider.Trait.Implementation.info implementation : Provider.Trait.Info.t)])
   in
   print_s [%sexp (info : Sexp.t list)]
 ;;
 
 let print_implements (Provider.T { t = _; interface }) =
-  let implements class_id = Provider.Interface.implements interface ~class_id in
+  let implements trait = Provider.Interface.implements interface ~trait in
   print_s
     [%sexp
       { implements =
@@ -65,15 +65,15 @@ let%expect_test "introspection" =
     in
     Sexp.Atom (Int.to_string id)
   in
-  Ref.set_temporarily Provider.Class_id.Info.sexp_of_id sexp_of_id ~f:(fun () ->
-    print_implemented_classes unix_reader;
+  Ref.set_temporarily Provider.Trait.Info.sexp_of_id sexp_of_id ~f:(fun () ->
+    print_implemented_traits unix_reader;
     [%expect
       {|
       ((
         (id 0)
         (name
          Provider_test__Interface__Directory_reader.Provider_interface.Directory_reader))) |}];
-    print_implemented_classes eio_reader;
+    print_implemented_traits eio_reader;
     [%expect
       {|
       (((id 0)

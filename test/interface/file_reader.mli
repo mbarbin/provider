@@ -15,6 +15,6 @@ module Provider_interface : sig
     val load : t -> path:string -> string
   end
 
-  type (_, _, _) Provider.Class_id.t +=
-    | File_reader : ('t, (module S with type t = 't), [> tag ]) Provider.Class_id.t
+  type (_, _, _) Provider.Trait.t +=
+    | File_reader : ('t, (module S with type t = 't), [> tag ]) Provider.Trait.t
 end

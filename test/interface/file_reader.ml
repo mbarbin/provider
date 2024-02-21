@@ -8,13 +8,13 @@ module Provider_interface = struct
     val load : t -> path:string -> string
   end
 
-  type (_, _, _) Provider.Class_id.t +=
-    | File_reader : ('t, (module S with type t = 't), [> tag ]) Provider.Class_id.t
+  type (_, _, _) Provider.Trait.t +=
+    | File_reader : ('t, (module S with type t = 't), [> tag ]) Provider.Trait.t
 end
 
 let load (Provider.T { t; interface }) ~path =
   let module M =
-    (val Provider.Interface.lookup interface ~class_id:Provider_interface.File_reader)
+    (val Provider.Interface.lookup interface ~trait:Provider_interface.File_reader)
   in
   M.load t ~path
 ;;

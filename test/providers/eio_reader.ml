@@ -16,12 +16,12 @@ let make ~env : [ `Directory_reader | `File_reader ] Provider.t =
     { t = Impl.T { fs = Eio.Stdenv.fs env }
     ; interface =
         Provider.Interface.make
-          [ Provider.Class.implement
-              ~class_id:Interface.Directory_reader.Provider_interface.Directory_reader
-              (module Impl)
-          ; Provider.Class.implement
-              ~class_id:Interface.File_reader.Provider_interface.File_reader
-              (module Impl)
+          [ Provider.Trait.implement
+              Interface.Directory_reader.Provider_interface.Directory_reader
+              ~impl:(module Impl)
+          ; Provider.Trait.implement
+              Interface.File_reader.Provider_interface.File_reader
+              ~impl:(module Impl)
           ]
     }
 ;;

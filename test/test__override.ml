@@ -1,4 +1,4 @@
-(* Here we verify that it is possible to override an existing class. *)
+(* Here we verify that it is possible to override an existing trait. *)
 
 module Int_hum_printer = struct
   module Impl = struct
@@ -14,19 +14,20 @@ module Int_hum_printer = struct
           Provider.Interface.extend
             Providers.Num_printer.interface
             ~with_:
-              [ Provider.Class.implement
-                  ~class_id:Interface.Int_printer.Provider_interface.Int_printer
-                  (module Impl)
+              [ Provider.Trait.implement
+                  Interface.Int_printer.Provider_interface.Int_printer
+                  ~impl:(module Impl)
               ]
       }
   ;;
 end
 
 let%expect_test "override" =
-  let print_implemented_classes (Provider.T { t = _; interface }) =
+  let print_implemented_traits (Provider.T { t = _; interface }) =
     let info =
-      List.map (Provider.Interface.classes interface) ~f:(fun class_ ->
-        [%sexp (Provider.Class.info class_ : Provider.Class_id.Info.t)])
+      List.map (Provider.Interface.implementations interface) ~f:(fun implementation ->
+        [%sexp
+          (Provider.Trait.Implementation.info implementation : Provider.Trait.Info.t)])
     in
     print_s [%sexp (info : Sexp.t list)]
   in
@@ -35,7 +36,7 @@ let%expect_test "override" =
     Interface.Float_printer.print printer 1234.5678
   in
   let num_printer = Providers.Num_printer.make () in
-  print_implemented_classes num_printer;
+  print_implemented_traits num_printer;
   [%expect
     {|
       (((id #id)
@@ -48,7 +49,7 @@ let%expect_test "override" =
       1234
       1234.5678 |}];
   let hum_printer = Int_hum_printer.make () in
-  print_implemented_classes hum_printer;
+  print_implemented_traits hum_printer;
   [%expect
     {|
       (((id #id)

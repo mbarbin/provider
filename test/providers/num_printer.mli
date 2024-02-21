@@ -5,7 +5,7 @@
     is not documented in details. Refer to {!Eio_reader} for more. *)
 
 (** In this case we decided to expose the type {!type:t} and {!val:interface},
-    to demonstrate how to override a particular class of the provided
+    to demonstrate how to override a particular trait of the provided
     interface. See [test__override.ml]. *)
 type t = unit
 

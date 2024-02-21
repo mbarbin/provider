@@ -1,45 +1,49 @@
 (** Parametrize your OCaml library with values that behave like objects but
     aren't.
 
-    A "provider" is a construct that implements a set of methods that an
+    A "provider" is a construct that implements a set of functionality that an
     library typically needs in order to provide certain functionality to a
     client.
 
     The module is divided into several submodules:
-    - {!module:Class_id}: To identify classes.
-    - {!module:Class}: For implementing classes.
-    - {!module:Interface}: Manages the set of classes that an object implements.
+    - {!module:Trait}: To identify and implement functionality.
+    - {!module:Interface}: Manages the set of traits that a provider implements.
     - {!module:Private}: Used for testing purposes.
 
     This module is inspired by the [Eio.Resource] module and provides a way to
     parameterize code when a library either doesn't want to or can't commit to a
     specific implementation. *)
 
-module Class_id : sig
-  (** Identifying a class within the provider system.
+module Trait : sig
+  (** Think of a trait as a way to identify and implement the signature of a
+      module that contains enough functions to support some functionality. The
+      type {!type:t} allows to identify a trait within the provider system.
+      The name was inspired from the Rust programming language construct of
+      the same name.
 
       - ['t] is the internal state of the provider itself.
-      - ['implementation] is the API that can be requested.
-      - ['tag] is the tag (or tags) indicating the supported class. It's a
+      - ['module_type] is the signature of a module implementing the trait.
+      - ['tag] is the tag (or tags) indicating the supported trait. It's a
         phantom type designed to make {!val:Interface.lookup} more type-safe.
+        This relates to Trait bounds in Rust.
 
-      The API requested is expected to be a module type (Eio supports single
+      ['module_type] is expected to be a module type (Eio supports single
       functions but this is discouraged through the use of this library). *)
-  type ('t, 'implementation, 'tag) t = ..
+  type ('t, 'module_type, 'tag) t = ..
 
   (** {1 Dump & debug} *)
 
   module Info : sig
     (** This type is primarily used for debugging purposes.
 
-        An [t] value includes the name of the class constructor and the module
+        An [t] value includes the name of the trait constructor and the module
         path where it was defined. It may also include the runtime id for the
-        extensible variant of the class id, but this is not included by default
-        as its value can be brittle (it may depend on the order in which modules
+        extensible variant of the trait, but this is not included by default as
+        its value can be brittle (it may depend on the order in which modules
         are evaluated).
 
         This type provides a way to retrieve and display detailed information
-        about a class, which can be useful for debugging and understanding the
+        about a trait, which can be useful for debugging and understanding the
         structure and behavior of the provider system. *)
     type t [@@deriving sexp_of]
 
@@ -56,10 +60,10 @@ module Class_id : sig
 
   module Uid : sig
     (** A uid is particularly useful when you need to quickly look up or sort
-        classes, as it provides a consistent and unique way to identify each
-        class. You can use it to manipulate classes within container
-        structures, making it easier to store, retrieve, and compare classes
-        at runtime. *)
+        traits, as it provides a consistent and unique way to identify each
+        trait. You can use it to manipulate traits within container
+        structures, making it easier to store, retrieve, and compare traits at
+        runtime. *)
     type t [@@deriving compare, equal, hash, sexp_of]
 
     include Comparable.S with type t := t
@@ -67,44 +71,47 @@ module Class_id : sig
 
   val uid : _ t -> Uid.t
   val same : _ t -> _ t -> bool
-end
 
-module Class : sig
-  (** This module is used by providers to implement classes. *)
+  module Implementation : sig
+    (** Representing an implementation for a trait. *)
 
-  type _ t = private
-    | T :
-        { class_id : ('t, 'implementation, _) Class_id.t
-        ; implementation : 'implementation
-        }
-        -> 't t
+    type ('t, 'module_type, 'tag) trait := ('t, 'module_type, 'tag) t
 
-  (** [implement ~class_id (module Impl)] returns a class that uses [Impl] as
-      the implementation for [class_id].
+    type _ t = private
+      | T :
+          { trait : ('t, 'module_type, _) trait
+          ; impl : 'module_type
+          }
+          -> 't t
 
-      The tags associated with the [class_id] are ignored at this stage. The
+    (** {1 Dump & debug} *)
+
+    val uid : _ t -> Uid.t
+    val info : _ t -> Info.t
+  end
+
+  (** [implement trait ~impl:(module Impl)] says to implement [trait] with
+      [Impl]. The module [Impl] provided must have the right module type as
+      specified by the type of [trait].
+
+      The tags associated with the [trait] are ignored at this stage. The
       handling of the tags happens at the interface building stage, not at the
-      granularity of each class. This means that the [implement] function
-      focuses solely on creating the class, without considering the tags that
-      indicate which classes are supported by the provider. *)
-  val implement : class_id:('t, 'implementation, _) Class_id.t -> 'implementation -> 't t
-
-  (** {1 Dump & debug} *)
-
-  val uid : _ t -> Class_id.Uid.t
-  val info : _ t -> Class_id.Info.t
+      granularity of each trait. This means that the {!val:implement} function
+      focuses solely on creating the implementation, without considering the
+      tags that indicate which traits are supported by the provider. *)
+  val implement : ('t, 'module_type, _) t -> impl:'module_type -> 't Implementation.t
 end
 
 module Interface : sig
-  (** Manipulating the set of classes implemented by a provider.
+  (** Manipulating the set of traits implemented by a provider.
 
       This module provides functions for creating an interface, as well as
-      retrieving and extending the classes implemented by an interface, making
-      it easy to manage the functionalities that a provider supports. *)
+      retrieving and extending the traits implemented by an interface, making it
+      easy to manage the functionalities that a provider supports. *)
 
-  (** An interface is essentially a collection of classes that an object
-      implements, each of which providing a specific set of functionalities
-      (one class = one first-class module with type t = 't).
+  (** An interface is essentially a collection of traits that a provider
+      implements, each of which providing a specific functionality (one trait
+      implementation = one first-class module with type t = 't).
 
       - ['t] is the internal state of the provider.
       - ['tags] indicate which functionality are supported by the provider. It
@@ -131,36 +138,37 @@ module Interface : sig
 
   (** {1 Building interfaces} *)
 
-  (** [make classes] create a new interface from a list of classes. It only
-      keeps the last occurrence of each class. This means that the resulting
-      interface will not contain any duplicate classes, and the order of the
-      classes in the input list can affect its contents. *)
-  val make : 't Class.t list -> ('t, _) t
+  (** [make implementations] create a new interface from a list of
+      implementation. It only keeps the last implementation supplied for each
+      trait. This means that the resulting interface will not contain any
+      duplicate traits, and the order of the implementations in the input list
+      can affect its contents. *)
+  val make : 't Trait.Implementation.t list -> ('t, _) t
 
-  (** [classes t] returns a list of classes that the interface [t]
-      implements. See also {!extend}. *)
-  val classes : ('t, _) t -> 't Class.t list
+  (** [implementations t] returns a list of trait implementations that the
+      interface [t] supports. See also {!extend}. *)
+  val implementations : ('t, _) t -> 't Trait.Implementation.t list
 
   (** [extend t ~with_] extends the interface [t] and returns a new interface
-      that includes both the original and additional classes. The resulting
-      interface only contains the last occurrence of each class identifier,
+      that includes both the original and additional implementations. The
+      resulting interface only contains the last occurrence of each trait,
       prioritizing the rightmost elements in the combined list
-      [classes t @ with_]. *)
-  val extend : ('t, _) t -> with_:'t Class.t list -> ('t, _) t
+      [implementations t @ with_]. *)
+  val extend : ('t, _) t -> with_:'t Trait.Implementation.t list -> ('t, _) t
 
   (** {1 Lookup}
 
       A lookup operation is used to retrieve the implementation of a specific
-      class within an interface based on its class identifier. *)
+      trait within an interface. *)
 
-  (** [is_empty t] checks if an interface [t] implements any classes. An empty
+  (** [is_empty t] checks if an interface [t] implements any traits. An empty
       interface may be created using [make []]. It will cause any lookup
       operation to fail. It can be useful for initializing data structures or
       providing a base case for algorithms that process interfaces. *)
   val is_empty : ('t, _) t -> bool
 
-  (** [lookup t ~class_id] retrieves the implementation for a given class from
-      an interface.
+  (** [lookup t ~trait] retrieves the implementation for a given [trait] from an
+      interface.
 
       If the provider has correctly exported their implementation using the
       appropriate tags, the compiler will ensure that this function does not
@@ -168,11 +176,11 @@ module Interface : sig
       programming error in the provider's setup). *)
   val lookup
     :  ('t, 'tags) t
-    -> class_id:('t, 'implementation, 'tags) Class_id.t
+    -> trait:('t, 'implementation, 'tags) Trait.t
     -> 'implementation
 
-  (** [lookup_opt t ~class_id] returns the implementation of the class
-      ([Some implementation]) or indicates that the class is not implemented
+  (** [lookup_opt t ~trait] returns the implementation of the [trait]
+      ([Some implementation]) or indicates that the trait is not implemented
       ([None]).
 
       This is particularly useful in scenarios where a part of a program needs
@@ -180,17 +188,16 @@ module Interface : sig
       available or not. *)
   val lookup_opt
     :  ('t, _) t
-    -> class_id:('t, 'implementation, _) Class_id.t
+    -> trait:('t, 'implementation, _) Trait.t
     -> 'implementation option
 
-  (** [implements t ~class_id] says wether an interface implements a class. This
-      is [true] iif [lookup_opt t ~class_id] returns [Some _]. *)
-  val implements : ('t, _) t -> class_id:('t, _, _) Class_id.t -> bool
+  (** [implements t ~trait] says wether an interface implements a trait. This
+      is [true] iif [lookup_opt t ~trait] returns [Some _]. *)
+  val implements : ('t, _) t -> trait:('t, _, _) Trait.t -> bool
 end
 
-(** A provider is a pair of a value and an interface for it. Think about [t] as
-    the internal state of an object, and [interface] as the set of methods
-    that the object implements. *)
+(** A provider is a pair of a value and a set of traits that the provider
+    implements. *)
 type -'tags t =
   | T :
       { t : 't
@@ -205,14 +212,14 @@ module Private : sig
       version of the library to be minted. Use at your own risk. *)
 
   module Interface : sig
-    (** [same_class_uids i1 i2] checks if the class identifiers of two
-        interfaces are the same and in the same order. *)
-    val same_class_uids : ('t, _) Interface.t -> ('t, _) Interface.t -> bool
+    (** [same_trait_uids i1 i2] checks if the traits of two interfaces are the
+        same and in the same order. *)
+    val same_trait_uids : ('t, _) Interface.t -> ('t, _) Interface.t -> bool
 
     (** Exported to test the caching strategy. Retains the most recently looked
-        up class. Currently returns [None] for empty interface, and if the
-        interface is not empty, returns the most recently looked up class
+        up trait. Currently returns [None] for empty interface, and if the
+        interface is not empty, returns the most recently looked up trait
         ([Some uid]) or an arbitrary initial value. *)
-    val cache : _ Interface.t -> Class_id.Uid.t option
+    val cache : _ Interface.t -> Trait.Uid.t option
   end
 end

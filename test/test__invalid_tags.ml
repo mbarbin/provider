@@ -18,8 +18,8 @@ let%expect_test "invalid tags" =
   require_does_raise [%here] (fun () -> print_42 (Invalid_int_printer.make ()));
   [%expect
     {|
-    ("Class not implemented" ((
-      class_info (
+    ("Trait not implemented" ((
+      trait_info (
         (id #id)
         (name
          Provider_test__Interface__Int_printer.Provider_interface.Int_printer))))) |}];
