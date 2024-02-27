@@ -30,11 +30,40 @@
    (and
     :dev
     (>= 2.8.3)))
-  (ppx_jane
+  (ppx_compare
+   (and
+    (>= v0.16)
+    (< v0.17)))
+  (ppx_enumerate
+   (and
+    (>= v0.16)
+    (< v0.17)))
+  (ppx_expect
+   (and
+    :with-test
+    (>= v0.16)
+    (< v0.17)))
+  (ppx_hash
+   (and
+    (>= v0.16)
+    (< v0.17)))
+  (ppx_here
    (and
     (>= v0.16)
     (< v0.17)))
   (ppx_js_style
+   (and
+    (>= v0.16)
+    (< v0.17)))
+  (ppx_let
+   (and
+    (>= v0.16)
+    (< v0.17)))
+  (ppx_sexp_conv
+   (and
+    (>= v0.16)
+    (< v0.17)))
+  (ppx_sexp_value
    (and
     (>= v0.16)
     (< v0.17)))))
@@ -61,11 +90,40 @@
    (and
     (>= v0.16)
     (< v0.17)))
-  (ppx_jane
+  (ppx_compare
+   (and
+    (>= v0.16)
+    (< v0.17)))
+  (ppx_enumerate
+   (and
+    (>= v0.16)
+    (< v0.17)))
+  (ppx_expect
+   (and
+    :with-test
+    (>= v0.16)
+    (< v0.17)))
+  (ppx_hash
+   (and
+    (>= v0.16)
+    (< v0.17)))
+  (ppx_here
    (and
     (>= v0.16)
     (< v0.17)))
   (ppx_js_style
+   (and
+    (>= v0.16)
+    (< v0.17)))
+  (ppx_let
+   (and
+    (>= v0.16)
+    (< v0.17)))
+  (ppx_sexp_conv
+   (and
+    (>= v0.16)
+    (< v0.17)))
+  (ppx_sexp_value
    (and
     (>= v0.16)
     (< v0.17)))

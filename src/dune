@@ -6,4 +6,13 @@
  (instrumentation
   (backend bisect_ppx))
  (preprocess
-  (pps ppx_jane ppx_js_style -check-doc-comments)))
+  (pps
+   ppx_compare
+   ppx_enumerate
+   ppx_hash
+   ppx_here
+   ppx_let
+   ppx_sexp_conv
+   ppx_sexp_value
+   ppx_js_style
+   -check-doc-comments)))
