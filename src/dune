@@ -5,6 +5,8 @@
  (libraries base)
  (instrumentation
   (backend bisect_ppx))
+ (lint
+  (pps ppx_js_style -check-doc-comments))
  (preprocess
   (pps
    ppx_compare
@@ -13,6 +15,4 @@
    ppx_here
    ppx_let
    ppx_sexp_conv
-   ppx_sexp_value
-   ppx_js_style
-   -check-doc-comments)))
+   ppx_sexp_value)))
