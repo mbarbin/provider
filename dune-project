@@ -87,7 +87,7 @@
    (>= 0.15))
   (eio_main
    (>= 0.15))
-  (expect_test_helpers_core
+  (expect-test-helpers
    (and
     (>= v0.16)
     (< v0.17)))

@@ -11,14 +11,8 @@
   -open
   Base
   -open
-  Expect_test_helpers_base)
- (libraries
-  base
-  eio
-  eio_main
-  expect_test_helpers_core.expect_test_helpers_base
-  provider
-  unix)
+  Expect_test_helpers)
+ (libraries base eio eio_main expect-test-helpers provider unix)
  (instrumentation
   (backend bisect_ppx))
  (lint
