@@ -8,11 +8,4 @@
  (lint
   (pps ppx_js_style -check-doc-comments))
  (preprocess
-  (pps
-   ppx_compare
-   ppx_enumerate
-   ppx_hash
-   ppx_here
-   ppx_let
-   ppx_sexp_conv
-   ppx_sexp_value)))
+  (pps ppx_compare ppx_hash ppx_sexp_conv ppx_sexp_value)))
