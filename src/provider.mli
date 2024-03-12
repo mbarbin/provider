@@ -50,7 +50,7 @@ module Trait : sig
     (** Controls whether the runtime ids are shown or hidden in the sexp built
         by {!val:sexp_of_t}. By default [Fn.const (Sexp.Atom "#id")]. You may
         temporarily change it, e.g. in a test, for example using
-        {!Ref.set_temporarily}. *)
+        [Ref.set_temporarily]. *)
     val sexp_of_id : (int -> Sexp.t) ref
   end
 
