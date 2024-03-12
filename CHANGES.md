@@ -1,3 +1,17 @@
+## 0.0.5 (unreleased)
+
+### Added
+
+### Changed
+
+- Upgrade `eio` to `1.0` (no change required).
+
+### Deprecated
+
+### Fixed
+
+### Removed
+
 ## 0.0.4 (2024-03-05)
 
 ### Changed
