@@ -9,7 +9,7 @@ homepage: "https://github.com/mbarbin/provider"
 doc: "https://mbarbin.github.io/provider/"
 bug-reports: "https://github.com/mbarbin/provider/issues"
 depends: [
-  "dune" {>= "3.14"}
+  "dune" {>= "3.15"}
   "ocaml" {>= "5.1"}
   "base" {>= "v0.16" & < "v0.17"}
   "bisect_ppx" {dev & >= "2.8.3"}
