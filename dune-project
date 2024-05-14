@@ -21,7 +21,7 @@
   "Parametrize your OCaml library with values that behave like objects but aren't")
  (depends
   (ocaml
-   (>= 5.1))
+   (>= 5.2))
   (base
    (and
     (>= v0.17)
@@ -57,7 +57,7 @@
  (synopsis "Test suite for provider library")
  (depends
   (ocaml
-   (>= 5.1))
+   (>= 5.2))
   (base
    (and
     (>= v0.17)
