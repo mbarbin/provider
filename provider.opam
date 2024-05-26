@@ -11,13 +11,13 @@ bug-reports: "https://github.com/mbarbin/provider/issues"
 depends: [
   "dune" {>= "3.15"}
   "ocaml" {>= "5.1"}
-  "base" {>= "v0.16" & < "v0.17"}
+  "base" {>= "v0.17" & < "v0.18"}
   "bisect_ppx" {dev & >= "2.8.3"}
-  "ppx_compare" {>= "v0.16" & < "v0.17"}
-  "ppx_hash" {>= "v0.16" & < "v0.17"}
-  "ppx_js_style" {dev & >= "v0.16" & < "v0.17"}
-  "ppx_sexp_conv" {>= "v0.16" & < "v0.17"}
-  "ppx_sexp_value" {>= "v0.16" & < "v0.17"}
+  "ppx_compare" {>= "v0.17" & < "v0.18"}
+  "ppx_hash" {>= "v0.17" & < "v0.18"}
+  "ppx_js_style" {dev & >= "v0.17" & < "v0.18"}
+  "ppx_sexp_conv" {>= "v0.17" & < "v0.18"}
+  "ppx_sexp_value" {>= "v0.17" & < "v0.18"}
   "odoc" {with-doc}
 ]
 build: [
