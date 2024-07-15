@@ -4,6 +4,8 @@
 
 ### Changed
 
+- Upgrade `ocaml` to `5.2`.
+- Upgrade `dune` to `3.16`.
 - Upgrade `eio` to `1.0` (no change required).
 
 ### Deprecated
