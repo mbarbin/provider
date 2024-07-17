@@ -52,7 +52,7 @@
     (>= v0.17)
     (< v0.18)))
   (ppxlib
-   (>= 0.32))))
+   (>= 0.33))))
 
 (package
  (name provider-test)
@@ -114,6 +114,6 @@
     (>= v0.17)
     (< v0.18)))
   (ppxlib
-   (>= 0.32))
+   (>= 0.33))
   (provider
    (= :version))))
