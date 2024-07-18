@@ -50,7 +50,9 @@
   (ppx_sexp_value
    (and
     (>= v0.17)
-    (< v0.18)))))
+    (< v0.18)))
+  (ppxlib
+   (>= 0.32))))
 
 (package
  (name provider-test)
@@ -111,5 +113,7 @@
    (and
     (>= v0.17)
     (< v0.18)))
+  (ppxlib
+   (>= 0.32))
   (provider
    (= :version))))
