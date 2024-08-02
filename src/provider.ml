@@ -22,7 +22,7 @@ module Trait = struct
 
   module Uid = Int
 
-  let uid t =
+  let uid (t : _ t) =
     Stdlib.Obj.Extension_constructor.id (Stdlib.Obj.Extension_constructor.of_val t)
   ;;
 
@@ -61,7 +61,10 @@ module Interface = struct
     let implementations =
       let table = Hashtbl.create (module Trait.Uid) in
       List.iter implementations ~f:(fun implementation ->
-        Hashtbl.set table ~key:(Trait.uid implementation) ~data:implementation);
+        Hashtbl.set
+          table
+          ~key:(Trait.Implementation.uid implementation)
+          ~data:implementation);
       Hashtbl.data table |> List.sort ~compare:Trait.Implementation.compare_by_uid
     in
     match implementations with
