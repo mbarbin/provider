@@ -7,6 +7,7 @@
 
     The module is divided into several submodules:
     - {!module:Trait}: To identify and implement functionality.
+    - {!module:Implementation}: Represents an implementation for a trait.
     - {!module:Interface}: Manages the set of traits that a provider implements.
     - {!module:Private}: Used for testing purposes.
 
@@ -81,24 +82,6 @@ module Trait : sig
 
   val same : _ t -> _ t -> bool
 
-  module Implementation : sig
-    (** Representing an implementation for a trait. *)
-
-    type ('t, 'module_type, 'tag) trait := ('t, 'module_type, 'tag) t
-
-    type 'a t = 'a Implementation0.t = private
-      | T :
-          { trait : ('t, 'module_type, _) trait
-          ; impl : 'module_type
-          }
-          -> 't t
-
-    (** {1 Dump & debug} *)
-
-    val uid : _ t -> Uid.t
-    val info : _ t -> Info.t
-  end
-
   (** [implement trait ~impl:(module Impl)] says to implement [trait] with
       [Impl]. The module [Impl] provided must have the right module type as
       specified by the type of [trait].
@@ -108,7 +91,23 @@ module Trait : sig
       granularity of each trait. This means that the {!val:implement} function
       focuses solely on creating the implementation, without considering the
       tags that indicate which traits are supported by the provider. *)
-  val implement : ('t, 'module_type, _) t -> impl:'module_type -> 't Implementation.t
+  val implement : ('t, 'module_type, _) t -> impl:'module_type -> 't Implementation0.t
+end
+
+module Implementation : sig
+  (** Representing an implementation for a trait. *)
+
+  type 'a t = 'a Implementation0.t = private
+    | T :
+        { trait : ('t, 'module_type, _) Trait.t
+        ; impl : 'module_type
+        }
+        -> 't t
+
+  (** {1 Dump & debug} *)
+
+  val uid : _ t -> Trait.Uid.t
+  val info : _ t -> Trait.Info.t
 end
 
 module Interface : sig
@@ -152,18 +151,18 @@ module Interface : sig
       trait. This means that the resulting interface will not contain any
       duplicate traits, and the order of the implementations in the input list
       can affect its contents. *)
-  val make : 't Trait.Implementation.t list -> ('t, _) t
+  val make : 't Implementation.t list -> ('t, _) t
 
   (** [implementations t] returns a list of trait implementations that the
       interface [t] supports. See also {!extend}. *)
-  val implementations : ('t, _) t -> 't Trait.Implementation.t list
+  val implementations : ('t, _) t -> 't Implementation.t list
 
   (** [extend t ~with_] extends the interface [t] and returns a new interface
       that includes both the original and additional implementations. The
       resulting interface only contains the last occurrence of each trait,
       prioritizing the rightmost elements in the combined list
       [implementations t @ with_]. *)
-  val extend : ('t, _) t -> with_:'t Trait.Implementation.t list -> ('t, _) t
+  val extend : ('t, _) t -> with_:'t Implementation.t list -> ('t, _) t
 
   (** {1 Lookup}
 

@@ -47,8 +47,8 @@ let%expect_test "make interface" =
      require_equal
        [%here]
        (module Provider.Trait.Uid)
-       (Provider.Trait.Implementation.uid c1)
-       (Provider.Trait.Implementation.uid trait1);
+       (Provider.Implementation.uid c1)
+       (Provider.Implementation.uid trait1);
      [%expect {||}]
    | _ -> assert false);
   let empty = Provider.Interface.make [] in

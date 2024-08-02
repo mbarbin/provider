@@ -151,7 +151,7 @@ end
 let uids (Provider.T { t = _; interface }) =
   interface
   |> Provider.Interface.implementations
-  |> List.map ~f:Provider.Trait.Implementation.uid
+  |> List.map ~f:Provider.Implementation.uid
   |> Set.of_list (module Uid)
 ;;
 

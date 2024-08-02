@@ -46,32 +46,29 @@ module Trait = struct
 
   let compare_by_uid id1 id2 = Uid.compare (uid id1) (uid id2)
   let same (id1 : _ t) (id2 : _ t) = phys_same id1 id2
-
-  module Implementation = struct
-    type ('t, 'module_type, 'tag) trait = ('t, 'module_type, 'tag) t
-
-    type 'a t = 'a Implementation0.t = private
-      | T :
-          { trait : ('t, 'module_type, _) trait
-          ; impl : 'module_type
-          }
-          -> 't t
-
-    let uid (T { trait; impl = _ }) = uid trait
-    let info (T { trait; impl = _ }) = info trait
-
-    let compare_by_uid (T { trait = id1; _ }) (T { trait = id2; _ }) =
-      compare_by_uid id1 id2
-    ;;
-  end
-
   let implement = Implementation0.implement
+end
+
+module Implementation = struct
+  type 'a t = 'a Implementation0.t = private
+    | T :
+        { trait : ('t, 'module_type, _) Trait.t
+        ; impl : 'module_type
+        }
+        -> 't t
+
+  let uid (T { trait; impl = _ }) = Trait.uid trait
+  let info (T { trait; impl = _ }) = Trait.info trait
+
+  let compare_by_uid (T { trait = id1; _ }) (T { trait = id2; _ }) =
+    Trait.compare_by_uid id1 id2
+  ;;
 end
 
 module Interface = struct
   (* We sort the element by their extension_id in increasing order. Element.(0)
      is a cache of the most recently looked up method. *)
-  type ('t, -'tags) t = 't Trait.Implementation.t array
+  type ('t, -'tags) t = 't Implementation.t array
 
   let dedup_sorted_keep_last =
     let[@tail_mod_cons] rec aux list ~cmp =
@@ -84,11 +81,11 @@ module Interface = struct
     aux
   ;;
 
-  let make (type a) (implementations : a Trait.Implementation.t list) : (a, _) t =
+  let make (type a) (implementations : a Implementation.t list) : (a, _) t =
     let implementations =
       implementations
-      |> List.stable_sort ~cmp:Trait.Implementation.compare_by_uid
-      |> dedup_sorted_keep_last ~cmp:Trait.Implementation.compare_by_uid
+      |> List.stable_sort ~cmp:Implementation.compare_by_uid
+      |> dedup_sorted_keep_last ~cmp:Implementation.compare_by_uid
     in
     match implementations with
     | [] -> [||]
@@ -104,11 +101,11 @@ module Interface = struct
     then false
     else
       Array.for_alli t1 ~f:(fun i implementation ->
-        i = 0 || 0 = Trait.Implementation.compare_by_uid implementation t2.(i))
+        i = 0 || 0 = Implementation.compare_by_uid implementation t2.(i))
   ;;
 
   let is_empty t = Array.length t = 0
-  let cache t = if Array.length t = 0 then None else Some (Trait.Implementation.uid t.(0))
+  let cache t = if Array.length t = 0 then None else Some (Implementation.uid t.(0))
 
   let implementations t =
     match Array.to_list t with
@@ -134,7 +131,7 @@ module Interface = struct
     then if_not_found ~trait_info:(Trait.info trait)
     else (
       let mid = (from + to_) / 2 in
-      let (Trait.Implementation.T { trait = elt; impl } as implementation) = t.(mid) in
+      let (Implementation.T { trait = elt; impl } as implementation) = t.(mid) in
       match Trait.compare_by_uid elt trait |> Ordering.of_int with
       | Equal ->
         if update_cache then t.(0) <- implementation;
@@ -158,7 +155,7 @@ module Interface = struct
     if Array.length t = 0
     then if_not_found ~trait_info:(Trait.info trait)
     else (
-      let (Trait.Implementation.T { trait = cached_id; impl }) = t.(0) in
+      let (Implementation.T { trait = cached_id; impl }) = t.(0) in
       if Trait.same trait cached_id
       then if_found (Stdlib.Obj.magic impl)
       else
