@@ -2,6 +2,8 @@
 
 ### Added
 
+- Added dedicated tests for internal functions.
+
 ### Changed
 
 ### Deprecated
