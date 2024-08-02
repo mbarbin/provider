@@ -1,3 +1,17 @@
+## 0.0.6 (unreleased)
+
+### Changed
+
+- Reduce `provider` package dependencies - reduce from `base` to `sexplib0`.
+
+### Fixed
+
+- Make sure to select the right most implementation in case of overrides, as per specification.
+
+### Removed
+
+- Removed `Trait.Uid.Comparable.S` as this requires `Base`. Make it compatible with `Comparable.Make (Trait.Uid)` and add tests for this use case.
+
 ## 0.0.5 (2024-07-26)
 
 ### Added
