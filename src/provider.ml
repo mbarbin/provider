@@ -12,7 +12,7 @@ let raise_s msg sexp = raise (E (Sexp.List [ Atom msg; sexp ]))
 let phys_same t1 t2 = phys_equal (Stdlib.Obj.repr t1) (Stdlib.Obj.repr t2)
 
 module Trait = struct
-  type ('t, 'module_type, 'tag) t = ..
+  type ('t, 'module_type, 'tag) t = ('t, 'module_type, 'tag) Trait0.t = ..
 
   module Info = struct
     type t = Stdlib.Obj.Extension_constructor.t
@@ -50,7 +50,7 @@ module Trait = struct
   module Implementation = struct
     type ('t, 'module_type, 'tag) trait = ('t, 'module_type, 'tag) t
 
-    type _ t =
+    type 'a t = 'a Implementation0.t = private
       | T :
           { trait : ('t, 'module_type, _) trait
           ; impl : 'module_type
@@ -65,9 +65,7 @@ module Trait = struct
     ;;
   end
 
-  let implement (type a i) (trait : (a, i, _) t) ~(impl : i) : a Implementation.t =
-    Implementation.T { trait; impl }
-  ;;
+  let implement = Implementation0.implement
 end
 
 module Interface = struct

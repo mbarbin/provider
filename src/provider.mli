@@ -29,7 +29,7 @@ module Trait : sig
 
       ['module_type] is expected to be a module type (Eio supports single
       functions but this is discouraged through the use of this library). *)
-  type ('t, 'module_type, 'tag) t = ..
+  type ('t, 'module_type, 'tag) t = ('t, 'module_type, 'tag) Trait0.t = ..
 
   (** {1 Dump & debug} *)
 
@@ -86,7 +86,7 @@ module Trait : sig
 
     type ('t, 'module_type, 'tag) trait := ('t, 'module_type, 'tag) t
 
-    type _ t = private
+    type 'a t = 'a Implementation0.t = private
       | T :
           { trait : ('t, 'module_type, _) trait
           ; impl : 'module_type
