@@ -8,6 +8,8 @@ end
 
 module List : sig
   include module type of ListLabels
+
+  val stable_sort : 'a list -> compare:('a -> 'a -> int) -> 'a list
 end
 
 module Ordering : sig

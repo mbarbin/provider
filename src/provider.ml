@@ -71,12 +71,12 @@ module Interface = struct
   type ('t, -'tags) t = 't Implementation.t array
 
   let dedup_sorted_keep_last =
-    let[@tail_mod_cons] rec aux list ~cmp =
+    let[@tail_mod_cons] rec aux list ~compare =
       match list with
       | [] -> []
       | [ elt ] -> [ elt ]
       | elt1 :: (elt2 :: _ as tl) ->
-        if cmp elt1 elt2 = 0 then aux tl ~cmp else elt1 :: aux tl ~cmp
+        if compare elt1 elt2 = 0 then aux tl ~compare else elt1 :: aux tl ~compare
     in
     aux
   ;;
@@ -84,8 +84,8 @@ module Interface = struct
   let make (type a) (implementations : a Implementation.t list) : (a, _) t =
     let implementations =
       implementations
-      |> List.stable_sort ~cmp:Implementation.compare_by_uid
-      |> dedup_sorted_keep_last ~cmp:Implementation.compare_by_uid
+      |> List.stable_sort ~compare:Implementation.compare_by_uid
+      |> dedup_sorted_keep_last ~compare:Implementation.compare_by_uid
     in
     match implementations with
     | [] -> [||]
@@ -218,5 +218,6 @@ type -'tags t =
       -> 'tags t
 
 module Private = struct
+  module Import = Import
   module Interface = Interface
 end

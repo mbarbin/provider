@@ -11,7 +11,11 @@ module Array = struct
   ;;
 end
 
-module List = ListLabels
+module List = struct
+  include ListLabels
+
+  let stable_sort t ~compare = stable_sort t ~cmp:compare
+end
 
 module Ordering = struct
   type t =

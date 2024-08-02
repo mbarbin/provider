@@ -217,7 +217,7 @@ module Private : sig
   (** This module is exported for testing purposes only.
 
       Its interface may change in breaking ways without requiring a major
-      version of the library to be minted. Use at your own risk. *)
+      version of the library to be minted. Do not use. *)
 
   module Interface : sig
     (** [same_trait_uids i1 i2] checks if the traits of two interfaces are the
@@ -229,5 +229,25 @@ module Private : sig
         interface is not empty, returns the most recently looked up trait
         ([Some uid]) or an arbitrary initial value. *)
     val cache : _ Interface.t -> Trait.Uid.t option
+
+    (** Part of the strategy for [make], [extend], etc. *)
+    val dedup_sorted_keep_last : 'a list -> compare:('a -> 'a -> int) -> 'a list
+  end
+
+  module Import : sig
+    (** Exported things from the import module we'd like to test separately. *)
+
+    module Array : sig
+      val for_alli : 'a array -> f:(int -> 'a -> bool) -> bool
+    end
+
+    module Ordering : sig
+      type t =
+        | Equal
+        | Less
+        | Greater
+
+      val of_int : int -> t
+    end
   end
 end
