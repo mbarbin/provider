@@ -99,7 +99,7 @@ module Interface = struct
       Array.of_list (hd :: implementations)
   ;;
 
-  let same_trait_uids : type a tags1 tags2. (a, tags1) t -> (a, tags2) t -> bool =
+  let same_trait_uids : type a b tags1 tags2. (a, tags1) t -> (b, tags2) t -> bool =
     fun t1 t2 ->
     (* We skip the cell 0 which contains the cache. *)
     if Array.length t1 <> Array.length t2

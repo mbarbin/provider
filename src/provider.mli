@@ -223,7 +223,7 @@ module Private : sig
   module Interface : sig
     (** [same_trait_uids i1 i2] checks if the traits of two interfaces are the
         same and in the same order. *)
-    val same_trait_uids : ('t, _) Interface.t -> ('t, _) Interface.t -> bool
+    val same_trait_uids : ('t1, _) Interface.t -> ('t2, _) Interface.t -> bool
 
     (** Exported to test the caching strategy. Retains the most recently looked
         up trait. Currently returns [None] for empty interface, and if the
