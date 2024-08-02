@@ -2,6 +2,7 @@
 
 ### Changed
 
+- Rename `Provider.Trait.Implementation` as `Provider.Implementation` to expose the concepts in a more flat way.
 - Reduce `provider` package dependencies - reduce from `base` to `sexplib0`.
 
 ### Fixed
