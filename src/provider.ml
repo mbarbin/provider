@@ -1,3 +1,5 @@
+open! Import
+
 exception E of Sexp.t
 
 let () =
@@ -87,7 +89,7 @@ module Interface = struct
   let make (type a) (implementations : a Trait.Implementation.t list) : (a, _) t =
     let implementations =
       implementations
-      |> List.stable_sort ~compare:Trait.Implementation.compare_by_uid
+      |> List.stable_sort ~cmp:Trait.Implementation.compare_by_uid
       |> dedup_sorted_keep_last ~cmp:Trait.Implementation.compare_by_uid
     in
     match implementations with
@@ -189,7 +191,7 @@ module Interface = struct
       ~trait
       ~update_cache:true
       ~if_not_found:If_not_found.raise
-      ~if_found:Fn.id
+      ~if_found:Fun.id
   ;;
 
   let lookup_opt t ~trait =
@@ -198,7 +200,7 @@ module Interface = struct
       ~trait
       ~update_cache:true
       ~if_not_found:If_not_found.none
-      ~if_found:Option.return
+      ~if_found:Option.some
   ;;
 
   let implements t ~trait =
@@ -209,7 +211,7 @@ module Interface = struct
       ~trait
       ~update_cache:false
       ~if_not_found:If_not_found.false_
-      ~if_found:(Fn.const true)
+      ~if_found:(Fun.const true)
   ;;
 end
 

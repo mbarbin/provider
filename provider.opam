@@ -11,7 +11,6 @@ bug-reports: "https://github.com/mbarbin/provider/issues"
 depends: [
   "dune" {>= "3.16"}
   "ocaml" {>= "5.2"}
-  "base" {>= "v0.17" & < "v0.18"}
   "bisect_ppx" {dev & >= "2.8.3"}
   "ppx_js_style" {dev & >= "v0.17" & < "v0.18"}
   "sexplib0" {>= "v0.17" & < "v0.18"}

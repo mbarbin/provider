@@ -22,10 +22,6 @@
  (depends
   (ocaml
    (>= 5.2))
-  (base
-   (and
-    (>= v0.17)
-    (< v0.18)))
   (bisect_ppx
    (and
     :dev
