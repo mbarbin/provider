@@ -45,7 +45,9 @@ module Trait : sig
         This type provides a way to retrieve and display detailed information
         about a trait, which can be useful for debugging and understanding the
         structure and behavior of the provider system. *)
-    type t [@@deriving sexp_of]
+    type t
+
+    val sexp_of_t : t -> Sexp.t
 
     (** Controls whether the runtime ids are shown or hidden in the sexp built
         by {!val:sexp_of_t}. By default [Fn.const (Sexp.Atom "#id")]. You may
@@ -64,9 +66,14 @@ module Trait : sig
         trait. You can use it to manipulate traits within container
         structures, making it easier to store, retrieve, and compare traits at
         runtime. *)
-    type t [@@deriving compare, equal, hash, sexp_of]
+    type t
 
     include Comparable.S with type t := t
+
+    val sexp_of_t : t -> Sexp.t
+    val equal : t -> t -> bool
+    val compare : t -> t -> int
+    val hash : t -> int
   end
 
   val uid : _ t -> Uid.t

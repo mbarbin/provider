@@ -1,3 +1,12 @@
+exception E of Sexp.t
+
+let () =
+  Sexplib0.Sexp_conv.Exn_converter.add [%extension_constructor E] (function
+    | E sexp -> sexp
+    | _ -> assert false)
+;;
+
+let raise_s msg sexp = raise (E (Sexp.List [ Atom msg; sexp ]))
 let phys_same t1 t2 = phys_equal (Stdlib.Obj.repr t1) (Stdlib.Obj.repr t2)
 
 module Trait = struct
@@ -11,10 +20,10 @@ module Trait = struct
 
     let sexp_of_t t =
       let sexp_of_id id = !sexp_of_id id in
-      [%sexp
-        { id = (Stdlib.Obj.Extension_constructor.id t : id)
-        ; name = (Stdlib.Obj.Extension_constructor.name t : string)
-        }]
+      Sexp.List
+        [ List [ Atom "id"; sexp_of_id (Stdlib.Obj.Extension_constructor.id t) ]
+        ; List [ Atom "name"; Atom (Stdlib.Obj.Extension_constructor.name t) ]
+        ]
     ;;
   end
 
@@ -151,7 +160,9 @@ module Interface = struct
 
   module If_not_found = struct
     let raise ~trait_info =
-      raise_s [%sexp "Trait not implemented", { trait_info : Trait.Info.t }]
+      raise_s
+        "Trait not implemented"
+        (Sexp.List [ List [ Atom "trait_info"; trait_info |> Trait.Info.sexp_of_t ] ])
     ;;
 
     let none ~trait_info:_ = None

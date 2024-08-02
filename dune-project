@@ -30,29 +30,15 @@
    (and
     :dev
     (>= 2.8.3)))
-  (ppx_compare
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_hash
-   (and
-    (>= v0.17)
-    (< v0.18)))
   (ppx_js_style
    (and
     :dev
     (>= v0.17)
     (< v0.18)))
-  (ppx_sexp_conv
+  (sexplib0
    (and
     (>= v0.17)
-    (< v0.18)))
-  (ppx_sexp_value
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppxlib
-   (>= 0.33))))
+    (< v0.18)))))
 
 (package
  (name provider-test)
