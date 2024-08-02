@@ -73,15 +73,22 @@ module Interface = struct
      is a cache of the most recently looked up method. *)
   type ('t, -'tags) t = 't Trait.Implementation.t array
 
+  let dedup_sorted_keep_last =
+    let[@tail_mod_cons] rec aux list ~cmp =
+      match list with
+      | [] -> []
+      | [ elt ] -> [ elt ]
+      | elt1 :: (elt2 :: _ as tl) ->
+        if cmp elt1 elt2 = 0 then aux tl ~cmp else elt1 :: aux tl ~cmp
+    in
+    aux
+  ;;
+
   let make (type a) (implementations : a Trait.Implementation.t list) : (a, _) t =
     let implementations =
-      let table = Hashtbl.create (module Trait.Uid) in
-      List.iter implementations ~f:(fun implementation ->
-        Hashtbl.set
-          table
-          ~key:(Trait.Implementation.uid implementation)
-          ~data:implementation);
-      Hashtbl.data table |> List.sort ~compare:Trait.Implementation.compare_by_uid
+      implementations
+      |> List.stable_sort ~compare:Trait.Implementation.compare_by_uid
+      |> dedup_sorted_keep_last ~cmp:Trait.Implementation.compare_by_uid
     in
     match implementations with
     | [] -> [||]
