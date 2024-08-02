@@ -29,7 +29,14 @@ module Trait = struct
 
   let info = Stdlib.Obj.Extension_constructor.of_val
 
-  module Uid = Int
+  module Uid = struct
+    type t = int
+
+    let sexp_of_t = Sexplib0.Sexp_conv.sexp_of_int
+    let equal = Int.equal
+    let compare = Int.compare
+    let hash = Int.hash
+  end
 
   let uid (t : _ t) =
     Stdlib.Obj.Extension_constructor.id (Stdlib.Obj.Extension_constructor.of_val t)
