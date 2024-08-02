@@ -1,3 +1,15 @@
+## 0.0.7 (unreleased)
+
+### Added
+
+### Changed
+
+### Deprecated
+
+### Fixed
+
+### Removed
+
 ## 0.0.6 (2024-08-02)
 
 ### Changed
