@@ -164,3 +164,39 @@ let%expect_test "sub-interface" =
   [%expect {| true |}];
   ()
 ;;
+
+let provider3 () : _ t =
+  let interface =
+    Provider.Interface.make
+      [ Provider.Trait.implement A ~impl:(module Impls.A)
+      ; Provider.Trait.implement C ~impl:(module Impls.C)
+      ; Provider.Trait.implement E ~impl:(module Impls.E)
+      ; Provider.Trait.implement F ~impl:(module Impls.F)
+      ]
+  in
+  Provider.T { t = (); interface }
+;;
+
+let%expect_test "same_trait_uids" =
+  (* This exercises the test when the interface arrays have the same length,
+     otherwise we skip the actual uid comparison branch. *)
+  let same_trait_uids
+    (Provider.T { t = _; interface = i1 })
+    (Provider.T { t = _; interface = i2 })
+    =
+    print_s [%sexp (Provider.Private.Interface.same_trait_uids i1 i2 : bool)]
+  in
+  let p1 = provider () in
+  let p2 = provider2 () in
+  let p2_bis = provider2 () in
+  let p3 = provider3 () in
+  same_trait_uids p1 p1;
+  [%expect {| true |}];
+  same_trait_uids p1 p2;
+  [%expect {| false |}];
+  same_trait_uids p2 p2_bis;
+  [%expect {| true |}];
+  same_trait_uids p2 p3;
+  [%expect {| false |}];
+  ()
+;;
