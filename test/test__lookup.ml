@@ -125,3 +125,42 @@ let%expect_test "lookup" =
     F |}];
   ()
 ;;
+
+(* In this section we show how to check at runtime that an interface implements
+   a subset of another. This demonstrates other possible uses for trait unique
+   ids. *)
+
+let provider2 () : _ t =
+  let interface =
+    Provider.Interface.make
+      [ Provider.Trait.implement A ~impl:(module Impls.A)
+      ; Provider.Trait.implement B ~impl:(module Impls.B)
+      ; Provider.Trait.implement D ~impl:(module Impls.D)
+      ; Provider.Trait.implement F ~impl:(module Impls.F)
+      ]
+  in
+  Provider.T { t = (); interface }
+;;
+
+module Uid = struct
+  type t = Provider.Trait.Uid.t
+
+  include Comparable.Make (Provider.Trait.Uid)
+end
+
+let uids (Provider.T { t = _; interface }) =
+  interface
+  |> Provider.Interface.implementations
+  |> List.map ~f:Provider.Trait.Implementation.uid
+  |> Set.of_list (module Uid)
+;;
+
+let%expect_test "sub-interface" =
+  let traits1 = provider () |> uids in
+  let traits2 = provider2 () |> uids in
+  print_s [%sexp (Set.equal traits1 traits2 : bool)];
+  [%expect {| false |}];
+  print_s [%sexp (Set.is_subset traits2 ~of_:traits1 : bool)];
+  [%expect {| true |}];
+  ()
+;;

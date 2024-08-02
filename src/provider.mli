@@ -61,9 +61,7 @@ module Trait : sig
   (** {1 Indexation} *)
 
   module Uid : sig
-    type t
-
-    include Comparable.S with type t := t
+    type t = private int
 
     val sexp_of_t : t -> Sexp.t
     val equal : t -> t -> bool
