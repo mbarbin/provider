@@ -61,11 +61,6 @@ module Trait : sig
   (** {1 Indexation} *)
 
   module Uid : sig
-    (** A uid is particularly useful when you need to quickly look up or sort
-        traits, as it provides a consistent and unique way to identify each
-        trait. You can use it to manipulate traits within container
-        structures, making it easier to store, retrieve, and compare traits at
-        runtime. *)
     type t
 
     include Comparable.S with type t := t
@@ -76,7 +71,16 @@ module Trait : sig
     val hash : t -> int
   end
 
+  (** A uid is particularly useful when you need to quickly look up or sort
+      traits, as it provides a consistent and unique way to identify each
+      trait. You can use it to manipulate traits within container structures,
+      making it easier to store, retrieve, and compare traits at runtime.
+
+      Trait uniq ids are computed with [Obj.Extension_constructor.id], applied
+      to the constructors of the variant type {!type:Trait.t}, making them valid
+      only for the lifetime of the running program. *)
   val uid : _ t -> Uid.t
+
   val same : _ t -> _ t -> bool
 
   module Implementation : sig
