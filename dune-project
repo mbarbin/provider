@@ -15,10 +15,11 @@
 
 (documentation "https://mbarbin.github.io/provider/")
 
+(using mdx 0.4)
+
 (package
  (name provider)
- (synopsis
-  "Parametrize your OCaml library with values that behave like objects but aren't")
+ (synopsis "Dynamic Dispatch with Traits")
  (depends
   (ocaml
    (>= 5.2))
@@ -58,6 +59,10 @@
    (and
     (>= v0.17)
     (< v0.18)))
+  (mdx
+   (and
+    :with-doc
+    (>= 2.4)))
   (ppx_compare
    (and
     (>= v0.17)

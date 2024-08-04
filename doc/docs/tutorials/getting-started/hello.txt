@@ -1,0 +1,5 @@
+This is a file that is used by the tutorial.
+Is has a few lines.
+
+It is used as input of a function that shows the number of lines in the file contents.
+Cool!
