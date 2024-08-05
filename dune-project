@@ -63,10 +63,6 @@
    (and
     :with-doc
     (>= 2.4)))
-  (sherlodoc
-   (and
-    :with-doc
-    (>= 0.2)))
   (ppx_compare
    (and
     (>= v0.17)
@@ -107,4 +103,8 @@
   (ppxlib
    (>= 0.33))
   (provider
-   (= :version))))
+   (= :version))
+  (sherlodoc
+   (and
+    :with-doc
+    (>= 0.2)))))
