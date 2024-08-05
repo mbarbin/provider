@@ -12,13 +12,13 @@ module Provider_interface = struct
     | Directory_reader : ('t, (module S with type t = 't), [> tag ]) Provider.Trait.t
 
   let make (type t) (module M : S with type t = t) =
-    Provider.Interface.make [ Provider.Trait.implement Directory_reader ~impl:(module M) ]
+    Provider.Handler.make [ Provider.Trait.implement Directory_reader ~impl:(module M) ]
   ;;
 end
 
-let readdir (Provider.T { t; interface }) ~path =
+let readdir (Provider.T { t; handler }) ~path =
   let module M =
-    (val Provider.Interface.lookup interface ~trait:Provider_interface.Directory_reader)
+    (val Provider.Handler.lookup handler ~trait:Provider_interface.Directory_reader)
   in
   M.readdir t ~path
 ;;

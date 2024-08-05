@@ -141,8 +141,8 @@ module Show_files2 : sig
 
 end = struct
 
-  let print_files_with_ext (Provider.T { t = reader; interface }) ~path ~ext =
-    let module Reader = (val Provider.Interface.lookup interface ~trait:Reader) in
+  let print_files_with_ext (Provider.T { t = reader; handler }) ~path ~ext =
+    let module Reader = (val Provider.Handler.lookup handler ~trait:Reader) in
     let entries = Reader.readdir reader ~path |> List.sort String.compare in
     let files = List.filter (String.ends_with ~suffix:ext) entries in
     files |> List.iter (fun file ->
@@ -156,7 +156,7 @@ end = struct
 end
 ```
 
-Notice how we've slightly changed the beginning of the implementation of `print_files_with_ext`. This time around, we are finding the module `Reader` by doing an interface lookup, based on the Trait we are interested in.
+Notice how we've slightly changed the beginning of the implementation of `print_files_with_ext`. This time around, we are finding the module `Reader` by doing an handler lookup, based on the Trait we are interested in.
 
 The rest of the implementation hasn't actually changed one bit compared to our first functor example. You can get further convinced by this last sentence, considering the following tweak:
 
@@ -167,8 +167,8 @@ module Show_files3 : sig
 
 end = struct
 
-  let print_files_with_ext (Provider.T { t = reader; interface }) ~path ~ext =
-    let module Reader = (val Provider.Interface.lookup interface ~trait:Reader) in
+  let print_files_with_ext (Provider.T { t = reader; handler }) ~path ~ext =
+    let module Reader = (val Provider.Handler.lookup handler ~trait:Reader) in
     let module M = Show_files (Reader) in
     M.print_files_with_ext reader ~path ~ext
 
@@ -179,14 +179,14 @@ This is a sort of hybrid of the two versions! In a real-world scenario, you woul
 
 ### Provider
 
-In this section, we are showing what implementing a Trait looks like. This part is simplified, given that we already have implemented a version of our `Reader` interface when we wrote `Sys_reader`. We're going to be able to re-use it here, and we are showing below really only the provider-specific bits:
+In this section, we are showing what implementing a Trait looks like. This part is simplified, given that we already have implemented a version of our `Reader` Trait when we wrote `Sys_reader`. We're going to be able to re-use it here, and we are showing below really only the provider-specific bits:
 
 ```ocaml
 let sys_reader () : [ `Reader ] Provider.t =
   Provider.T
     { t = ()
-    ; interface =
-        Provider.Interface.make
+    ; handler =
+        Provider.Handler.make
           [ Provider.Trait.implement Reader ~impl:(module Sys_reader) ]
     }
 ```
@@ -217,6 +217,6 @@ We can then move on to enjoying the functionality offered by the parametrized li
 
 In this tutorial, we've created a Trait, a library parametrized by it, a provider implementing that Trait, and finally some user code invoking the library with this provider, providing a complete tour of the functionality offered by the library.
 
-More complex cases would involve providers implementing multiple Traits, parametrized interfaces with functions expecting multiple Traits as well (with some arbitrary overlap). You'll also have the ability to conditionally depend on the availability of certain Traits implementation at runtime.
+More complex cases would involve providers implementing multiple Traits, parametrized libraries with functions expecting multiple Traits as well (with some arbitrary overlap). You'll also have the ability to conditionally depend on the availability of certain Traits implementation at runtime.
 
-This granularity allows different providers to select which Traits to implement. They can even choose to cover only part of the functionality required by a parametrized interface, leaving some functions aside. This provides a level of flexibility that is not achievable with a monolithic functor.
+This granularity allows different providers to select which Traits to implement. They can even choose to cover only part of the functionality required by a parametrized library, leaving some functions aside. This provides a level of flexibility that is not achievable with a monolithic functor.

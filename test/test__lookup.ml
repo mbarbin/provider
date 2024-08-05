@@ -55,10 +55,10 @@ module Selector = struct
   ;;
 end
 
-let print_tag (Provider.T { t; interface } : _ t) ~tag =
+let print_tag (Provider.T { t; handler } : _ t) ~tag =
   match Selector.of_tag tag with
   | T trait ->
-    let module M = (val Provider.Interface.lookup interface ~trait) in
+    let module M = (val Provider.Handler.lookup handler ~trait) in
     M.print_tag t
 ;;
 
@@ -98,8 +98,8 @@ module Impls = struct
 end
 
 let provider () : _ t =
-  let interface =
-    Provider.Interface.make
+  let handler =
+    Provider.Handler.make
       [ Provider.Trait.implement A ~impl:(module Impls.A)
       ; Provider.Trait.implement B ~impl:(module Impls.B)
       ; Provider.Trait.implement C ~impl:(module Impls.C)
@@ -108,12 +108,12 @@ let provider () : _ t =
       ; Provider.Trait.implement F ~impl:(module Impls.F)
       ]
   in
-  Provider.T { t = (); interface }
+  Provider.T { t = (); handler }
 ;;
 
 let%expect_test "lookup" =
-  let (Provider.T { t = _; interface } as t) = provider () in
-  print_s [%sexp (List.length (Provider.Interface.implementations interface) : int)];
+  let (Provider.T { t = _; handler } as t) = provider () in
+  print_s [%sexp (List.length (Provider.Handler.implementations handler) : int)];
   [%expect {| 6 |}];
   List.iter Tag.all ~f:(fun tag -> print_tag t ~tag);
   [%expect {|
@@ -126,20 +126,20 @@ let%expect_test "lookup" =
   ()
 ;;
 
-(* In this section we show how to check at runtime that an interface implements
-   a subset of another. This demonstrates other possible uses for trait unique
+(* In this section we show how to check at runtime that a handler implements a
+   subset of another. This demonstrates other possible uses for trait unique
    ids. *)
 
 let provider2 () : _ t =
-  let interface =
-    Provider.Interface.make
+  let handler =
+    Provider.Handler.make
       [ Provider.Trait.implement A ~impl:(module Impls.A)
       ; Provider.Trait.implement B ~impl:(module Impls.B)
       ; Provider.Trait.implement D ~impl:(module Impls.D)
       ; Provider.Trait.implement F ~impl:(module Impls.F)
       ]
   in
-  Provider.T { t = (); interface }
+  Provider.T { t = (); handler }
 ;;
 
 module Uid = struct
@@ -148,14 +148,14 @@ module Uid = struct
   include Comparable.Make (Provider.Trait.Uid)
 end
 
-let uids (Provider.T { t = _; interface }) =
-  interface
-  |> Provider.Interface.implementations
+let uids (Provider.T { t = _; handler }) =
+  handler
+  |> Provider.Handler.implementations
   |> List.map ~f:Provider.Binding.uid
   |> Set.of_list (module Uid)
 ;;
 
-let%expect_test "sub-interface" =
+let%expect_test "sub-handler" =
   let traits1 = provider () |> uids in
   let traits2 = provider2 () |> uids in
   print_s [%sexp (Set.equal traits1 traits2 : bool)];
@@ -166,25 +166,25 @@ let%expect_test "sub-interface" =
 ;;
 
 let provider3 () : _ t =
-  let interface =
-    Provider.Interface.make
+  let handler =
+    Provider.Handler.make
       [ Provider.Trait.implement A ~impl:(module Impls.A)
       ; Provider.Trait.implement C ~impl:(module Impls.C)
       ; Provider.Trait.implement E ~impl:(module Impls.E)
       ; Provider.Trait.implement F ~impl:(module Impls.F)
       ]
   in
-  Provider.T { t = (); interface }
+  Provider.T { t = (); handler }
 ;;
 
 let%expect_test "same_trait_uids" =
-  (* This exercises the test when the interface arrays have the same length,
+  (* This exercises the test when the handler arrays have the same length,
      otherwise we skip the actual uid comparison branch. *)
   let same_trait_uids
-    (Provider.T { t = _; interface = i1 })
-    (Provider.T { t = _; interface = i2 })
+    (Provider.T { t = _; handler = h1 })
+    (Provider.T { t = _; handler = h2 })
     =
-    print_s [%sexp (Provider.Private.Interface.same_trait_uids i1 i2 : bool)]
+    print_s [%sexp (Provider.Private.Handler.same_trait_uids h1 h2 : bool)]
   in
   let p1 = provider () in
   let p2 = provider2 () in

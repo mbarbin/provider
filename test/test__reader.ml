@@ -50,10 +50,10 @@ let print_all_text_files_with_lines_if_available t ~path =
     (Interface.Directory_reader.find_files_with_extension t ~path ~ext:".txt")
     ~f:(fun file ->
       let lines =
-        let (Provider.T { t; interface }) = t in
+        let (Provider.T { t; handler }) = t in
         match
-          Provider.Interface.lookup_opt
-            interface
+          Provider.Handler.lookup_opt
+            handler
             ~trait:Interface.File_reader.Provider_interface.File_reader
         with
         | None -> "not-available"

@@ -32,6 +32,6 @@
 
 **Binding**: The pair of a Trait and an actual implementation for it.
 
-**Interface**: A set of implementations.
+**Handler**: A list of bindings.
 
-**Provider**: An interface coupled with its required internal state (an OCaml value that behaves like an object, but isn't one).
+**Provider**: A handler coupled with its required internal state (an OCaml value that behaves like an object, but isn't one).

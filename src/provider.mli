@@ -7,7 +7,7 @@
     The module is divided into several submodules:
     - {!module:Trait}: To identify functionality.
     - {!module:Binding}: Associates a trait with an implementation for it.
-    - {!module:Interface}: Manages the set of traits that a provider implements.
+    - {!module:Handler}: Manages the set of traits that a provider implements.
     - {!module:Private}: Used for testing purposes.
 
     This module is inspired by the [Eio.Resource] module and provides a way to
@@ -24,7 +24,7 @@ module Trait : sig
       - ['t] is the internal state of the provider itself.
       - ['module_type] is the signature of a module implementing the trait.
       - ['tag] is the tag (or tags) indicating the supported trait. It's a
-        phantom type designed to make {!val:Interface.lookup} more type-safe.
+        phantom type designed to make {!val:Handler.lookup} more type-safe.
 
       ['module_type] is expected to be a module type (Eio supports single
       functions but this is discouraged through the use of this library). *)
@@ -85,7 +85,7 @@ module Trait : sig
       specified by the type of [trait].
 
       The tags associated with the [trait] are ignored at this stage. The
-      handling of the tags happens at the interface building stage, not at the
+      handling of the tags happens at the handler building stage, not at the
       granularity of each trait. This means that the {!val:implement} function
       focuses solely on creating the implementation, without considering the
       tags that indicate which traits are supported by the provider. *)
@@ -107,16 +107,13 @@ module Binding : sig
   val info : _ t -> Trait.Info.t
 end
 
-module Interface : sig
-  (** Manipulating the set of traits implemented by a provider.
+module Handler : sig
+  (** Manipulating the set of traits implemented by a provider. *)
 
-      This module provides functions for creating an interface, as well as
-      retrieving and extending the traits implemented by an interface, making it
-      easy to manage the functionalities that a provider supports. *)
-
-  (** An interface is essentially a collection of traits that a provider
-      implements, each of which providing a specific functionality (one trait
-      implementation = one first-class module with type t = 't).
+  (** A handler is essentially a collection of bindings, associating each Trait
+      it contains with an implementation for it. Each Trait provides a
+      specific functionality (one trait implementation = one first-class
+      module with type t = 't).
 
       - ['t] is the internal state of the provider.
       - ['tags] indicate which functionality are supported by the provider. It
@@ -133,30 +130,30 @@ module Interface : sig
         end
       ]}
 
-      Then, the type of the interface for a provider whose internal state is
+      Then, the type of the handler for a provider whose internal state is
       [state], that would implement both functionalities would be:
 
       {[
-        (state, [ Directory_reader.tag | File_reader.tag ]) Provider.Interface.t
+        (state, [ Directory_reader.tag | File_reader.tag ]) Provider.Handler.t
       ]} *)
   type ('t, -'tags) t
 
-  (** {1 Building interfaces} *)
+  (** {1 Building handlers} *)
 
-  (** [make implementations] create a new interface from a list of
-      implementation. It only keeps the last implementation supplied for each
-      trait. This means that the resulting interface will not contain any
+  (** [make implementations] create a new handler from a list of bindings. It
+      only keeps the last implementation supplied for each Trait, from left to
+      right. This means that the resulting handler will not contain any
       duplicate traits, and the order of the implementations in the input list
       can affect its contents. *)
   val make : 't Binding.t list -> ('t, _) t
 
   (** [implementations t] returns a list of trait implementations that the
-      interface [t] supports. See also {!extend}. *)
+      handler [t] supports. See also {!extend}. *)
   val implementations : ('t, _) t -> 't Binding.t list
 
-  (** [extend t ~with_] extends the interface [t] and returns a new interface
+  (** [extend t ~with_] extends the handler [t] and returns a new handler
       that includes both the original and additional implementations. The
-      resulting interface only contains the last occurrence of each trait,
+      resulting handler only contains the last occurrence of each trait,
       prioritizing the rightmost elements in the combined list
       [implementations t @ with_]. *)
   val extend : ('t, _) t -> with_:'t Binding.t list -> ('t, _) t
@@ -164,16 +161,16 @@ module Interface : sig
   (** {1 Lookup}
 
       A lookup operation is used to retrieve the implementation of a specific
-      trait within an interface. *)
+      trait within an handler. *)
 
-  (** [is_empty t] checks if an interface [t] implements any traits. An empty
-      interface may be created using [make []]. It will cause any lookup
+  (** [is_empty t] checks if an handler [t] implements any traits. An empty
+      handler may be created using [make []]. It will cause any lookup
       operation to fail. It can be useful for initializing data structures or
-      providing a base case for algorithms that process interfaces. *)
+      providing a base case for algorithms that process handlers. *)
   val is_empty : ('t, _) t -> bool
 
   (** [lookup t ~trait] retrieves the implementation for a given [trait] from an
-      interface.
+      handler.
 
       If the provider has correctly exported their implementation using the
       appropriate tags, the compiler will ensure that this function does not
@@ -196,7 +193,7 @@ module Interface : sig
     -> trait:('t, 'implementation, _) Trait.t
     -> 'implementation option
 
-  (** [implements t ~trait] says wether an interface implements a trait. This
+  (** [implements t ~trait] says wether an handler implements a trait. This
       is [true] iif [lookup_opt t ~trait] returns [Some _]. *)
   val implements : ('t, _) t -> trait:('t, _, _) Trait.t -> bool
 end
@@ -206,7 +203,7 @@ end
 type -'tags t =
   | T :
       { t : 't
-      ; interface : ('t, 'tags) Interface.t
+      ; handler : ('t, 'tags) Handler.t
       }
       -> 'tags t
 
@@ -216,16 +213,16 @@ module Private : sig
       Its interface may change in breaking ways without requiring a major
       version of the library to be minted. Do not use. *)
 
-  module Interface : sig
-    (** [same_trait_uids i1 i2] checks if the traits of two interfaces are the
+  module Handler : sig
+    (** [same_trait_uids i1 i2] checks if the traits of two handlers are the
         same and in the same order. *)
-    val same_trait_uids : ('t1, _) Interface.t -> ('t2, _) Interface.t -> bool
+    val same_trait_uids : ('t1, _) Handler.t -> ('t2, _) Handler.t -> bool
 
     (** Exported to test the caching strategy. Retains the most recently looked
-        up trait. Currently returns [None] for empty interface, and if the
-        interface is not empty, returns the most recently looked up trait
+        up trait. Currently returns [None] for empty handler, and if the
+        handler is not empty, returns the most recently looked up trait
         ([Some uid]) or an arbitrary initial value. *)
-    val cache : _ Interface.t -> Trait.Uid.t option
+    val cache : _ Handler.t -> Trait.Uid.t option
 
     (** Part of the strategy for [make], [extend], etc. *)
     val dedup_sorted_keep_last : 'a list -> compare:('a -> 'a -> int) -> 'a list

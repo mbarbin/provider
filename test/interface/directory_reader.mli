@@ -1,11 +1,11 @@
-(** A directory reader is an interface that is able to list all the entries
-    contained in a directory in the file system. *)
+(** A directory reader is a Trait that is able to list all the entries contained
+    in a directory in the file system. *)
 
-(** The tag is used as a phantom type to characterize the nature of the
-    specific provider that this interface needs. *)
+(** The tag is used as a phantom type to characterize the nature of the specific
+    provider that this library needs. *)
 type tag = [ `Directory_reader ]
 
-(** This interface can operate on any provider, as long as it implements at
+(** This library can operate on any provider, as long as it implements at
     least the [`Directory_reader] capability. *)
 type 'a t = ([> tag ] as 'a) Provider.t
 
@@ -24,8 +24,8 @@ val find_files_with_extension : _ t -> path:string -> ext:string -> string list
 (** {1 Building providers} *)
 
 (** Such abstraction will export a way for implementers (providers) to provide
-    an implementation for that interface. In [Eio] naming conventions, these
-    modules are typically named [Pi]. *)
+    the implementation required by that interface. In [Eio] naming
+    conventions, these modules are typically named [Pi]. *)
 module Provider_interface : sig
   module type S = sig
     (** The implementation may be based on any type it wants, that's the whole point. *)
@@ -38,10 +38,10 @@ module Provider_interface : sig
     val readdir : t -> path:string -> string list
   end
 
-  (** [make (module Impl)] creates a provider interface that implements the
+  (** [make (module Impl)] creates a provider handler that implements the
       directory_reader functionality. Another option is to use the constructor
       [Directory_reader] below. *)
-  val make : (module S with type t = 't) -> ('t, tag) Provider.Interface.t
+  val make : (module S with type t = 't) -> ('t, tag) Provider.Handler.t
 
   (** The actual trait constructor may or may not be exported by the provider
       interface -- either way works. That's left as a programmer's preference

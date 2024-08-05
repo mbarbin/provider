@@ -10,9 +10,9 @@ module Int_hum_printer = struct
   let make () : [ `Int_printer | `Float_printer ] Provider.t =
     Provider.T
       { t = ()
-      ; interface =
-          Provider.Interface.extend
-            Providers.Num_printer.interface
+      ; handler =
+          Provider.Handler.extend
+            Providers.Num_printer.handler
             ~with_:
               [ Provider.Trait.implement
                   Interface.Int_printer.Provider_interface.Int_printer
@@ -23,9 +23,9 @@ module Int_hum_printer = struct
 end
 
 let%expect_test "override" =
-  let print_implemented_traits (Provider.T { t = _; interface }) =
+  let print_implemented_traits (Provider.T { t = _; handler }) =
     let info =
-      List.map (Provider.Interface.implementations interface) ~f:(fun implementation ->
+      List.map (Provider.Handler.implementations handler) ~f:(fun implementation ->
         [%sexp (Provider.Binding.info implementation : Provider.Trait.Info.t)])
     in
     print_s [%sexp (info : Sexp.t list)]

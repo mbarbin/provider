@@ -19,7 +19,7 @@ flowchart TD
     Library --> Client
 ```
 
-The provider and library must agree on the interface the providers will need to implement. These signatures will be defined in some common dependency.
+The provider and library must agree on the module signatures the providers will need to implement. These signatures will be defined in some common dependency.
 
 This scales well with the appearance of alternative providers and multiple clients, allowing them to limit their dependencies as needed:
 

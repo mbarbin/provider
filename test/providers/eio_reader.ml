@@ -14,8 +14,8 @@ include Impl
 let make ~env : [ `Directory_reader | `File_reader ] Provider.t =
   Provider.T
     { t = Impl.T { fs = Eio.Stdenv.fs env }
-    ; interface =
-        Provider.Interface.make
+    ; handler =
+        Provider.Handler.make
           [ Provider.Trait.implement
               Interface.Directory_reader.Provider_interface.Directory_reader
               ~impl:(module Impl)

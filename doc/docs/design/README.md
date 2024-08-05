@@ -1,6 +1,6 @@
 # Design
 
-Provider is an OCaml library for creating Traits and Interfaces to build upon some functionality needed by a library without committing to an actual implementation for it, until runtime.
+Provider is an OCaml library for creating Traits and Signatures to build upon some functionality needed by a library without committing to an actual implementation for it, until runtime.
 
 In essence, it provides a way to handle dynamic dispatch, where the target of a function call is not known until runtime. This is particularly useful in situations where there are many ways to provide a certain functionality, and the choice of provider is determined by the user at runtime.
 

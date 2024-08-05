@@ -11,7 +11,7 @@ let%expect_test "invalid tags" =
      implement the [Int_printer] interface. *)
   let module Invalid_int_printer = struct
     let make () : [ `Int_printer ] Provider.t =
-      Provider.T { t = (); interface = Provider.Interface.make [] }
+      Provider.T { t = (); handler = Provider.Handler.make [] }
     ;;
   end
   in

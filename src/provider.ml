@@ -62,7 +62,7 @@ module Binding = struct
   let compare_by_uid t1 t2 = Trait.Uid.compare (uid t1) (uid t2)
 end
 
-module Interface = struct
+module Handler = struct
   (* We sort the element by their extension_id in increasing order. Element.(0)
      is a cache of the most recently looked up method. *)
   type ('t, -'tags) t = 't Binding.t array
@@ -210,11 +210,11 @@ end
 type -'tags t =
   | T :
       { t : 't
-      ; interface : ('t, 'tags) Interface.t
+      ; handler : ('t, 'tags) Handler.t
       }
       -> 'tags t
 
 module Private = struct
   module Import = Import
-  module Interface = Interface
+  module Handler = Handler
 end

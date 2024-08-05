@@ -1,5 +1,5 @@
 let%expect_test "dedup_sorted_keep_last" =
-  let dedup = Provider.Private.Interface.dedup_sorted_keep_last in
+  let dedup = Provider.Private.Handler.dedup_sorted_keep_last in
   let test list =
     print_s
       [%sexp

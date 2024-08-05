@@ -7,16 +7,16 @@ end
 
 include Impl
 
-let interface : (unit, [ `Int_printer | `Float_printer ]) Provider.Interface.t =
-  Provider.Interface.make
+let handler : (unit, [ `Int_printer | `Float_printer ]) Provider.Handler.t =
+  Provider.Handler.make
     (List.concat
        [ Interface.Int_printer.Provider_interface.make (module Impl)
-         |> Provider.Interface.implementations
+         |> Provider.Handler.implementations
        ; Interface.Float_printer.Provider_interface.make (module Impl)
-         |> Provider.Interface.implementations
+         |> Provider.Handler.implementations
        ])
 ;;
 
 let make () : [ `Int_printer | `Float_printer ] Provider.t =
-  Provider.T { t = (); interface }
+  Provider.T { t = (); handler }
 ;;

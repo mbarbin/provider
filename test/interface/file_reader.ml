@@ -12,9 +12,9 @@ module Provider_interface = struct
     | File_reader : ('t, (module S with type t = 't), [> tag ]) Provider.Trait.t
 end
 
-let load (Provider.T { t; interface }) ~path =
+let load (Provider.T { t; handler }) ~path =
   let module M =
-    (val Provider.Interface.lookup interface ~trait:Provider_interface.File_reader)
+    (val Provider.Handler.lookup handler ~trait:Provider_interface.File_reader)
   in
   M.load t ~path
 ;;
