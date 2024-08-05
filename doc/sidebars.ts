@@ -39,6 +39,7 @@ const sidebars: SidebarsConfig = {
       items: [
         { type: 'doc', id: 'reference/odoc', label: 'OCaml Packages' },
         { type: 'doc', id: 'reference/glossary', label: 'Glossary' },
+        { type: 'doc', id: 'reference/hello_world', label: 'Hello World' },
       ],
     },
   ],
