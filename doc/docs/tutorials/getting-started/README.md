@@ -68,7 +68,7 @@ end
 
 ### Provider
 
-A provider is an implementation for a set of Traits. Let's create an implementation for the `READER` Trait based on OCaml Stdlib.
+A provider supplies implementations for a set of Traits. Let's create an implementation for the `READER` Trait based on OCaml Stdlib.
 
 ```ocaml
 module Sys_reader : READER with type t = unit = struct
@@ -132,7 +132,7 @@ type (_, _, _) Provider.Trait.t +=
 
 ### Parametrized Library
 
-Now that we're switching to using Provider, our module is no longer a functor. Rather, each of the functions that need provider functionality will take it as an extra parameter. The type `[> reader ] Provider.t` indicates that the provider required needs to implement *at least* the `reader` Trait, but it is allowed to implement other Traits too (the other implementations will be ignored).
+Now that we're switching to using Provider, our module is no longer a functor. Rather, each of the functions that need provider functionality will take it as an extra parameter. The type `[> reader ] Provider.t` indicates that the provider required needs to implement *at least* the `reader` Trait, but it is allowed to implement other Traits too (the other bindings will be ignored).
 
 ```ocaml
 module Show_files2 : sig

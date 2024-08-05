@@ -26,7 +26,7 @@ let%expect_test "override" =
   let print_implemented_traits (Provider.T { t = _; interface }) =
     let info =
       List.map (Provider.Interface.implementations interface) ~f:(fun implementation ->
-        [%sexp (Provider.Implementation.info implementation : Provider.Trait.Info.t)])
+        [%sexp (Provider.Binding.info implementation : Provider.Trait.Info.t)])
     in
     print_s [%sexp (info : Sexp.t list)]
   in

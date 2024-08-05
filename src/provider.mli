@@ -6,7 +6,7 @@
 
     The module is divided into several submodules:
     - {!module:Trait}: To identify functionality.
-    - {!module:Implementation}: Represents an implementation for a trait.
+    - {!module:Binding}: Associates a trait with an implementation for it.
     - {!module:Interface}: Manages the set of traits that a provider implements.
     - {!module:Private}: Used for testing purposes.
 
@@ -89,16 +89,15 @@ module Trait : sig
       granularity of each trait. This means that the {!val:implement} function
       focuses solely on creating the implementation, without considering the
       tags that indicate which traits are supported by the provider. *)
-  val implement : ('t, 'module_type, _) t -> impl:'module_type -> 't Implementation0.t
+  val implement : ('t, 'module_type, _) t -> impl:'module_type -> 't Binding0.t
 end
 
-module Implementation : sig
-  (** Representing an implementation for a trait. *)
-
-  type 'a t = 'a Implementation0.t = private
+module Binding : sig
+  (** A binding associates a Trait with an implementation for it. *)
+  type 'a t = 'a Binding0.t = private
     | T :
         { trait : ('t, 'module_type, _) Trait.t
-        ; impl : 'module_type
+        ; implementation : 'module_type
         }
         -> 't t
 
@@ -149,18 +148,18 @@ module Interface : sig
       trait. This means that the resulting interface will not contain any
       duplicate traits, and the order of the implementations in the input list
       can affect its contents. *)
-  val make : 't Implementation.t list -> ('t, _) t
+  val make : 't Binding.t list -> ('t, _) t
 
   (** [implementations t] returns a list of trait implementations that the
       interface [t] supports. See also {!extend}. *)
-  val implementations : ('t, _) t -> 't Implementation.t list
+  val implementations : ('t, _) t -> 't Binding.t list
 
   (** [extend t ~with_] extends the interface [t] and returns a new interface
       that includes both the original and additional implementations. The
       resulting interface only contains the last occurrence of each trait,
       prioritizing the rightmost elements in the combined list
       [implementations t @ with_]. *)
-  val extend : ('t, _) t -> with_:'t Implementation.t list -> ('t, _) t
+  val extend : ('t, _) t -> with_:'t Binding.t list -> ('t, _) t
 
   (** {1 Lookup}
 

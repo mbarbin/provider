@@ -2,11 +2,11 @@
 
 ## Actors
 
-**Library authors**: Identify the required functionality they want to parameterize over.
+**Library authors** identify the required functionality they want to parameterize over.
 
-**Provider authors**: Implement these building blocks. There can be several different implementations of the same Traits, each with different characteristics (e.g., blocking/non-blocking, using/avoiding certain dependencies).
+**Provider authors** implement these building blocks. There can be several different implementations of the same Traits, each with different characteristics (e.g., blocking/non-blocking, using/avoiding certain dependencies).
 
-**Clients**: Write the final code that utilizes everything else. Clients decide which providers to use at runtime and instantiate the parameterized libraries with them.
+**Clients** (end users) write the final code that utilizes everything else. Clients decide which providers to use at runtime and instantiate the parameterized libraries with them.
 
 ## Operations
 
@@ -26,9 +26,11 @@
 
 **Trait**: A module signature grouping some functionality.
 
+**Implemenation**: A module that implements a Trait signature.
+
 **Parameterized Library**: A library that requires the functionality contained in one or several Traits. It can compile without having access to actual Trait implementations.
 
-**Implementation**: The pair of a Trait and an actual implementation for it.
+**Binding**: The pair of a Trait and an actual implementation for it.
 
 **Interface**: A set of implementations.
 
