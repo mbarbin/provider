@@ -16,6 +16,7 @@ depends: [
   "eio_main" {>= "1.0"}
   "expect-test-helpers" {>= "v0.17" & < "v0.18"}
   "mdx" {with-doc & >= "2.4"}
+  "sherlodoc" {with-doc & >= "0.2"}
   "ppx_compare" {>= "v0.17" & < "v0.18"}
   "ppx_enumerate" {>= "v0.17" & < "v0.18"}
   "ppx_expect" {>= "v0.17" & < "v0.18"}
