@@ -2,12 +2,12 @@
 
     A "provider" is a construct that implements a set of functionality that an
     library typically needs in order to provide certain functionality to a
-    client.
+    end user.
 
     The module is divided into several submodules:
     - {!module:Trait}: To identify functionality.
-    - {!module:Binding}: Associates a trait with an implementation for it.
-    - {!module:Handler}: Manages the set of traits that a provider implements.
+    - {!module:Binding}: Associates a Trait with an implementation for it.
+    - {!module:Handler}: Manages the set of Traits that a provider implements.
     - {!module:Private}: Used for testing purposes.
 
     This module is inspired by the [Eio.Resource] module and provides a way to
@@ -15,15 +15,15 @@
     specific implementation. *)
 
 module Trait : sig
-  (** Think of a trait as a way to designate the signature of a module that
+  (** Think of a Trait as a way to designate the signature of a module that
       contains enough functions to support some functionality. The type
-      {!type:t} allows to identify a trait within the provider system. The
+      {!type:t} allows to identify a Trait within the provider system. The
       name was inspired from the Rust programming language construct of the
       same name.
 
       - ['t] is the internal state of the provider itself.
-      - ['module_type] is the signature of a module implementing the trait.
-      - ['tag] is the tag (or tags) indicating the supported trait. It's a
+      - ['module_type] is the signature of a module implementing the Trait.
+      - ['tag] is the tag (or tags) indicating the supported Trait. It's a
         phantom type designed to make {!val:Handler.lookup} more type-safe.
 
       ['module_type] is expected to be a module type (Eio supports single
@@ -35,14 +35,14 @@ module Trait : sig
   module Info : sig
     (** This type is primarily used for debugging purposes.
 
-        An [t] value includes the name of the trait constructor and the module
+        An [t] value includes the name of the Trait constructor and the module
         path where it was defined. It may also include the runtime id for the
-        extensible variant of the trait, but this is not included by default as
+        extensible variant of the Trait, but this is not included by default as
         its value can be brittle (it may depend on the order in which modules
         are evaluated).
 
         This type provides a way to retrieve and display detailed information
-        about a trait, which can be useful for debugging and understanding the
+        about a Trait, which can be useful for debugging and understanding the
         structure and behavior of the provider system. *)
     type t
 
@@ -69,9 +69,9 @@ module Trait : sig
   end
 
   (** A uid is particularly useful when you need to quickly look up or sort
-      traits, as it provides a consistent and unique way to identify each
-      trait. You can use it to manipulate traits within container structures,
-      making it easier to store, retrieve, and compare traits at runtime.
+      Traits, as it provides a consistent and unique way to identify each
+      Trait. You can use it to manipulate Traits within container structures,
+      making it easier to store, retrieve, and compare Traits at runtime.
 
       Trait uniq ids are computed with [Obj.Extension_constructor.id], applied
       to the constructors of the variant type {!type:Trait.t}, making them valid
@@ -86,9 +86,9 @@ module Trait : sig
 
       The tags associated with the [trait] are ignored at this stage. The
       handling of the tags happens at the handler building stage, not at the
-      granularity of each trait. This means that the {!val:implement} function
+      granularity of each Trait. This means that the {!val:implement} function
       focuses solely on creating the implementation, without considering the
-      tags that indicate which traits are supported by the provider. *)
+      tags that indicate which Traits are supported by the provider. *)
   val implement : ('t, 'module_type, _) t -> impl:'module_type -> 't Binding0.t
 end
 
@@ -108,11 +108,11 @@ module Binding : sig
 end
 
 module Handler : sig
-  (** Manipulating the set of traits implemented by a provider. *)
+  (** Manipulating the set of Traits implemented by a provider. *)
 
   (** A handler is essentially a collection of bindings, associating each Trait
       it contains with an implementation for it. Each Trait provides a
-      specific functionality (one trait implementation = one first-class
+      specific functionality (one Trait implementation = one first-class
       module with type t = 't).
 
       - ['t] is the internal state of the provider.
@@ -143,17 +143,17 @@ module Handler : sig
   (** [make implementations] create a new handler from a list of bindings. It
       only keeps the last implementation supplied for each Trait, from left to
       right. This means that the resulting handler will not contain any
-      duplicate traits, and the order of the implementations in the input list
+      duplicate Traits, and the order of the implementations in the input list
       can affect its contents. *)
   val make : 't Binding.t list -> ('t, _) t
 
-  (** [implementations t] returns a list of trait implementations that the
+  (** [implementations t] returns a list of Trait implementations that the
       handler [t] supports. See also {!extend}. *)
   val implementations : ('t, _) t -> 't Binding.t list
 
   (** [extend t ~with_] extends the handler [t] and returns a new handler
       that includes both the original and additional implementations. The
-      resulting handler only contains the last occurrence of each trait,
+      resulting handler only contains the last occurrence of each Trait,
       prioritizing the rightmost elements in the combined list
       [implementations t @ with_]. *)
   val extend : ('t, _) t -> with_:'t Binding.t list -> ('t, _) t
@@ -161,9 +161,9 @@ module Handler : sig
   (** {1 Lookup}
 
       A lookup operation is used to retrieve the implementation of a specific
-      trait within an handler. *)
+      Trait within an handler. *)
 
-  (** [is_empty t] checks if an handler [t] implements any traits. An empty
+  (** [is_empty t] checks if an handler [t] implements any Traits. An empty
       handler may be created using [make []]. It will cause any lookup
       operation to fail. It can be useful for initializing data structures or
       providing a base case for algorithms that process handlers. *)
@@ -182,7 +182,7 @@ module Handler : sig
     -> 'implementation
 
   (** [lookup_opt t ~trait] returns the implementation of the [trait]
-      ([Some implementation]) or indicates that the trait is not implemented
+      ([Some implementation]) or indicates that the Trait is not implemented
       ([None]).
 
       This is particularly useful in scenarios where a part of a program needs
@@ -193,12 +193,12 @@ module Handler : sig
     -> trait:('t, 'implementation, _) Trait.t
     -> 'implementation option
 
-  (** [implements t ~trait] says wether an handler implements a trait. This
+  (** [implements t ~trait] says wether an handler implements a Trait. This
       is [true] iif [lookup_opt t ~trait] returns [Some _]. *)
   val implements : ('t, _) t -> trait:('t, _, _) Trait.t -> bool
 end
 
-(** A provider is a pair of a value and a set of traits that the provider
+(** A provider is a pair of a value and a set of Traits that the provider
     implements. *)
 type -'tags t =
   | T :
@@ -214,13 +214,13 @@ module Private : sig
       version of the library to be minted. Do not use. *)
 
   module Handler : sig
-    (** [same_trait_uids i1 i2] checks if the traits of two handlers are the
+    (** [same_trait_uids i1 i2] checks if the Traits of two handlers are the
         same and in the same order. *)
     val same_trait_uids : ('t1, _) Handler.t -> ('t2, _) Handler.t -> bool
 
     (** Exported to test the caching strategy. Retains the most recently looked
-        up trait. Currently returns [None] for empty handler, and if the
-        handler is not empty, returns the most recently looked up trait
+        up Trait. Currently returns [None] for empty handler, and if the
+        handler is not empty, returns the most recently looked up Trait
         ([Some uid]) or an arbitrary initial value. *)
     val cache : _ Handler.t -> Trait.Uid.t option
 
