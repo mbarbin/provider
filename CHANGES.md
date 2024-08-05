@@ -6,6 +6,8 @@
 
 ### Changed
 
+- More renamings. `Implementation => Binding`, `Interface => Handler`. This brings the lib closer to the original namings from Eio.
+
 ### Deprecated
 
 ### Fixed
