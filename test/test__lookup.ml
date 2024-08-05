@@ -113,7 +113,7 @@ let provider () : _ t =
 
 let%expect_test "lookup" =
   let (Provider.T { t = _; handler } as t) = provider () in
-  print_s [%sexp (List.length (Provider.Handler.implementations handler) : int)];
+  print_s [%sexp (List.length (Provider.Handler.bindings handler) : int)];
   [%expect {| 6 |}];
   List.iter Tag.all ~f:(fun tag -> print_tag t ~tag);
   [%expect {|
@@ -150,7 +150,7 @@ end
 
 let uids (Provider.T { t = _; handler }) =
   handler
-  |> Provider.Handler.implementations
+  |> Provider.Handler.bindings
   |> List.map ~f:Provider.Binding.uid
   |> Set.of_list (module Uid)
 ;;

@@ -140,22 +140,21 @@ module Handler : sig
 
   (** {1 Building handlers} *)
 
-  (** [make implementations] create a new handler from a list of bindings. It
-      only keeps the last implementation supplied for each Trait, from left to
+  (** [make bindings] create a new handler from a list of bindings. It only
+      keeps the last implementation supplied for each Trait, from left to
       right. This means that the resulting handler will not contain any
-      duplicate Traits, and the order of the implementations in the input list
-      can affect its contents. *)
+      duplicate Traits, and the order of the bindings in the input list can
+      affect its contents. *)
   val make : 't Binding.t list -> ('t, _) t
 
-  (** [implementations t] returns a list of Trait implementations that the
-      handler [t] supports. See also {!extend}. *)
-  val implementations : ('t, _) t -> 't Binding.t list
+  (** [bindings t] returns a list of bindings with the Traits that the handler
+      [t] supports. See also {!extend}. *)
+  val bindings : ('t, _) t -> 't Binding.t list
 
-  (** [extend t ~with_] extends the handler [t] and returns a new handler
-      that includes both the original and additional implementations. The
-      resulting handler only contains the last occurrence of each Trait,
-      prioritizing the rightmost elements in the combined list
-      [implementations t @ with_]. *)
+  (** [extend t ~with_] extends the handler [t] and returns a new handler that
+      includes both the original and additional bindings. The resulting
+      handler only contains the last occurrence of each Trait, prioritizing
+      the rightmost elements in the combined list [bindings t @ with_]. *)
   val extend : ('t, _) t -> with_:'t Binding.t list -> ('t, _) t
 
   (** {1 Lookup}

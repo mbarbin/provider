@@ -13,7 +13,7 @@ let%expect_test "make interface" =
   let eio1 =
     Interface.Directory_reader.Provider_interface.make (module Providers.Eio_reader.Impl)
   in
-  (match trait1, List.hd_exn (Provider.Handler.implementations eio1) with
+  (match trait1, List.hd_exn (Provider.Handler.bindings eio1) with
    | T t, T t' ->
      require [%here] (Provider.Trait.same t.trait t'.trait);
      [%expect {||}];
@@ -42,7 +42,7 @@ let%expect_test "make interface" =
      require [%here] (not (Provider.Trait.same t1.trait t2.trait));
      [%expect {||}];
      ());
-  (match Provider.Handler.implementations eio1 with
+  (match Provider.Handler.bindings eio1 with
    | [ c1 ] ->
      require_equal
        [%here]
@@ -53,15 +53,13 @@ let%expect_test "make interface" =
    | _ -> assert false);
   let empty = Provider.Handler.make [] in
   require [%here] (Provider.Handler.is_empty empty);
-  require [%here] (List.is_empty (Provider.Handler.implementations empty));
+  require [%here] (List.is_empty (Provider.Handler.bindings empty));
   let eio2 = Provider.Handler.make [ trait2 ] in
   require [%here] (not (Provider.Handler.is_empty eio2));
   require [%here] (not (Provider.Private.Handler.same_trait_uids empty eio2));
   [%expect {||}];
   let eio3 = Provider.Handler.make [ trait1; trait2 ] in
-  let eio4 =
-    Provider.Handler.extend eio1 ~with_:(Provider.Handler.implementations eio2)
-  in
+  let eio4 = Provider.Handler.extend eio1 ~with_:(Provider.Handler.bindings eio2) in
   require [%here] (Provider.Private.Handler.same_trait_uids eio3 eio4);
   [%expect {||}];
   ()

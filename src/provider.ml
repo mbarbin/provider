@@ -78,17 +78,17 @@ module Handler = struct
     aux
   ;;
 
-  let make (type a) (implementations : a Binding.t list) : (a, _) t =
-    let implementations =
-      implementations
+  let make (type a) (bindings : a Binding.t list) : (a, _) t =
+    let bindings =
+      bindings
       |> List.stable_sort ~compare:Binding.compare_by_uid
       |> dedup_sorted_keep_last ~compare:Binding.compare_by_uid
     in
-    match implementations with
+    match bindings with
     | [] -> [||]
     | hd :: _ ->
       (* We initialize the cache arbitrarily with the left most trait. *)
-      Array.of_list (hd :: implementations)
+      Array.of_list (hd :: bindings)
   ;;
 
   let same_trait_uids : type a b tags1 tags2. (a, tags1) t -> (b, tags2) t -> bool =
@@ -104,13 +104,13 @@ module Handler = struct
   let is_empty t = Array.length t = 0
   let cache t = if Array.length t = 0 then None else Some (Binding.uid t.(0))
 
-  let implementations t =
+  let bindings t =
     match Array.to_list t with
     | [] -> []
     | _ :: tl -> tl
   ;;
 
-  let extend t ~with_ = make (implementations t @ with_)
+  let extend t ~with_ = make (bindings t @ with_)
 
   let rec binary_search
     : type a implementation tags b.
