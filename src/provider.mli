@@ -5,7 +5,7 @@
     client.
 
     The module is divided into several submodules:
-    - {!module:Trait}: To identify and implement functionality.
+    - {!module:Trait}: To identify functionality.
     - {!module:Implementation}: Represents an implementation for a trait.
     - {!module:Interface}: Manages the set of traits that a provider implements.
     - {!module:Private}: Used for testing purposes.
@@ -15,17 +15,16 @@
     specific implementation. *)
 
 module Trait : sig
-  (** Think of a trait as a way to identify and implement the signature of a
-      module that contains enough functions to support some functionality. The
-      type {!type:t} allows to identify a trait within the provider system.
-      The name was inspired from the Rust programming language construct of
-      the same name.
+  (** Think of a trait as a way to designate the signature of a module that
+      contains enough functions to support some functionality. The type
+      {!type:t} allows to identify a trait within the provider system. The
+      name was inspired from the Rust programming language construct of the
+      same name.
 
       - ['t] is the internal state of the provider itself.
       - ['module_type] is the signature of a module implementing the trait.
       - ['tag] is the tag (or tags) indicating the supported trait. It's a
         phantom type designed to make {!val:Interface.lookup} more type-safe.
-        This relates to Trait bounds in Rust.
 
       ['module_type] is expected to be a module type (Eio supports single
       functions but this is discouraged through the use of this library). *)
