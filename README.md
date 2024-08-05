@@ -30,3 +30,9 @@ Please note that this library is still considered experimental. The aim is to ga
 ## License
 
 This project is licensed under the ISC license, the same as the original Eio project.
+
+## Acknowledgements
+
+We're very thankful to:
+- The `Eio` developers for their work on the [Eio](https://github.com/ocaml-multicore/eio) project and for the documentation they published on the rationale for the design of the `Eio.Resource` module, which was the foundation of the Provider project.
+- The [diataxis](https://diataxis.fr/) approach to technical documentation, which we use as inspiration to structure our doc.
