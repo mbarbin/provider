@@ -7,7 +7,7 @@ We'll create a functionality equivalent to the following bash script:
 ```sh
 $ for file in $(ls -1 *.txt | sort) ; do wc -l $file; done
 5 hello.txt
-2 prelude.txt
+1 prelude.txt
 ```
 
 ## Library Requirements
@@ -95,7 +95,7 @@ And then use it:
 ```ocaml
 # My_show_files.print_files_with_ext () ~path:"." ~ext:".txt"
 5 hello.txt
-2 prelude.txt
+1 prelude.txt
 - : unit = ()
 ```
 
@@ -204,12 +204,12 @@ We can then move on to enjoying the functionality offered by the parametrized li
 ```ocaml
 # Show_files2.print_files_with_ext my_sys_reader ~path:"." ~ext:".txt"
 5 hello.txt
-2 prelude.txt
+1 prelude.txt
 - : unit = ()
 
 # Show_files3.print_files_with_ext my_sys_reader ~path:"." ~ext:".txt"
 5 hello.txt
-2 prelude.txt
+1 prelude.txt
 - : unit = ()
 ```
 
