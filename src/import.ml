@@ -19,8 +19,8 @@ end
 
 module Ordering = struct
   type t =
-    | Equal
     | Less
+    | Equal
     | Greater
 
   let of_int i = if i < 0 then Less else if i = 0 then Equal else Greater

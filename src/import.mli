@@ -14,8 +14,8 @@ end
 
 module Ordering : sig
   type t =
-    | Equal
     | Less
+    | Equal
     | Greater
 
   val of_int : int -> t
