@@ -1,3 +1,9 @@
+## 0.0.8 (2024-08-19)
+
+### Fixed
+
+- Follow-up fixes to binding renaming.
+
 ## 0.0.7 (2024-08-05)
 
 ### Added
