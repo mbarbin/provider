@@ -1,6 +1,6 @@
 (** Provider - Dynamic Dispatch with Traits.
 
-    A "provider" is a construct that implements a set of functionality that an
+    A provider is a construct that implements a set of functionality that a
     library typically needs in order to provide certain functionality to a
     end user.
 

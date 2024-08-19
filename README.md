@@ -2,6 +2,7 @@
 
 [![CI Status](https://github.com/mbarbin/provider/workflows/ci/badge.svg)](https://github.com/mbarbin/provider/actions/workflows/ci.yml)
 [![Coverage Status](https://coveralls.io/repos/github/mbarbin/provider/badge.svg?branch=main)](https://coveralls.io/github/mbarbin/provider?branch=main)
+[![Deploy Doc Status](https://github.com/mbarbin/provider/workflows/deploy-doc/badge.svg)](https://github.com/mbarbin/provider/actions/workflows/deploy-doc.yml)
 
 ## Introduction
 
