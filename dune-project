@@ -38,8 +38,8 @@
     (< v0.18)))))
 
 (package
- (name provider-test)
- (synopsis "Test suite for provider library")
+ (name provider-tests)
+ (synopsis "Tests for provider")
  (depends
   (ocaml
    (>= 5.2))
@@ -55,7 +55,7 @@
    (>= 1.0))
   (eio_main
    (>= 1.0))
-  (expect-test-helpers
+  (expect_test_helpers_core
    (and
     (>= v0.17)
     (< v0.18)))
