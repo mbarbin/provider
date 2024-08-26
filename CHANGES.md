@@ -1,17 +1,13 @@
-## 0.0.9 (unreleased)
-
-### Added
+## 0.0.9 (2024-08-26)
 
 ### Changed
 
 - Split test package.
 - Use `expect_test_helpers_core.expect_test_helpers_base`.
 
-### Deprecated
-
 ### Fixed
 
-### Removed
+- Attach doc test package so it is not built when running the CI for the main package.
 
 ## 0.0.8 (2024-08-19)
 
