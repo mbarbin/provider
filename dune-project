@@ -23,13 +23,17 @@
  (depends
   (ocaml
    (>= 5.2))
+  (ocamlformat
+   (and
+    :with-dev-setup
+    (= 0.26.2)))
   (bisect_ppx
    (and
-    :dev
+    :with-dev-setup
     (>= 2.8.3)))
   (ppx_js_style
    (and
-    :dev
+    :with-dev-setup
     (>= v0.17)
     (< v0.18)))
   (sexplib0
@@ -43,13 +47,17 @@
  (depends
   (ocaml
    (>= 5.2))
+  (ocamlformat
+   (and
+    :with-dev-setup
+    (= 0.26.2)))
   (base
    (and
     (>= v0.17)
     (< v0.18)))
   (bisect_ppx
    (and
-    :dev
+    :with-dev-setup
     (>= 2.8.3)))
   (eio
    (>= 1.0))
@@ -85,7 +93,7 @@
     (< v0.18)))
   (ppx_js_style
    (and
-    :dev
+    :with-dev-setup
     (>= v0.17)
     (< v0.18)))
   (ppx_let
