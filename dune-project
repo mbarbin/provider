@@ -23,19 +23,6 @@
  (depends
   (ocaml
    (>= 5.2))
-  (ocamlformat
-   (and
-    :with-dev-setup
-    (= 0.26.2)))
-  (bisect_ppx
-   (and
-    :with-dev-setup
-    (>= 2.8.3)))
-  (ppx_js_style
-   (and
-    :with-dev-setup
-    (>= v0.17)
-    (< v0.18)))
   (sexplib0
    (and
     (>= v0.17)
