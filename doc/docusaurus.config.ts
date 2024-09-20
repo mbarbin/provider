@@ -91,9 +91,9 @@ const config: Config = {
         },
         {
           type: 'docSidebar',
-          sidebarId: 'designSidebar',
+          sidebarId: 'explanationSidebar',
           position: 'left',
-          label: 'Design',
+          label: 'Explanation',
         },
         { to: '/blog/', label: 'Blog', position: 'right' },
         {
@@ -128,8 +128,8 @@ const config: Config = {
               to: '/docs/reference/odoc/',
             },
             {
-              label: 'Design',
-              to: '/docs/design/',
+              label: 'Explanation',
+              to: '/docs/explanation/',
             },
           ],
         },

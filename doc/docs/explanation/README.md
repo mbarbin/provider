@@ -1,4 +1,8 @@
-# Design
+# Explanation
+
+Welcome to the Explanation section of the `provider` documentation. Here, we delve into the details of how `provider` works and its design principles. This section is intended to provide a deeper understanding of the project for developers and contributors.
+
+## Synopsis
 
 Provider is an OCaml library for creating Traits and Signatures to build upon some functionality needed by a library without committing to an actual implementation for it, until runtime.
 
