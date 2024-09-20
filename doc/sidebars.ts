@@ -44,12 +44,12 @@ const sidebars: SidebarsConfig = {
     },
   ],
 
-  designSidebar: [
+  explanationSidebar: [
     {
       type: 'category',
-      label: 'Design',
+      label: 'Explanation',
       items: [
-        { type: 'doc', id: 'design/README', label: 'Introduction' },
+        { type: 'doc', id: 'explanation/README', label: 'Introduction' },
       ],
     },
   ],

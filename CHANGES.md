@@ -1,3 +1,17 @@
+## 0.0.10 (unreleased)
+
+### Added
+
+### Changed
+
+- Rename `explanation` section of documentation per diataxis.
+
+### Deprecated
+
+### Fixed
+
+### Removed
+
 ## 0.0.9 (2024-08-26)
 
 ### Changed
