@@ -1,7 +1,14 @@
 {
     "cSpell.words": [
+        "abstr",
+        "alli",
+        "dedup",
+        "Doublable",
+        "functors",
         "janestreet",
+        "kinded",
         "odoc",
-        "opam"
+        "opam",
+        "uids"
     ]
 }
