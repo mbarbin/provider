@@ -18,12 +18,12 @@ We called this tutorial *handler-explicit* in reference to this. In the pattern 
 In a nutshell:
 
 ```ocaml
-module type Type = sig type t val id : t -> t end
+module type Id = sig type t val id : t -> t end
 
 type id = [ `Id ]
 
 type (_, _, _) Provider.Trait.t +=
-  | Id : ('a, (module Type with type t = 'a), [> id]) Provider.Trait.t
+  | Id : ('a, (module Id with type t = 'a), [> id]) Provider.Trait.t
 
 let id : type a. (a, [> id]) Provider.Handler.t -> a -> a =
   fun handler x ->
@@ -96,17 +96,16 @@ end
 We build *handlers* values for these modules:
 
 ```ocaml
-# let doublable_int : (int, [> doublable ]) Provider.Handler.t =
+# let doublable_int () : (int, [> doublable ]) Provider.Handler.t =
   Provider.Handler.make
     [ Provider.Trait.implement Doublable ~impl:(module Doublable_int) ]
-val doublable_int : (int, [> doublable ] as '_weak1) Provider.Handler.t =
-  <abstr>
+val doublable_int : unit -> (int, [> doublable ]) Provider.Handler.t = <fun>
 
-# let doublable_float : (float, [> doublable ]) Provider.Handler.t =
+# let doublable_float () : (float, [> doublable ]) Provider.Handler.t =
   Provider.Handler.make
     [ Provider.Trait.implement Doublable ~impl:(module Doublable_float) ]
-val doublable_float : (float, [> doublable ] as '_weak2) Provider.Handler.t =
-  <abstr>
+val doublable_float : unit -> (float, [> doublable ]) Provider.Handler.t =
+  <fun>
 ```
 
 ### Instantiation
@@ -114,10 +113,10 @@ val doublable_float : (float, [> doublable ] as '_weak2) Provider.Handler.t =
 And now, it is time to instantiate!
 
 ```ocaml
-# quadruple doublable_int 1
+# quadruple (doublable_int ()) 1
 - : int = 4
 
-# quadruple doublable_float 2.1
+# quadruple (doublable_float ()) 2.1
 - : float = 8.4
 ```
 
@@ -173,24 +172,23 @@ end
 We can now build a *handler* for it:
 
 ```ocaml
-# let versatile_int : (int, [> doublable | repeatable ]) Provider.Handler.t =
+# let versatile_int () : (int, [> doublable | repeatable ]) Provider.Handler.t =
   Provider.Handler.make
     [ Provider.Trait.implement Doublable ~impl:(module Versatile_int)
     ; Provider.Trait.implement Repeatable ~impl:(module Versatile_int)
     ]
 val versatile_int :
-  (int, [> `Doublable | `Repeatable ] as '_weak3) Provider.Handler.t =
-  <abstr>
+  unit -> (int, [> `Doublable | `Repeatable ]) Provider.Handler.t = <fun>
 ```
 
-The careful reader will note that this section requires careful handling, as there is no compiler assistance here. You must tag the handler correctly, or some traits may not be found at runtime.
+The careful reader will note that this section requires careful handling, as there is no compiler assistance here. When defining handlers, you must tag them correctly, or you may not be able to supply them to the functions you want, some traits may not be found at runtime, etc.
 
 ### Instantiation
 
 And now, time to instantiate!
 
 ```ocaml
-# double_then_repeat versatile_int 21
+# double_then_repeat (versatile_int ()) 21
 - : int = 4242
 ```
 
@@ -204,18 +202,21 @@ Consider values that can be mapped:
 module type Mappable = sig
   type 'a t
 
-  val map : 'a t -> f:('a -> 'b) -> 'b t
+  val map : ('a -> 'b) -> 'a t -> 'b t
 end
 ```
 
 Imagine you want to write a function that applies the same mapping function multiple times for some reason.
 
-This kind of higher-kinded polymorphism can be achieved using modular explicit. It might look something like this:
+This kind of higher-kinded polymorphism will be achievable using modular explicit. It might look something like this in the future:
 
 <!-- $MDX skip -->
 ```ocaml
-let map_n_times (module A : Mappable) (x : 'a A.t) ~(f : 'a -> 'a) ~n =
-  ...
+let map_n_times (type a) (module A : Mappable) (x : a A.t) ~(f : a -> a) ~n =
+  let rec loop n x = if n = 0 then x else loop (n - 1) (A.map f x) in
+  loop n x
+;;
+val map_n_times : (module A : Mappable) -> 'a A.t -> f:('a -> 'a) -> n:int -> 'a = <fun>
 ```
 
 In this section we show how to do this with the *provider* library, leveraging the [higher_kinded](https://github.com/janestreet/higher_kinded) library.
@@ -243,7 +244,7 @@ We define a provider trait for this interface:
 type mappable = [ `Mappable ]
 ```
 
-Note, you cannot write this:
+Note, you cannot write this (the `'a 't` syntax doesn't mean anything):
 
 ```ocaml
 type (_, _, _) Provider.Trait.t +=
@@ -265,9 +266,9 @@ type (_, _, _) Provider.Trait.t +=
         Provider.Trait.t
 ```
 
-# Writing Parametrized code
+### Writing Parametrized Code
 
-That's it, we are on our way to write higher-kinded polymorphic functions. This would look like this:
+That's it, we are on our way to write higher-kinded polymorphic functions:
 
 ```ocaml
 let map_n_times
@@ -285,11 +286,12 @@ let map_n_times
   M.inject (loop n at)
 ;;
 ```
+
 Granted, writing the type is quite a journey :-). But the implementation looks clear enough, doesn't it?
 
 ### Implementing Providers
 
-To make it work with higher-kinded types, we'll invoke the functors to create ready-to-use modules with the expected `Mappable` signature:
+To make it work with higher-kinded types, we'll invoke the functor `Higher_kinded.Make` to create ready-to-use modules with the expected `Mappable` signature:
 
 ```ocaml
 module Higher_kinded_list = struct
