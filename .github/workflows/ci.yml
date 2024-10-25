@@ -12,6 +12,7 @@ jobs:
         os:
           - ubuntu-latest
         ocaml-compiler:
+          - 4.14.x
           - 5.2.x
 
     runs-on: ${{ matrix.os }}
@@ -30,13 +31,19 @@ jobs:
 #           janestreet-bleeding: https://github.com/janestreet/opam-repository.git
 #           janestreet-bleeding-external: https://github.com/janestreet/opam-repository.git#external-packages
 
-      - name: Install dependencies
+      - name: Install dependencies for OCaml 4
+        if: startsWith(matrix.ocaml-compiler, '4.')
+        run: opam install . --deps-only --with-doc --with-dev-setup
+
+      - name: Install dependencies for OCaml 5
+        if: startsWith(matrix.ocaml-compiler, '5.')
         run: opam install . --deps-only --with-doc --with-test --with-dev-setup
 
       - name: Build
         run: opam exec -- dune build @all @lint
 
-      - name: Run tests
+      - name: Run OCaml 5 tests
+        if: startsWith(matrix.ocaml-compiler, '5.')
         run: |
              mkdir $BISECT_DIR
              opam exec -- dune runtest --instrument-with bisect_ppx
@@ -44,7 +51,8 @@ jobs:
           BISECT_DIR: ${{ runner.temp }}/_bisect_ppx_data
           BISECT_FILE: ${{ runner.temp }}/_bisect_ppx_data/data
 
-      - name: Send coverage report to Coveralls
+      - name: Send OCaml 5 coverage report to Coveralls
+        if: startsWith(matrix.ocaml-compiler, '5.')
         run: opam exec -- bisect-ppx-report send-to Coveralls --coverage-path $BISECT_DIR
         env:
           BISECT_DIR: ${{ runner.temp }}/_bisect_ppx_data
