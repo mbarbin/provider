@@ -3,7 +3,7 @@
 This guide shows how to architect the dependencies between different libraries involved in a typical provider setup.
 
 - **Trait**: A library where you define your Traits and their signatures.
-- **Library**: A library that is parameterized by your Traits.
+- **Library**: A library that is parametrized by your Traits.
 - **Provider**: A library that implements your Traits.
 - **Client**: An end user.
 
@@ -69,7 +69,7 @@ flowchart TD
     Library --> Client
 ```
 
-The point of a parameterized library is to limit your dependencies. You will run into trouble if all clients depend on all providers!
+The point of a parametrized library is to limit your dependencies. You will run into trouble if all clients depend on all providers!
 
 ```mermaid
 flowchart TD

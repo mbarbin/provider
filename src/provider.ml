@@ -9,13 +9,17 @@ let () =
 ;;
 
 let raise_s msg sexp = raise (E (Sexp.List [ Atom msg; sexp ]))
-let phys_same t1 t2 = phys_equal (Stdlib.Obj.repr t1) (Stdlib.Obj.repr t2)
+let phys_same t1 t2 = phys_equal (Obj.repr t1) (Obj.repr t2)
 
 module Trait = struct
   type ('t, 'module_type, 'tag) t = ('t, 'module_type, 'tag) Trait0.t = ..
 
+  let extension_constructor =
+    (Obj.Extension_constructor.of_val : _ t -> Obj.Extension_constructor.t)
+  ;;
+
   module Info = struct
-    type t = Stdlib.Obj.Extension_constructor.t
+    type t = Obj.Extension_constructor.t
 
     let sexp_of_id_default _ = Sexp.Atom "#id"
     let sexp_of_id = ref sexp_of_id_default
@@ -23,13 +27,13 @@ module Trait = struct
     let sexp_of_t t =
       let sexp_of_id id = !sexp_of_id id in
       Sexp.List
-        [ List [ Atom "id"; sexp_of_id (Stdlib.Obj.Extension_constructor.id t) ]
-        ; List [ Atom "name"; Atom (Stdlib.Obj.Extension_constructor.name t) ]
+        [ List [ Atom "id"; sexp_of_id (Obj.Extension_constructor.id t) ]
+        ; List [ Atom "name"; Atom (Obj.Extension_constructor.name t) ]
         ]
     ;;
   end
 
-  let info = Stdlib.Obj.Extension_constructor.of_val
+  let info = extension_constructor
 
   module Uid = struct
     type t = int
@@ -40,10 +44,7 @@ module Trait = struct
     let hash = Int.hash
   end
 
-  let uid (t : _ t) =
-    Stdlib.Obj.Extension_constructor.id (Stdlib.Obj.Extension_constructor.of_val t)
-  ;;
-
+  let uid (t : _ t) = Obj.Extension_constructor.id (extension_constructor t)
   let compare_by_uid id1 id2 = Uid.compare (uid id1) (uid id2)
   let same (id1 : _ t) (id2 : _ t) = phys_same id1 id2
   let implement = Binding0.implement
@@ -132,7 +133,7 @@ module Handler = struct
       match Trait.compare_by_uid elt trait |> Ordering.of_int with
       | Equal ->
         if update_cache then t.(0) <- binding;
-        if_found (Stdlib.Obj.magic implementation)
+        if_found (Obj.magic implementation)
       | Less ->
         binary_search t ~trait ~update_cache ~if_not_found ~if_found ~from:(mid + 1) ~to_
       | Greater ->
@@ -154,7 +155,7 @@ module Handler = struct
     else (
       let (Binding.T { trait = cached_id; implementation }) = t.(0) in
       if Trait.same trait cached_id
-      then if_found (Stdlib.Obj.magic implementation)
+      then if_found (Obj.magic implementation)
       else
         binary_search
           t

@@ -194,7 +194,7 @@ And now, time to instantiate!
 
 ## Parametrized types
 
-In this part, we'll demonstrate how to write code that is parameterized by an interface working on a parameterized type, a concept known as *higher-kinded polymorphism*.
+In this part, we'll demonstrate how to write code that is parametrized by an interface working on a parametrized type, a concept known as *higher-kinded polymorphism*.
 
 Consider values that can be mapped:
 
@@ -364,8 +364,8 @@ And, again, time to instantiate our polymorphic code!
 
 ## Conclusion
 
-In this tutorial, we've demonstrated examples using the provider library that go beyond typical object-oriented patterns. We've shown how to write code parameterized by handlers and how to make this work with purely functional functions, as well as with parameterized types.
+In this tutorial, we've demonstrated examples using the provider library that go beyond typical object-oriented patterns. We've shown how to write code parametrized by handlers and how to make this work with purely functional functions, as well as with parametrized types.
 
-These techniques should offer convenient ways to parameterize code depending on various needs, and we hope they'll find practical applications in your favorite projects!
+These techniques should offer convenient ways to parametrize code depending on various needs, and we hope they'll find practical applications in your favorite projects!
 
 We'll be keeping an eye on modular explicit too, and we're excited about the future of the module language!

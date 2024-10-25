@@ -20,7 +20,7 @@ We'll instantiate this library with an implementation based on OCaml Stdlib.
 
 ## Using a Functor
 
-We'll start in familiar territory by making a first attempt using a functor. A functor in OCaml is a module that is parameterized by another module. This allows us to create flexible and reusable code.
+We'll start in familiar territory by making a first attempt using a functor. A functor in OCaml is a module that is parametrized by another module. This allows us to create flexible and reusable code.
 
 ### Trait
 
