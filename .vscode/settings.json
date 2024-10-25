@@ -2,6 +2,7 @@
     "cSpell.words": [
         "abstr",
         "alli",
+        "conv",
         "dedup",
         "Doublable",
         "functors",
@@ -9,6 +10,7 @@
         "kinded",
         "odoc",
         "opam",
+        "repr",
         "uids"
     ]
 }
