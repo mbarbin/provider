@@ -33,9 +33,9 @@ module Trait : sig
   (** {1 Dump & debug} *)
 
   module Info : sig
-    (** This type is primarily used for debugging purposes.
+    (** This type is meant to be used for debugging purposes only.
 
-        An [t] value includes the name of the Trait constructor and the module
+        A [t] value includes the name of the Trait constructor and the module
         path where it was defined. It may also include the runtime id for the
         extensible variant of the Trait, but this is not included by default as
         its value can be brittle (it may depend on the order in which modules
@@ -174,7 +174,15 @@ module Handler : sig
       If the provider has correctly exported their implementation using the
       appropriate tags, the compiler will ensure that this function does not
       fail in user code (a failure of this function would typically indicate a
-      programming error in the provider's setup). *)
+      programming error in the provider's setup).
+
+      In the rare case where a provider has not correctly exported the tags of
+      their implementation, this function will raise an internal exception. The
+      exception is not exported, because it is not raised assuming a correct
+      usage of the library.
+
+      You can find examples of incorrect usage in the tests of this library
+      (e.g. "test__invalid_tags.ml"). *)
   val lookup
     :  ('t, 'tags) t
     -> trait:('t, 'implementation, 'tags) Trait.t
