@@ -11,7 +11,7 @@
     - {!module:Private}: Used for testing purposes.
 
     This module is inspired by the [Eio.Resource] module and provides a way to
-    parameterize code when a library either doesn't want to or can't commit to a
+    parametrize code when a library either doesn't want to or can't commit to a
     specific implementation. *)
 
 module Trait : sig
