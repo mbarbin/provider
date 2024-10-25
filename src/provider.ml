@@ -14,6 +14,10 @@ let phys_same t1 t2 = phys_equal (Obj.repr t1) (Obj.repr t2)
 module Trait = struct
   type ('t, 'module_type, 'tag) t = ('t, 'module_type, 'tag) Trait0.t = ..
 
+  let extension_constructor =
+    (Obj.Extension_constructor.of_val : _ t -> Obj.Extension_constructor.t)
+  ;;
+
   module Info = struct
     type t = Obj.Extension_constructor.t
 
@@ -29,7 +33,7 @@ module Trait = struct
     ;;
   end
 
-  let info = Obj.Extension_constructor.of_val
+  let info = extension_constructor
 
   module Uid = struct
     type t = int
@@ -40,7 +44,7 @@ module Trait = struct
     let hash = Int.hash
   end
 
-  let uid (t : _ t) = Obj.Extension_constructor.id (Obj.Extension_constructor.of_val t)
+  let uid (t : _ t) = Obj.Extension_constructor.id (extension_constructor t)
   let compare_by_uid id1 id2 = Uid.compare (uid id1) (uid id2)
   let same (id1 : _ t) (id2 : _ t) = phys_same id1 id2
   let implement = Binding0.implement
