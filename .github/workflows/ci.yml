@@ -33,7 +33,7 @@ jobs:
 
       - name: Install dependencies for OCaml 4
         if: startsWith(matrix.ocaml-compiler, '4.')
-        run: opam install . --deps-only --with-doc --with-dev-setup
+        run: opam install ./provider.opam --deps-only --with-doc --with-dev-setup
 
       - name: Install dependencies for OCaml 5
         if: startsWith(matrix.ocaml-compiler, '5.')
