@@ -39,7 +39,12 @@ jobs:
         if: startsWith(matrix.ocaml-compiler, '5.')
         run: opam install . --deps-only --with-doc --with-test --with-dev-setup
 
-      - name: Build
+      - name: Build for OCaml 4
+        if: startsWith(matrix.ocaml-compiler, '4.')
+        run: opam exec -- dune build @all @lint -p provider.opam
+
+      - name: Build for OCaml 5
+        if: startsWith(matrix.ocaml-compiler, '5.')
         run: opam exec -- dune build @all @lint
 
       - name: Run OCaml 5 tests
