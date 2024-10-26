@@ -33,7 +33,7 @@ module Trait = struct
     ;;
   end
 
-  let info = extension_constructor
+  let info : _ t -> Info.t = extension_constructor
 
   module Uid = struct
     type t = int
@@ -48,6 +48,27 @@ module Trait = struct
   let compare_by_uid id1 id2 = Uid.compare (uid id1) (uid id2)
   let same (id1 : _ t) (id2 : _ t) = phys_same id1 id2
   let implement = Binding0.implement
+
+  module Unsafe_cast : sig
+    type (_, _) eq_opt =
+      | Equal : ('a, 'a) eq_opt
+      | Not_equal : ('a, 'b) eq_opt
+
+    (* We limit unsafe casting to cases where the first parameter is already
+       determined to be the same. *)
+    val same_witness : ('a, 'i1, _) t -> ('a, 'i2, _) t -> ('i1, 'i2) eq_opt
+  end = struct
+    type (_, _) eq_opt =
+      | Equal : ('a, 'a) eq_opt
+      | Not_equal : ('a, 'b) eq_opt
+
+    let same_witness : type a i1 i2. (a, i1, _) t -> (a, i2, _) t -> (i1, i2) eq_opt =
+      fun t1 t2 ->
+      if same t1 t2
+      then (Obj.magic (Obj.repr (Equal : _ eq_opt)) : (i1, i2) eq_opt)
+      else Not_equal
+    ;;
+  end
 end
 
 module Binding = struct
@@ -131,13 +152,24 @@ module Handler = struct
       let mid = (from + to_) / 2 in
       let (Binding.T { trait = elt; implementation } as binding) = t.(mid) in
       match Trait.compare_by_uid elt trait |> Ordering.of_int with
-      | Equal ->
-        if update_cache then t.(0) <- binding;
-        if_found (Obj.magic implementation)
       | Less ->
         binary_search t ~trait ~update_cache ~if_not_found ~if_found ~from:(mid + 1) ~to_
       | Greater ->
-        binary_search t ~trait ~update_cache ~if_not_found ~if_found ~from ~to_:(mid - 1))
+        binary_search t ~trait ~update_cache ~if_not_found ~if_found ~from ~to_:(mid - 1)
+      | Equal ->
+        (match Trait.Unsafe_cast.same_witness elt trait with
+         | Equal ->
+           if update_cache then t.(0) <- binding;
+           if_found implementation
+         | Not_equal ->
+           (* [same_witness a b => (uid a = uid b)] but the converse might not
+              hold. We treat as invalid usages cases where traits (t1, t2) would
+              have the same uids without being physically equal. *)
+           raise_s
+             "Invalid usage of [Provider.Trait]: Extensible variants with the same id \
+              are expected to be physically equal through the use of this library"
+             (Sexp.List
+                [ List [ Atom "trait"; Trait.info trait |> Trait.Info.sexp_of_t ] ])))
   ;;
 
   let make_lookup
@@ -154,9 +186,9 @@ module Handler = struct
     then if_not_found ~trait_info:(Trait.info trait)
     else (
       let (Binding.T { trait = cached_id; implementation }) = t.(0) in
-      if Trait.same trait cached_id
-      then if_found (Obj.magic implementation)
-      else
+      match Trait.Unsafe_cast.same_witness trait cached_id with
+      | Equal -> if_found implementation
+      | Not_equal ->
         binary_search
           t
           ~trait

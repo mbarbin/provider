@@ -6,6 +6,7 @@
         "dedup",
         "Doublable",
         "functors",
+        "GADT",
         "janestreet",
         "kinded",
         "odoc",
