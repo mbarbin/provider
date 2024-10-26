@@ -2,6 +2,8 @@
 
 ### Added
 
+- Added a tutorial with new examples of handler-based polymorphism (#13, @mbarbin).
+
 ### Changed
 
 - Rename `explanation` section of documentation per diataxis.
@@ -9,6 +11,8 @@
 ### Deprecated
 
 ### Fixed
+
+- Made the lib raise an exception instead of a segfault under some invalid usage (#18, @mbarbin).
 
 ### Removed
 
