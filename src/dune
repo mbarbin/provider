@@ -3,7 +3,8 @@
  (public_name provider)
  (flags :standard -w +a-4-40-41-42-44-45-48-66 -warn-error +a -open Sexplib0)
  (libraries sexplib0)
- (modules (:standard \ uid4xx uid5xx))
+ (modules
+  (:standard \ uid4xx uid5xx))
  (instrumentation
   (backend bisect_ppx))
  (lint
@@ -11,11 +12,15 @@
  (preprocess no_preprocessing))
 
 (rule
- (enabled_if (< %{ocaml_version} 5.0))
+ (enabled_if
+  (< %{ocaml_version} 5.0))
  (target selecteduid.ml)
- (action (copy uid4xx.ml %{target})))
+ (action
+  (copy uid4xx.ml %{target})))
 
 (rule
- (enabled_if (>= %{ocaml_version} 5.0))
+ (enabled_if
+  (>= %{ocaml_version} 5.0))
  (target selecteduid.ml)
- (action (copy uid5xx.ml %{target})))
+ (action
+  (copy uid5xx.ml %{target})))
