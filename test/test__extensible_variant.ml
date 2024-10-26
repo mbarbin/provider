@@ -16,24 +16,21 @@ module Eq_opt = struct
 end
 
 let%expect_test "Eq_opt at runtime" =
-  let equal = Obj.repr Eq_opt.Equal in
-  let not_equal = Obj.repr Eq_opt.Not_equal in
-  print_s [%sexp { is_int = (Obj.is_int equal : bool) }];
-  [%expect {| ((is_int true)) |}];
-  print_s [%sexp { is_int = (Obj.is_int not_equal : bool) }];
-  [%expect {| ((is_int true)) |}];
-  print_s [%sexp { is_blocked = (Obj.is_block equal : bool) }];
-  [%expect {| ((is_blocked false)) |}];
-  print_s [%sexp { is_blocked = (Obj.is_block not_equal : bool) }];
-  [%expect {| ((is_blocked false)) |}];
-  let () =
-    if Obj.is_int equal then print_s [%sexp (Obj.obj equal : int)];
-    [%expect {| 0 |}]
+  let test obj =
+    let is_int = Obj.is_int obj in
+    require [%here] is_int;
+    print_s [%sexp { is_int : bool; value = (Obj.obj obj : int) }]
   in
-  let () =
-    if Obj.is_int equal then print_s [%sexp (Obj.obj not_equal : int)];
-    [%expect {| 1 |}]
-  in
+  test (Obj.repr Eq_opt.Equal);
+  [%expect {|
+    ((is_int true)
+     (value  0))
+    |}];
+  test (Obj.repr Eq_opt.Not_equal);
+  [%expect {|
+    ((is_int true)
+     (value  1))
+    |}];
   ()
 ;;
 
