@@ -33,7 +33,7 @@ module Trait = struct
     ;;
   end
 
-  let info = extension_constructor
+  let info : _ t -> Info.t = extension_constructor
 
   module Uid = struct
     type t = int
@@ -64,7 +64,9 @@ module Trait = struct
 
     let same_witness : type a i1 i2. (a, i1, _) t -> (a, i2, _) t -> (i1, i2) eq_opt =
       fun t1 t2 ->
-      if same t1 t2 then (Obj.magic (Equal : _ eq_opt) : (i1, i2) eq_opt) else Not_equal
+      if same t1 t2
+      then (Obj.magic (Obj.repr (Equal : _ eq_opt)) : (i1, i2) eq_opt)
+      else Not_equal
     ;;
   end
 end
@@ -159,7 +161,11 @@ module Handler = struct
            (* [same_witness a b => (uid a = uid b)] but the converse might not
               hold. We treat as invalid usages cases where traits (t1, t2) would
               have the same uids without being physically equal. *)
-           assert false
+           raise_s
+             "Invalid usage of [Provider.Trait]: Extensible variants with the same id \
+              are expected to be physically equal through the use of this library"
+             (Sexp.List
+                [ List [ Atom "trait"; Trait.info trait |> Trait.Info.sexp_of_t ] ])
          | Less ->
            binary_search
              t
