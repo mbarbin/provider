@@ -6,6 +6,7 @@
 
 ### Changed
 
+- Make the library detect invalid Traits earlier (during handler creation) (#20, @mbarbin).
 - Rename `explanation` section of documentation per diataxis.
 
 ### Deprecated
