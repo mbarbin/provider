@@ -47,7 +47,20 @@ module Trait = struct
   let uid (t : _ t) = Obj.Extension_constructor.id (extension_constructor t)
   let compare_by_uid id1 id2 = Uid.compare (uid id1) (uid id2)
   let same (id1 : _ t) (id2 : _ t) = phys_same id1 id2
-  let implement = Binding0.implement
+
+  let check_trait_exn (t : _ t) =
+    if not (Trait0.is_valid t)
+    then
+      raise_s
+        "Invalid usage of [Provider.Trait]: trait is not a valid extensible variant for \
+         this library"
+        (Sexp.List [ List [ Atom "trait"; info t |> Info.sexp_of_t ] ])
+  ;;
+
+  let implement trait ~impl =
+    check_trait_exn trait;
+    Binding0.implement trait ~impl
+  ;;
 
   module Unsafe_cast : sig
     type (_, _) eq_opt =
@@ -249,5 +262,13 @@ type -'tags t =
 
 module Private = struct
   module Import = Import
+
+  module Trait = struct
+    let implement_unsafe trait ~impl ~check_trait =
+      if check_trait then Trait.check_trait_exn trait;
+      Binding0.implement trait ~impl
+    ;;
+  end
+
   module Handler = Handler
 end

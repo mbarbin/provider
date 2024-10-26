@@ -17,8 +17,8 @@ type (_, _, _) Provider.Trait.t +=
 let id_int = Type_equal.Id.create ~name:"int" [%sexp_of: int]
 let id_string = Type_equal.Id.create ~name:"string" [%sexp_of: string]
 
-let impl (type a) id value =
-  Provider.Trait.implement
+let impl (type a) id value ~check_trait =
+  Provider.Private.Trait.implement_unsafe
     (A id)
     ~impl:
       (module struct
@@ -26,13 +26,27 @@ let impl (type a) id value =
 
         let t = value
       end)
+    ~check_trait
 ;;
 
 let%expect_test "magic" =
-  let handler =
+  let make_handler ~check_trait =
     Provider.Handler.make
-      [ (if true then impl id_int 1 else impl id_string "" [@coverage off]) ]
+      [ (if true
+         then impl id_int 1 ~check_trait
+         else impl id_string "" ~check_trait [@coverage off])
+      ]
   in
+  require_does_raise [%here] (fun () -> make_handler ~check_trait:true);
+  [%expect
+    {|
+    ("Invalid usage of [Provider.Trait]: trait is not a valid extensible variant for this library"
+     ((
+       trait (
+         (id   #id)
+         (name Provider_test.Test__magic.A)))))
+    |}];
+  let handler = make_handler ~check_trait:false in
   require_does_raise [%here] (fun () ->
     (let module M = (val Provider.Handler.lookup handler ~trait:(A id_string)) in
     print_string M.t) [@coverage off]);

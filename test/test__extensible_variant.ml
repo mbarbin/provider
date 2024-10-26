@@ -61,6 +61,26 @@ let%expect_test "extension_constructor" =
   ()
 ;;
 
+let%expect_test "implement" =
+  (* This test covers a case where [implement_unsafe ~check_trait] succeeds. *)
+  let handler =
+    Provider.Handler.make
+      [ Provider.Private.Trait.implement_unsafe
+          No_arg_A
+          ~impl:
+            (module struct
+              type t = int
+            end)
+          ~check_trait:true
+      ]
+  in
+  let module M = (val Provider.Handler.lookup handler ~trait:No_arg_A) in
+  let x = (0 : M.t) in
+  print_s [%sexp (x : int)];
+  [%expect {| 0 |}];
+  ()
+;;
+
 let%expect_test "no_arg physical equality" =
   require [%here] (phys_equal No_arg_A No_arg_A);
   [%expect {||}];
@@ -169,10 +189,10 @@ let print (Provider.T { t; handler }) =
   print_endline (M.show t)) [@coverage off]
 ;;
 
-let string_provider t =
+let string_provider t ~check_trait =
   let handler =
     Provider.Handler.make
-      [ Provider.Trait.implement
+      [ Provider.Private.Trait.implement_unsafe
           (Show { arg = 0 })
           ~impl:
             (module struct
@@ -180,13 +200,24 @@ let string_provider t =
 
               let show = Fn.id
             end)
+          ~check_trait
       ]
   in
   Provider.T { t; handler }
 ;;
 
 let%expect_test "invalid_trait" =
-  require_does_raise [%here] (fun () -> print (string_provider "Hello World"));
+  require_does_raise [%here] (fun () -> string_provider "Hello World" ~check_trait:true);
+  [%expect
+    {|
+    ("Invalid usage of [Provider.Trait]: trait is not a valid extensible variant for this library"
+     ((
+       trait (
+         (id   #id)
+         (name Provider_test.Test__extensible_variant.Show)))))
+    |}];
+  require_does_raise [%here] (fun () ->
+    print (string_provider "Hello World" ~check_trait:false));
   [%expect
     {|
     ("Invalid usage of [Provider.Trait]: Extensible variants with the same id are expected to be physically equal through the use of this library"
@@ -198,8 +229,8 @@ let%expect_test "invalid_trait" =
   ()
 ;;
 
-(* Note that the API may be changed in the future to detect this error sooner,
-   or to avoid it by design. This is left as future work. *)
+(* Note that the API may be changed in the future to avoid it by design. This is
+   left as future work. *)
 
 type ('t, 'module_type, 'tag) With_arg.extensible +=
   | With_arg_C :

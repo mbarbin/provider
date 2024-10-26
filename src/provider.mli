@@ -27,7 +27,11 @@ module Trait : sig
         phantom type designed to make {!val:Handler.lookup} more type-safe.
 
       ['module_type] is expected to be a module type (Eio supports single
-      functions but this is discouraged through the use of this library). *)
+      functions but this is discouraged through the use of this library).
+
+      Beware, traits constructors must be such that they are physically equal
+      when they have the same extension id. In particular they should have zero
+      arguments. *)
   type ('t, 'module_type, 'tag) t = ('t, 'module_type, 'tag) Trait0.t = ..
 
   (** {1 Dump & debug} *)
@@ -233,6 +237,19 @@ module Private : sig
 
     (** Part of the strategy for [make], [extend], etc. *)
     val dedup_sorted_keep_last : 'a list -> compare:('a -> 'a -> int) -> 'a list
+  end
+
+  module Trait : sig
+    (** Some error cases of the implementation have been made non-reachable
+        thanks to additional checks run early. However, we'd like to cover
+        these cases in tests, thus this constructor is exposed to optionally
+        bypass the trait validation happening during [implement]. To be used
+        by tests only, do not use in user code. *)
+    val implement_unsafe
+      :  ('t, 'module_type, _) Trait.t
+      -> impl:'module_type
+      -> check_trait:bool
+      -> 't Binding.t
   end
 
   module Import : sig
