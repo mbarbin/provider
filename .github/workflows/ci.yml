@@ -41,7 +41,7 @@ jobs:
 
       - name: Build for OCaml 4
         if: startsWith(matrix.ocaml-compiler, '4.')
-        run: opam exec -- dune build @all @lint -p provider.opam
+        run: opam exec -- dune build @all @lint -p provider
 
       - name: Build for OCaml 5
         if: startsWith(matrix.ocaml-compiler, '5.')
