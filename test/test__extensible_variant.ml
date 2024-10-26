@@ -200,3 +200,49 @@ let%expect_test "invalid_trait" =
 
 (* Note that the API may be changed in the future to detect this error sooner,
    or to avoid it by design. This is left as future work. *)
+
+type ('t, 'module_type, 'tag) With_arg.extensible +=
+  | With_arg_C :
+      { a : 'a
+      ; b : 'b
+      }
+      -> ('t, 'a * 'b, [> `T ]) With_arg.extensible
+
+let%expect_test "with-arg detection" =
+  (* To detect the presence of argument, we can check whether the object is the
+     same as its extension constructor. *)
+  let test (repr : Obj.t) =
+    let is_block = Obj.is_block repr in
+    require [%here] is_block;
+    let size = Obj.size repr in
+    let extension_constructor = Obj.Extension_constructor.of_val repr in
+    let name = Obj.Extension_constructor.name extension_constructor in
+    let has_args = not (phys_equal repr (Obj.repr extension_constructor)) in
+    print_s [%sexp { name : string; is_block : bool; size : int; has_args : bool }]
+  in
+  test (Obj.repr No_arg_A);
+  [%expect
+    {|
+    ((name Provider_test.Test__extensible_variant.No_arg_A)
+     (is_block true)
+     (size     2)
+     (has_args false))
+    |}];
+  test (Obj.repr (With_arg.A { value = 42 }));
+  [%expect
+    {|
+    ((name Provider_test.Test__extensible_variant.With_arg.A)
+     (is_block true)
+     (size     2)
+     (has_args true))
+    |}];
+  test (Obj.repr (With_arg_C { a = 0; b = "1" }));
+  [%expect
+    {|
+    ((name Provider_test.Test__extensible_variant.With_arg_C)
+     (is_block true)
+     (size     3)
+     (has_args true))
+    |}];
+  ()
+;;
