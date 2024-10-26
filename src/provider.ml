@@ -50,34 +50,21 @@ module Trait = struct
   let implement = Binding0.implement
 
   module Unsafe_cast : sig
+    type (_, _) eq_opt =
+      | Equal : ('a, 'a) eq_opt
+      | Not_equal : ('a, 'b) eq_opt
+
     (* We limit unsafe casting to cases where the first parameter is already
        determined to be the same. *)
-    val same_witness : ('a, 'i1, _) t -> ('a, 'i2, _) t -> ('i1, 'i2) Type.eq option
+    val same_witness : ('a, 'i1, _) t -> ('a, 'i2, _) t -> ('i1, 'i2) eq_opt
   end = struct
-    (* We create [some_witness_val] at top level so that [same_witness] do not allocate. *)
-    let some_witness_val = Some Type.Equal
-    let some_witness_repr = Obj.repr some_witness_val
+    type (_, _) eq_opt =
+      | Equal : ('a, 'a) eq_opt
+      | Not_equal : ('a, 'b) eq_opt
 
-    let same_witness
-      : type a i1 i2. (a, i1, _) t -> (a, i2, _) t -> (i1, i2) Type.eq option
-      =
+    let same_witness : type a i1 i2. (a, i1, _) t -> (a, i2, _) t -> (i1, i2) eq_opt =
       fun t1 t2 ->
-      if same t1 t2 then (Obj.obj some_witness_repr : (i1, i2) Type.eq option) else None
-    ;;
-
-    let _f a b =
-      (* This expression is meant to help create a build error if we change the
-         type of [some_witness_val], acting as a reminder to go and update
-         [same_witness] too. For example, if you change [some_witness_val] to
-         something like:
-
-         {[
-           let some_witness_val = 1
-         ]}
-
-         You'll notice that [same_witness] still compiles (although would be
-         terribly broken), but this expression no longer type checks. *)
-      (if phys_same a b then some_witness_val else same_witness a b) [@coverage off]
+      if same t1 t2 then (Obj.magic (Equal : _ eq_opt) : (i1, i2) eq_opt) else Not_equal
     ;;
   end
 end
@@ -163,10 +150,10 @@ module Handler = struct
       let mid = (from + to_) / 2 in
       let (Binding.T { trait = elt; implementation } as binding) = t.(mid) in
       match Trait.Unsafe_cast.same_witness elt trait with
-      | Some Type.Equal ->
+      | Equal ->
         if update_cache then t.(0) <- binding;
         if_found implementation
-      | None ->
+      | Not_equal ->
         (match Trait.compare_by_uid elt trait |> Ordering.of_int with
          | Equal ->
            (* [same_witness a b => (uid a = uid b)] but the converse might not
@@ -208,8 +195,8 @@ module Handler = struct
     else (
       let (Binding.T { trait = cached_id; implementation }) = t.(0) in
       match Trait.Unsafe_cast.same_witness trait cached_id with
-      | Some Type.Equal -> if_found implementation
-      | None ->
+      | Equal -> if_found implementation
+      | Not_equal ->
         binary_search
           t
           ~trait
