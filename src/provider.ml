@@ -151,13 +151,17 @@ module Handler = struct
     else (
       let mid = (from + to_) / 2 in
       let (Binding.T { trait = elt; implementation } as binding) = t.(mid) in
-      match Trait.Unsafe_cast.same_witness elt trait with
+      match Trait.compare_by_uid elt trait |> Ordering.of_int with
+      | Less ->
+        binary_search t ~trait ~update_cache ~if_not_found ~if_found ~from:(mid + 1) ~to_
+      | Greater ->
+        binary_search t ~trait ~update_cache ~if_not_found ~if_found ~from ~to_:(mid - 1)
       | Equal ->
-        if update_cache then t.(0) <- binding;
-        if_found implementation
-      | Not_equal ->
-        (match Trait.compare_by_uid elt trait |> Ordering.of_int with
+        (match Trait.Unsafe_cast.same_witness elt trait with
          | Equal ->
+           if update_cache then t.(0) <- binding;
+           if_found implementation
+         | Not_equal ->
            (* [same_witness a b => (uid a = uid b)] but the converse might not
               hold. We treat as invalid usages cases where traits (t1, t2) would
               have the same uids without being physically equal. *)
@@ -165,25 +169,7 @@ module Handler = struct
              "Invalid usage of [Provider.Trait]: Extensible variants with the same id \
               are expected to be physically equal through the use of this library"
              (Sexp.List
-                [ List [ Atom "trait"; Trait.info trait |> Trait.Info.sexp_of_t ] ])
-         | Less ->
-           binary_search
-             t
-             ~trait
-             ~update_cache
-             ~if_not_found
-             ~if_found
-             ~from:(mid + 1)
-             ~to_
-         | Greater ->
-           binary_search
-             t
-             ~trait
-             ~update_cache
-             ~if_not_found
-             ~if_found
-             ~from
-             ~to_:(mid - 1)))
+                [ List [ Atom "trait"; Trait.info trait |> Trait.Info.sexp_of_t ] ])))
   ;;
 
   let make_lookup
