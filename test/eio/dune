@@ -1,6 +1,6 @@
 (library
- (name test_interfaces)
- (public_name provider-tests.test_interfaces)
+ (name provider_test_eio)
+ (public_name provider-tests.provider_test_eio)
  (inline_tests)
  (flags
   :standard
@@ -12,7 +12,16 @@
   Base
   -open
   Expect_test_helpers_base)
- (libraries base expect_test_helpers_core.expect_test_helpers_base provider)
+ (libraries
+  base
+  eio
+  eio_main
+  eio_test_providers
+  expect_test_helpers_core.expect_test_helpers_base
+  provider
+  test_interfaces
+  test_providers
+  unix)
  (instrumentation
   (backend bisect_ppx))
  (lint

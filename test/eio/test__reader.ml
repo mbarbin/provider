@@ -70,7 +70,7 @@ let%expect_test "test" =
   let unix_reader = Test_providers.Unix_reader.make () in
   Eio_main.run
   @@ fun env ->
-  let eio_reader = Test_providers.Eio_reader.make ~env in
+  let eio_reader = Eio_test_providers.Eio_reader.make ~env in
   with_temp_dir ~env ~path:"test" ~f:(fun dir ->
     print_s
       [%sexp
