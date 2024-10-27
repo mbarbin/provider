@@ -2,6 +2,7 @@
 
 ### Added
 
+- Added new checks in CI (build checks on windows and macos) (#21, @mbarbin).
 - Added a tutorial with new examples of handler-based polymorphism (#13, @mbarbin).
 
 ### Changed
