@@ -21,6 +21,8 @@ let print_implements (Provider.T { t = _; handler }) =
           ; directory_reader =
               (implements Interface.Directory_reader.Provider_interface.Directory_reader
                : bool)
+          ; int_printer =
+              (implements Interface.Int_printer.Provider_interface.Int_printer : bool)
           }
       }]
 ;;
@@ -32,25 +34,29 @@ let%expect_test "introspection" =
     ((
       implements (
         (file_reader      false)
-        (directory_reader false)))) |}];
+        (directory_reader false)
+        (int_printer      false))))
+    |}];
   let unix_reader = Providers.Unix_reader.make () in
-  Eio_main.run
-  @@ fun env ->
-  let eio_reader = Providers.Eio_reader.make ~env in
-  print_implements eio_reader;
+  let num_printer = Providers.Num_printer.make () in
+  print_implements num_printer;
   [%expect
     {|
     ((
       implements (
-        (file_reader      true)
-        (directory_reader true)))) |}];
+        (file_reader      false)
+        (directory_reader false)
+        (int_printer      true))))
+    |}];
   print_implements unix_reader;
   [%expect
     {|
     ((
       implements (
         (file_reader      false)
-        (directory_reader true)))) |}];
+        (directory_reader true)
+        (int_printer      false))))
+    |}];
   let id_mapping = Hashtbl.create (module Int) in
   let next_id = ref 0 in
   let sexp_of_id id =
@@ -73,14 +79,15 @@ let%expect_test "introspection" =
         (id 0)
         (name
          Provider_test__Interface__Directory_reader.Provider_interface.Directory_reader))) |}];
-    print_implemented_traits eio_reader;
+    print_implemented_traits num_printer;
     [%expect
       {|
-      (((id 0)
+      (((id 1)
         (name
-         Provider_test__Interface__Directory_reader.Provider_interface.Directory_reader))
-       ((id 1)
-        (name Provider_test__Interface__File_reader.Provider_interface.File_reader))) |}];
+         Provider_test__Interface__Float_printer.Provider_interface.Float_printer))
+       ((id 2)
+        (name Provider_test__Interface__Int_printer.Provider_interface.Int_printer)))
+      |}];
     ());
   ()
 ;;

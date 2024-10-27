@@ -7,21 +7,21 @@
 let%expect_test "make interface" =
   let trait1 =
     Provider.Trait.implement
-      Interface.Directory_reader.Provider_interface.Directory_reader
-      ~impl:(module Providers.Eio_reader.Impl)
+      Interface.Int_printer.Provider_interface.Int_printer
+      ~impl:(module Providers.Num_printer.Impl)
   in
-  let eio1 =
-    Interface.Directory_reader.Provider_interface.make (module Providers.Eio_reader.Impl)
+  let num1 =
+    Interface.Int_printer.Provider_interface.make (module Providers.Num_printer.Impl)
   in
-  (match trait1, List.hd_exn (Provider.Handler.bindings eio1) with
+  (match trait1, List.hd_exn (Provider.Handler.bindings num1) with
    | T t, T t' ->
      require [%here] (Provider.Trait.same t.trait t'.trait);
      [%expect {||}];
      ());
   let trait2 =
     Provider.Trait.implement
-      Interface.File_reader.Provider_interface.File_reader
-      ~impl:(module Providers.Eio_reader.Impl)
+      Interface.Float_printer.Provider_interface.Float_printer
+      ~impl:(module Providers.Num_printer.Impl)
   in
   (match trait1, trait2 with
    | T t1, T t2 ->
@@ -32,17 +32,18 @@ let%expect_test "make interface" =
          }];
      [%expect
        {|
-        ((trait1 (
-           (id #id)
-           (name
-            Provider_test__Interface__Directory_reader.Provider_interface.Directory_reader)))
-         (trait2 (
-           (id #id)
-           (name Provider_test__Interface__File_reader.Provider_interface.File_reader)))) |}];
+       ((trait1 (
+          (id #id)
+          (name Provider_test__Interface__Int_printer.Provider_interface.Int_printer)))
+        (trait2 (
+          (id #id)
+          (name
+           Provider_test__Interface__Float_printer.Provider_interface.Float_printer))))
+       |}];
      require [%here] (not (Provider.Trait.same t1.trait t2.trait));
      [%expect {||}];
      ());
-  (match Provider.Handler.bindings eio1 with
+  (match Provider.Handler.bindings num1 with
    | [ c1 ] ->
      require_equal
        [%here]
@@ -54,13 +55,13 @@ let%expect_test "make interface" =
   let empty = Provider.Handler.make [] in
   require [%here] (Provider.Handler.is_empty empty);
   require [%here] (List.is_empty (Provider.Handler.bindings empty));
-  let eio2 = Provider.Handler.make [ trait2 ] in
-  require [%here] (not (Provider.Handler.is_empty eio2));
-  require [%here] (not (Provider.Private.Handler.same_trait_uids empty eio2));
+  let num2 = Provider.Handler.make [ trait2 ] in
+  require [%here] (not (Provider.Handler.is_empty num2));
+  require [%here] (not (Provider.Private.Handler.same_trait_uids empty num2));
   [%expect {||}];
-  let eio3 = Provider.Handler.make [ trait1; trait2 ] in
-  let eio4 = Provider.Handler.extend eio1 ~with_:(Provider.Handler.bindings eio2) in
-  require [%here] (Provider.Private.Handler.same_trait_uids eio3 eio4);
+  let num3 = Provider.Handler.make [ trait1; trait2 ] in
+  let num4 = Provider.Handler.extend num1 ~with_:(Provider.Handler.bindings num2) in
+  require [%here] (Provider.Private.Handler.same_trait_uids num3 num4);
   [%expect {||}];
   ()
 ;;
