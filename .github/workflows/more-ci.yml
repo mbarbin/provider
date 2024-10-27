@@ -1,0 +1,66 @@
+# This workflow file is named 'more-ci' and is used to run additional CI checks
+# that complement the main CI workflow. It ensures that our code is tested
+# across multiple operating systems and OCaml compiler versions.
+#
+# Compared to the main 'ci.yml' job, this skips some steps that are not
+# necessary to check for every combination of os and ocaml-compiler, such as
+# generating coverage report, linting odoc, opam and fmt, etc.
+#
+# We prefer to keep it separate from the main CI workflow because we find it
+# more readable, over having too many conditional steps in the same job.
+
+name: more-ci
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - "**" # This will match pull requests targeting any branch
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - macos-latest
+          - ubuntu-latest
+          - windows-latest
+        ocaml-compiler:
+          - 5.2.x
+        exclude:
+          # We exclude the combination already tested in the 'ci' workflow.
+          - os: ubuntu-latest
+            ocaml-compiler: 5.2.x
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup OCaml
+        uses: ocaml/setup-ocaml@v3
+        with:
+          ocaml-compiler: ${{ matrix.ocaml-compiler }}
+          opam-repositories: |
+            default: https://github.com/ocaml/opam-repository.git
+            mbarbin: https://github.com/mbarbin/opam-repository.git
+      #     janestreet-bleeding: https://github.com/janestreet/opam-repository.git
+      #     janestreet-bleeding-external: https://github.com/janestreet/opam-repository.git#external-packages
+
+      - name: Install dependencies
+        run: opam install . --deps-only --with-test
+
+      - name: Build
+        run: opam exec -- dune build @all
+
+      # For now, we only run tests for the `provider` package. Effectively, this
+      # runs nothing because the tests are in the `provider-test` package. We
+      # configured this in preparation for running the tests for specific
+      # packages only in the future, once we have a dedicated test suite that
+      # can run on every matrix combination configured here.
+      - name: Run tests
+        run: opam exec -- dune build @runtest -p provider
