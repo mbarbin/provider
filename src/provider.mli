@@ -70,6 +70,7 @@ module Trait : sig
     val equal : t -> t -> bool
     val compare : t -> t -> int
     val hash : t -> int
+    val seeded_hash : int -> t -> int
   end
 
   (** A uid is particularly useful when you need to quickly look up or sort

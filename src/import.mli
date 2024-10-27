@@ -11,7 +11,9 @@ module Int : sig
 
   (** We re-export hash functions here to make the code compatible with earlier
       ocaml versions. [Stdlib.Int.hash] is available since [ocaml.5.1]. *)
+
   val hash : int -> int
+  val seeded_hash : int -> int -> int
 end
 
 module List : sig

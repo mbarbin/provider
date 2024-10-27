@@ -15,6 +15,7 @@ module Int = struct
   include Int
 
   let hash = (Hashtbl.hash : int -> int)
+  let seeded_hash = (Hashtbl.seeded_hash : int -> int -> int)
 end
 
 module List = struct

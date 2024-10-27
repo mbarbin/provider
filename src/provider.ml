@@ -42,6 +42,7 @@ module Trait = struct
     let equal = Int.equal
     let compare = Int.compare
     let hash = Int.hash
+    let seeded_hash = Int.seeded_hash
   end
 
   let uid (t : _ t) = Obj.Extension_constructor.id (extension_constructor t)
