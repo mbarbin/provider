@@ -54,5 +54,13 @@ jobs:
       - name: Install dependencies
         run: opam install . --deps-only --with-test
 
-      - name: Build & Run tests
-        run: opam exec -- dune build @all @runtest
+      - name: Build
+        run: opam exec -- dune build @all
+
+      # For now, we only run tests for the `provider` package. Effectively, this
+      # runs nothing because the tests are in the `provider-test` package. We
+      # configured this in preparation for running the tests for specific
+      # packages only in the future, once we have a dedicated test suite that
+      # can run on every matrix combination configured here.
+      - name: Run tests
+        run: opam exec -- dune build @runtest -p provider
