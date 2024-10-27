@@ -10,5 +10,7 @@ include Impl
 
 let make () : [ `Directory_reader ] Provider.t =
   Provider.T
-    { t = (); handler = Interface.Directory_reader.Provider_interface.make (module Impl) }
+    { t = ()
+    ; handler = Test_interfaces.Directory_reader.Provider_interface.make (module Impl)
+    }
 ;;

@@ -5,8 +5,8 @@
    interface creation. *)
 
 let%expect_test "int-printer" =
-  let printer = Providers.Int_printer.make () in
-  Interface.Int_printer.print printer 123_456_789;
+  let printer = Test_providers.Int_printer.make () in
+  Test_interfaces.Int_printer.print printer 123_456_789;
   [%expect {| 123456789 |}];
   ()
 ;;
@@ -14,17 +14,18 @@ let%expect_test "int-printer" =
 let%expect_test "make interface" =
   let binding1 =
     Provider.Trait.implement
-      Interface.Int_printer.Provider_interface.Int_printer
-      ~impl:(module Providers.Num_printer.Impl)
+      Test_interfaces.Int_printer.Provider_interface.Int_printer
+      ~impl:(module Test_providers.Num_printer.Impl)
   in
-  Interface.Int_printer.print
+  Test_interfaces.Int_printer.print
     (Provider.T { t = (); handler = Provider.Handler.make [ binding1 ] })
     1234;
   [%expect {| 1234 |}];
   let num1 =
-    Interface.Int_printer.Provider_interface.make (module Providers.Num_printer.Impl)
+    Test_interfaces.Int_printer.Provider_interface.make
+      (module Test_providers.Num_printer.Impl)
   in
-  Interface.Int_printer.print (Provider.T { t = (); handler = num1 }) 5678;
+  Test_interfaces.Int_printer.print (Provider.T { t = (); handler = num1 }) 5678;
   [%expect {| 5678 |}];
   (match binding1, List.hd_exn (Provider.Handler.bindings num1) with
    | T t, T t' ->
@@ -33,8 +34,8 @@ let%expect_test "make interface" =
      ());
   let binding2 =
     Provider.Trait.implement
-      Interface.Float_printer.Provider_interface.Float_printer
-      ~impl:(module Providers.Num_printer.Impl)
+      Test_interfaces.Float_printer.Provider_interface.Float_printer
+      ~impl:(module Test_providers.Num_printer.Impl)
   in
   (match binding1, binding2 with
    | T t1, T t2 ->
@@ -46,12 +47,10 @@ let%expect_test "make interface" =
      [%expect
        {|
        ((trait1 (
-          (id #id)
-          (name Provider_test__Interface__Int_printer.Provider_interface.Int_printer)))
+          (id #id) (name Test_interfaces.Int_printer.Provider_interface.Int_printer)))
         (trait2 (
           (id #id)
-          (name
-           Provider_test__Interface__Float_printer.Provider_interface.Float_printer))))
+          (name Test_interfaces.Float_printer.Provider_interface.Float_printer))))
        |}];
      require [%here] (not (Provider.Trait.same t1.trait t2.trait));
      [%expect {||}];

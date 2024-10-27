@@ -3,9 +3,9 @@
    runtime. *)
 
 let%expect_test "invalid tags" =
-  (* [Providers.Num_printer] was correctly built. *)
-  let print_42 printer = Interface.Int_printer.print printer 42 in
-  print_42 (Providers.Num_printer.make ());
+  (* [Test_providers.Num_printer] was correctly built. *)
+  let print_42 printer = Test_interfaces.Int_printer.print printer 42 in
+  print_42 (Test_providers.Num_printer.make ());
   [%expect {| 42 |}];
   (* Now let's build a provider with an empty interface, that claims however to
      implement the [Int_printer] interface. *)
@@ -21,7 +21,7 @@ let%expect_test "invalid tags" =
     ("Trait not implemented" ((
       trait_info (
         (id #id)
-        (name
-         Provider_test__Interface__Int_printer.Provider_interface.Int_printer))))) |}];
+        (name Test_interfaces.Int_printer.Provider_interface.Int_printer)))))
+    |}];
   ()
 ;;
