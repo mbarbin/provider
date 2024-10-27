@@ -25,7 +25,7 @@
    (>= 4.14))
   (sexplib0
    (and
-    (>= v0.17)
+    (>= v0.16)
     (< v0.18)))))
 
 (package
@@ -33,46 +33,46 @@
  (synopsis "Tests for provider")
  (depends
   (ocaml
-   (>= 5.2))
+   (>= 4.14))
   (base
    (and
-    (>= v0.17)
+    (>= v0.16)
     (< v0.18)))
   (expect_test_helpers_core
    (and
-    (>= v0.17)
+    (>= v0.16)
     (< v0.18)))
   (ppx_compare
    (and
-    (>= v0.17)
+    (>= v0.16)
     (< v0.18)))
   (ppx_enumerate
    (and
-    (>= v0.17)
+    (>= v0.16)
     (< v0.18)))
   (ppx_expect
    (and
-    (>= v0.17)
+    (>= v0.16)
     (< v0.18)))
   (ppx_hash
    (and
-    (>= v0.17)
+    (>= v0.16)
     (< v0.18)))
   (ppx_here
    (and
-    (>= v0.17)
+    (>= v0.16)
     (< v0.18)))
   (ppx_let
    (and
-    (>= v0.17)
+    (>= v0.16)
     (< v0.18)))
   (ppx_sexp_conv
    (and
-    (>= v0.17)
+    (>= v0.16)
     (< v0.18)))
   (ppx_sexp_value
    (and
-    (>= v0.17)
+    (>= v0.16)
     (< v0.18)))
   (ppxlib
    (>= 0.33))
