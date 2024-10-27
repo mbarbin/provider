@@ -2,7 +2,7 @@
     and {!module:Test_interfaces.Float_printer} interfaces.
 
     The structure of this file is very similar to the [Eio_reader] module, thus
-    is not documented in details. Refer to {!Eio_reader} for more. *)
+    is not documented in details. Refer to [Eio_reader] for more info. *)
 
 (** In this case we decided to expose the type {!type:t} and {!val:handler}, to
     demonstrate how to override a particular binding. See [test__override.ml]. *)
