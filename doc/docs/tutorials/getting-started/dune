@@ -1,5 +1,5 @@
 (mdx
- (package provider-tests)
+ (package provider-dev)
  (deps
   (package provider)
   (glob_files *.txt))

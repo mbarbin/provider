@@ -1,6 +1,6 @@
 (library
  (name eio_test_providers)
- (public_name provider-tests.eio_test_providers)
+ (public_name provider-dev.eio_test_providers)
  (inline_tests)
  (flags
   :standard
