@@ -82,7 +82,7 @@
 (package
  (name provider-dev)
  (synopsis
-  "Package to regroup dev targets for the provider project, documentation, etc.")
+  "Package to regroup dev targets for the provider project, documentation, and more")
  (depends
   (ocaml
    (>= 5.2))
