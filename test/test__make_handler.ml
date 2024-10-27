@@ -4,26 +4,39 @@
    equivalent interfaces. This ensures consistency across different methods of
    interface creation. *)
 
+let%expect_test "int-printer" =
+  let printer = Providers.Int_printer.make () in
+  Interface.Int_printer.print printer 123_456_789;
+  [%expect {| 123456789 |}];
+  ()
+;;
+
 let%expect_test "make interface" =
-  let trait1 =
+  let binding1 =
     Provider.Trait.implement
       Interface.Int_printer.Provider_interface.Int_printer
       ~impl:(module Providers.Num_printer.Impl)
   in
+  Interface.Int_printer.print
+    (Provider.T { t = (); handler = Provider.Handler.make [ binding1 ] })
+    1234;
+  [%expect {| 1234 |}];
   let num1 =
     Interface.Int_printer.Provider_interface.make (module Providers.Num_printer.Impl)
   in
-  (match trait1, List.hd_exn (Provider.Handler.bindings num1) with
+  Interface.Int_printer.print (Provider.T { t = (); handler = num1 }) 5678;
+  [%expect {| 5678 |}];
+  (match binding1, List.hd_exn (Provider.Handler.bindings num1) with
    | T t, T t' ->
      require [%here] (Provider.Trait.same t.trait t'.trait);
      [%expect {||}];
      ());
-  let trait2 =
+  let binding2 =
     Provider.Trait.implement
       Interface.Float_printer.Provider_interface.Float_printer
       ~impl:(module Providers.Num_printer.Impl)
   in
-  (match trait1, trait2 with
+  (match binding1, binding2 with
    | T t1, T t2 ->
      print_s
        [%sexp
@@ -49,17 +62,17 @@ let%expect_test "make interface" =
        [%here]
        (module Provider.Trait.Uid)
        (Provider.Binding.uid c1)
-       (Provider.Binding.uid trait1);
+       (Provider.Binding.uid binding1);
      [%expect {||}]
    | _ -> assert false);
   let empty = Provider.Handler.make [] in
   require [%here] (Provider.Handler.is_empty empty);
   require [%here] (List.is_empty (Provider.Handler.bindings empty));
-  let num2 = Provider.Handler.make [ trait2 ] in
+  let num2 = Provider.Handler.make [ binding2 ] in
   require [%here] (not (Provider.Handler.is_empty num2));
   require [%here] (not (Provider.Private.Handler.same_trait_uids empty num2));
   [%expect {||}];
-  let num3 = Provider.Handler.make [ trait1; trait2 ] in
+  let num3 = Provider.Handler.make [ binding1; binding2 ] in
   let num4 = Provider.Handler.extend num1 ~with_:(Provider.Handler.bindings num2) in
   require [%here] (Provider.Private.Handler.same_trait_uids num3 num4);
   [%expect {||}];

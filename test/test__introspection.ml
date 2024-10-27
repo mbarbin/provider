@@ -23,6 +23,8 @@ let print_implements (Provider.T { t = _; handler }) =
                : bool)
           ; int_printer =
               (implements Interface.Int_printer.Provider_interface.Int_printer : bool)
+          ; float_printer =
+              (implements Interface.Float_printer.Provider_interface.Float_printer : bool)
           }
       }]
 ;;
@@ -35,9 +37,10 @@ let%expect_test "introspection" =
       implements (
         (file_reader      false)
         (directory_reader false)
-        (int_printer      false))))
+        (int_printer      false)
+        (float_printer    false))))
     |}];
-  let unix_reader = Providers.Unix_reader.make () in
+  let int_printer = Providers.Int_printer.make () in
   let num_printer = Providers.Num_printer.make () in
   print_implements num_printer;
   [%expect
@@ -46,16 +49,18 @@ let%expect_test "introspection" =
       implements (
         (file_reader      false)
         (directory_reader false)
-        (int_printer      true))))
+        (int_printer      true)
+        (float_printer    true))))
     |}];
-  print_implements unix_reader;
+  print_implements int_printer;
   [%expect
     {|
     ((
       implements (
         (file_reader      false)
-        (directory_reader true)
-        (int_printer      false))))
+        (directory_reader false)
+        (int_printer      true)
+        (float_printer    false))))
     |}];
   let id_mapping = Hashtbl.create (module Int) in
   let next_id = ref 0 in
@@ -72,20 +77,20 @@ let%expect_test "introspection" =
     Sexp.Atom (Int.to_string id)
   in
   Ref.set_temporarily Provider.Trait.Info.sexp_of_id sexp_of_id ~f:(fun () ->
-    print_implemented_traits unix_reader;
+    print_implemented_traits int_printer;
     [%expect
       {|
       ((
         (id 0)
-        (name
-         Provider_test__Interface__Directory_reader.Provider_interface.Directory_reader))) |}];
+        (name Provider_test__Interface__Int_printer.Provider_interface.Int_printer)))
+      |}];
     print_implemented_traits num_printer;
     [%expect
       {|
       (((id 1)
         (name
          Provider_test__Interface__Float_printer.Provider_interface.Float_printer))
-       ((id 2)
+       ((id 0)
         (name Provider_test__Interface__Int_printer.Provider_interface.Int_printer)))
       |}];
     ());
