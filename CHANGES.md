@@ -1,24 +1,21 @@
-## 0.0.10 (unreleased)
+## 0.0.10 (2024-10-27)
 
 ### Added
 
-- Added `Trait.Uid.seeded_hash` (#23, @mbarbin).
+- Added `Trait.Uid.seeded_hash` (#24, @mbarbin).
 - Make the library build with `ocaml.4.14` (#22, @jonahbeckford, @mbarbin).
 - Added new checks in CI (build checks on windows and macos) (#21, @mbarbin).
 - Added a tutorial with new examples of handler-based polymorphism (#13, @mbarbin).
 
 ### Changed
 
+- Split the tests and enable most tests in the CI, including `ocaml.4.14` (#25, @mbarbin).
 - Make the library detect invalid Traits earlier (during handler creation) (#20, @mbarbin).
-- Rename `explanation` section of documentation per diataxis.
-
-### Deprecated
+- Rename `explanation` section of documentation per diataxis (#11, @mbarbin).
 
 ### Fixed
 
 - Made the lib raise an exception instead of a segfault under some invalid usage (#18, @mbarbin).
-
-### Removed
 
 ## 0.0.9 (2024-08-26)
 
