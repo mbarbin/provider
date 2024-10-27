@@ -6,6 +6,14 @@ module Array : sig
   val for_alli : 'a array -> f:(int -> 'a -> bool) -> bool
 end
 
+module Int : sig
+  include module type of Int
+
+  (** We re-export hash functions here to make the code compatible with earlier
+      ocaml versions. [Stdlib.Int.hash] is available since [ocaml.5.1]. *)
+  val hash : int -> int
+end
+
 module List : sig
   include module type of ListLabels
 
