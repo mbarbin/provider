@@ -22,7 +22,7 @@
  (synopsis "Dynamic Dispatch with Traits")
  (depends
   (ocaml
-   (>= 5.2))
+   (>= 4.14))
   (sexplib0
    (and
     (>= v0.17)
