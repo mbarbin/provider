@@ -18,7 +18,7 @@ type t
     {!module:Interface.File_reader}. *)
 val make
   :  env:< fs : _ Eio.Path.t ; .. >
-  -> [ Interface.Directory_reader.tag | Interface.File_reader.tag ] Provider.t
+  -> [ Test_interfaces.Directory_reader.tag | Test_interfaces.File_reader.tag ] Provider.t
 
 (** In this specific example, we chose to expose the signature of the provider's
     implementation. This is not something that is usually required, since
@@ -28,6 +28,6 @@ val make
 module Impl : sig
   type nonrec t = t
 
-  include Interface.Directory_reader.Provider_interface.S with type t := t
-  include Interface.File_reader.Provider_interface.S with type t := t
+  include Test_interfaces.Directory_reader.Provider_interface.S with type t := t
+  include Test_interfaces.File_reader.Provider_interface.S with type t := t
 end

@@ -10,9 +10,9 @@ include Impl
 let handler : (unit, [ `Int_printer | `Float_printer ]) Provider.Handler.t =
   Provider.Handler.make
     (List.concat
-       [ Interface.Int_printer.Provider_interface.make (module Impl)
+       [ Test_interfaces.Int_printer.Provider_interface.make (module Impl)
          |> Provider.Handler.bindings
-       ; Interface.Float_printer.Provider_interface.make (module Impl)
+       ; Test_interfaces.Float_printer.Provider_interface.make (module Impl)
          |> Provider.Handler.bindings
        ])
 ;;

@@ -25,7 +25,7 @@ let with_temp_dir ~env ~path ~f =
 let print_all_text_files t ~path =
   print_s
     [%sexp
-      (Interface.Directory_reader.find_files_with_extension t ~path ~ext:".txt"
+      (Test_interfaces.Directory_reader.find_files_with_extension t ~path ~ext:".txt"
        : string list)]
 ;;
 
@@ -33,10 +33,10 @@ let print_all_text_files t ~path =
    capabilities. *)
 let print_all_text_files_with_lines t ~path =
   List.iter
-    (Interface.Directory_reader.find_files_with_extension t ~path ~ext:".txt")
+    (Test_interfaces.Directory_reader.find_files_with_extension t ~path ~ext:".txt")
     ~f:(fun file ->
       let lines =
-        let contents = Interface.File_reader.load t ~path:(path ^ "/" ^ file) in
+        let contents = Test_interfaces.File_reader.load t ~path:(path ^ "/" ^ file) in
         List.sum (module Int) (String.split_lines contents) ~f:(Fn.const 1)
       in
       print_s [%sexp { file : string; lines : int }])
@@ -47,14 +47,14 @@ let print_all_text_files_with_lines t ~path =
    requiring it. *)
 let print_all_text_files_with_lines_if_available t ~path =
   List.iter
-    (Interface.Directory_reader.find_files_with_extension t ~path ~ext:".txt")
+    (Test_interfaces.Directory_reader.find_files_with_extension t ~path ~ext:".txt")
     ~f:(fun file ->
       let lines =
         let (Provider.T { t; handler }) = t in
         match
           Provider.Handler.lookup_opt
             handler
-            ~trait:Interface.File_reader.Provider_interface.File_reader
+            ~trait:Test_interfaces.File_reader.Provider_interface.File_reader
         with
         | None -> "not-available"
         | Some (module File_reader) ->
@@ -67,16 +67,18 @@ let print_all_text_files_with_lines_if_available t ~path =
 
 (* Now let's put it all together in a test. *)
 let%expect_test "test" =
-  let unix_reader = Providers.Unix_reader.make () in
+  let unix_reader = Test_providers.Unix_reader.make () in
   Eio_main.run
   @@ fun env ->
-  let eio_reader = Providers.Eio_reader.make ~env in
+  let eio_reader = Eio_test_providers.Eio_reader.make ~env in
   with_temp_dir ~env ~path:"test" ~f:(fun dir ->
     print_s
-      [%sexp (Interface.Directory_reader.readdir unix_reader ~path:dir : string list)];
+      [%sexp
+        (Test_interfaces.Directory_reader.readdir unix_reader ~path:dir : string list)];
     [%expect {| () |}];
     print_s
-      [%sexp (Interface.Directory_reader.readdir eio_reader ~path:dir : string list)];
+      [%sexp
+        (Test_interfaces.Directory_reader.readdir eio_reader ~path:dir : string list)];
     [%expect {| () |}];
     print_all_text_files unix_reader ~path:dir;
     [%expect {| () |}];

@@ -12,10 +12,10 @@ module Int_hum_printer = struct
       { t = ()
       ; handler =
           Provider.Handler.extend
-            Providers.Num_printer.handler
+            Test_providers.Num_printer.handler
             ~with_:
               [ Provider.Trait.implement
-                  Interface.Int_printer.Provider_interface.Int_printer
+                  Test_interfaces.Int_printer.Provider_interface.Int_printer
                   ~impl:(module Impl)
               ]
       }
@@ -31,18 +31,17 @@ let%expect_test "override" =
     print_s [%sexp (info : Sexp.t list)]
   in
   let test printer =
-    Interface.Int_printer.print printer 1234;
-    Interface.Float_printer.print printer 1234.5678
+    Test_interfaces.Int_printer.print printer 1234;
+    Test_interfaces.Float_printer.print printer 1234.5678
   in
-  let num_printer = Providers.Num_printer.make () in
+  let num_printer = Test_providers.Num_printer.make () in
   print_implemented_traits num_printer;
   [%expect
     {|
-      (((id #id)
-        (name
-         Provider_test__Interface__Float_printer.Provider_interface.Float_printer))
-       ((id #id)
-        (name Provider_test__Interface__Int_printer.Provider_interface.Int_printer))) |}];
+    (((id #id) (name Test_interfaces.Int_printer.Provider_interface.Int_printer))
+     ((id #id)
+      (name Test_interfaces.Float_printer.Provider_interface.Float_printer)))
+    |}];
   test num_printer;
   [%expect {|
       1234
@@ -51,11 +50,10 @@ let%expect_test "override" =
   print_implemented_traits hum_printer;
   [%expect
     {|
-      (((id #id)
-        (name
-         Provider_test__Interface__Float_printer.Provider_interface.Float_printer))
-       ((id #id)
-        (name Provider_test__Interface__Int_printer.Provider_interface.Int_printer))) |}];
+    (((id #id) (name Test_interfaces.Int_printer.Provider_interface.Int_printer))
+     ((id #id)
+      (name Test_interfaces.Float_printer.Provider_interface.Float_printer)))
+    |}];
   test hum_printer;
   (* Now there's an additional underscore separator in '1_234'. *)
   [%expect {|

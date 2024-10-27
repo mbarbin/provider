@@ -17,9 +17,17 @@ let print_implements (Provider.T { t = _; handler }) =
     [%sexp
       { implements =
           { file_reader =
-              (implements Interface.File_reader.Provider_interface.File_reader : bool)
+              (implements Test_interfaces.File_reader.Provider_interface.File_reader
+               : bool)
           ; directory_reader =
-              (implements Interface.Directory_reader.Provider_interface.Directory_reader
+              (implements
+                 Test_interfaces.Directory_reader.Provider_interface.Directory_reader
+               : bool)
+          ; int_printer =
+              (implements Test_interfaces.Int_printer.Provider_interface.Int_printer
+               : bool)
+          ; float_printer =
+              (implements Test_interfaces.Float_printer.Provider_interface.Float_printer
                : bool)
           }
       }]
@@ -32,25 +40,32 @@ let%expect_test "introspection" =
     ((
       implements (
         (file_reader      false)
-        (directory_reader false)))) |}];
-  let unix_reader = Providers.Unix_reader.make () in
-  Eio_main.run
-  @@ fun env ->
-  let eio_reader = Providers.Eio_reader.make ~env in
-  print_implements eio_reader;
-  [%expect
-    {|
-    ((
-      implements (
-        (file_reader      true)
-        (directory_reader true)))) |}];
-  print_implements unix_reader;
+        (directory_reader false)
+        (int_printer      false)
+        (float_printer    false))))
+    |}];
+  let int_printer = Test_providers.Int_printer.make () in
+  let num_printer = Test_providers.Num_printer.make () in
+  print_implements num_printer;
   [%expect
     {|
     ((
       implements (
         (file_reader      false)
-        (directory_reader true)))) |}];
+        (directory_reader false)
+        (int_printer      true)
+        (float_printer    true))))
+    |}];
+  print_implements int_printer;
+  [%expect
+    {|
+    ((
+      implements (
+        (file_reader      false)
+        (directory_reader false)
+        (int_printer      true)
+        (float_printer    false))))
+    |}];
   let id_mapping = Hashtbl.create (module Int) in
   let next_id = ref 0 in
   let sexp_of_id id =
@@ -66,21 +81,16 @@ let%expect_test "introspection" =
     Sexp.Atom (Int.to_string id)
   in
   Ref.set_temporarily Provider.Trait.Info.sexp_of_id sexp_of_id ~f:(fun () ->
-    print_implemented_traits unix_reader;
+    print_implemented_traits int_printer;
+    [%expect
+      {| (((id 0) (name Test_interfaces.Int_printer.Provider_interface.Int_printer))) |}];
+    print_implemented_traits num_printer;
     [%expect
       {|
-      ((
-        (id 0)
-        (name
-         Provider_test__Interface__Directory_reader.Provider_interface.Directory_reader))) |}];
-    print_implemented_traits eio_reader;
-    [%expect
-      {|
-      (((id 0)
-        (name
-         Provider_test__Interface__Directory_reader.Provider_interface.Directory_reader))
+      (((id 0) (name Test_interfaces.Int_printer.Provider_interface.Int_printer))
        ((id 1)
-        (name Provider_test__Interface__File_reader.Provider_interface.File_reader))) |}];
+        (name Test_interfaces.Float_printer.Provider_interface.Float_printer)))
+      |}];
     ());
   ()
 ;;

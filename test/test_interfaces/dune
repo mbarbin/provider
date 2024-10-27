@@ -1,6 +1,6 @@
 (library
- (name provider_test)
- (public_name provider-tests.provider_test)
+ (name test_interfaces)
+ (public_name provider-tests.test_interfaces)
  (inline_tests)
  (flags
   :standard
@@ -12,13 +12,7 @@
   Base
   -open
   Expect_test_helpers_base)
- (libraries
-  base
-  expect_test_helpers_core.expect_test_helpers_base
-  provider
-  test_interfaces
-  test_providers
-  unix)
+ (libraries base expect_test_helpers_core.expect_test_helpers_base provider)
  (instrumentation
   (backend bisect_ppx))
  (lint
