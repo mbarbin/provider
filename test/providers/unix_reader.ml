@@ -10,12 +10,5 @@ include Impl
 
 let make () : [ `Directory_reader ] Provider.t =
   Provider.T
-    { t = ()
-    ; handler =
-        Provider.Handler.make
-          [ Provider.Trait.implement
-              Interface.Directory_reader.Provider_interface.Directory_reader
-              ~impl:(module Impl)
-          ]
-    }
+    { t = (); handler = Interface.Directory_reader.Provider_interface.make (module Impl) }
 ;;
