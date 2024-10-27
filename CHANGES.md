@@ -2,6 +2,7 @@
 
 ### Added
 
+- Make the library build with `ocaml.4.14` (#22, @jonahbeckford, @mbarbin).
 - Added new checks in CI (build checks on windows and macos) (#21, @mbarbin).
 - Added a tutorial with new examples of handler-based polymorphism (#13, @mbarbin).
 

@@ -11,6 +11,12 @@ module Array = struct
   ;;
 end
 
+module Int = struct
+  include Int
+
+  let hash = (Hashtbl.hash : int -> int)
+end
+
 module List = struct
   include ListLabels
 
