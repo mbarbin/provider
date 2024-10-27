@@ -52,10 +52,10 @@ jobs:
       #     janestreet-bleeding-external: https://github.com/janestreet/opam-repository.git#external-packages
 
       - name: Install dependencies
-        run: opam install . --deps-only --with-test
+        run: opam install ./provider.opam --deps-only --with-test
 
       - name: Build
-        run: opam exec -- dune build @all
+        run: opam exec -- dune build @all -p provider
 
       # For now, we only run tests for the `provider` package. Effectively, this
       # runs nothing because the tests are in the `provider-test` package. We
