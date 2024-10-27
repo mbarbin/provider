@@ -1,8 +1,12 @@
 name: ci
 
 on:
-  - pull_request
-  - push
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - "**" # This will match pull requests targeting any branch
 
 jobs:
   build:
