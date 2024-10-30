@@ -20,5 +20,5 @@ let print (Provider.T { t; handler }) i =
   let module M =
     (val Provider.Handler.lookup handler ~trait:Provider_interface.Int_printer)
   in
-  print_endline (M.string_of_int t i)
+  Stdlib.print_endline (M.string_of_int t i)
 ;;
