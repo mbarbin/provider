@@ -15,8 +15,6 @@ module Provider_interface : sig
     val string_of_int : t -> int -> string
   end
 
-  type (_, _, _) Provider.Trait.t +=
-    | Int_printer : ('t, (module S with type t = 't), [> tag ]) Provider.Trait.t
-
+  val int_printer : ('t, (module S with type t = 't), [> tag ]) Provider.Trait.t
   val make : (module S with type t = 't) -> ('t, tag) Provider.Handler.t
 end

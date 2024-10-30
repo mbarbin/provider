@@ -17,17 +17,17 @@ let print_implements (Provider.T { t = _; handler }) =
     [%sexp
       { implements =
           { file_reader =
-              (implements Test_interfaces.File_reader.Provider_interface.File_reader
+              (implements Test_interfaces.File_reader.Provider_interface.file_reader
                : bool)
           ; directory_reader =
               (implements
-                 Test_interfaces.Directory_reader.Provider_interface.Directory_reader
+                 Test_interfaces.Directory_reader.Provider_interface.directory_reader
                : bool)
           ; int_printer =
-              (implements Test_interfaces.Int_printer.Provider_interface.Int_printer
+              (implements Test_interfaces.Int_printer.Provider_interface.int_printer
                : bool)
           ; float_printer =
-              (implements Test_interfaces.Float_printer.Provider_interface.Float_printer
+              (implements Test_interfaces.Float_printer.Provider_interface.float_printer
                : bool)
           }
       }]

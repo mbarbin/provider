@@ -8,19 +8,27 @@ module Provider_interface = struct
     val string_of_int : t -> int -> string
   end
 
-  type (_, _, _) Provider.Trait.t +=
-    | Int_printer : ('t, (module S with type t = 't), [> tag ]) Provider.Trait.t
+  module Trait = struct
+    type (_, _, _) Provider.Trait.t +=
+      | Int_printer : ('t, (module S with type t = 't), [> tag ]) Provider.Trait.t
 
-  let () = Provider.Trait.Info.register_name Int_printer ~name:"Int_printer"
+    let t = Int_printer
+  end
+
+  let int_printer =
+    (Trait.t : ('t, (module S with type t = 't), [> tag ]) Provider.Trait.t)
+  ;;
+
+  let () = Provider.Trait.Info.register_name int_printer ~name:"Int_printer"
 
   let make (type t) (module M : S with type t = t) =
-    Provider.Handler.make [ Provider.Trait.implement Int_printer ~impl:(module M) ]
+    Provider.Handler.make [ Provider.Trait.implement int_printer ~impl:(module M) ]
   ;;
 end
 
 let print (Provider.T { t; handler }) i =
   let module M =
-    (val Provider.Handler.lookup handler ~trait:Provider_interface.Int_printer)
+    (val Provider.Handler.lookup handler ~trait:Provider_interface.int_printer)
   in
   Stdlib.print_endline (M.string_of_int t i)
 ;;

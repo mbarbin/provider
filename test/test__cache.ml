@@ -17,11 +17,11 @@ let%expect_test "override" =
   let cache_state_of_uid uid =
     if Provider.Trait.Uid.equal
          uid
-         (Test_interfaces.Int_printer.Provider_interface.Int_printer |> Provider.Trait.uid)
+         (Test_interfaces.Int_printer.Provider_interface.int_printer |> Provider.Trait.uid)
     then Cache_state.Int_printer
     else if Provider.Trait.Uid.equal
               uid
-              (Test_interfaces.Float_printer.Provider_interface.Float_printer
+              (Test_interfaces.Float_printer.Provider_interface.float_printer
                |> Provider.Trait.uid)
     then Cache_state.Float_printer
     else assert false [@coverage off]
@@ -45,7 +45,7 @@ let%expect_test "override" =
       ignore
         (Provider.Handler.lookup
            handler
-           ~trait:Test_interfaces.Int_printer.Provider_interface.Int_printer
+           ~trait:Test_interfaces.Int_printer.Provider_interface.int_printer
          : (module Test_interfaces.Int_printer.Provider_interface.S with type t = a)))
       handler;
     require_equal
@@ -59,7 +59,7 @@ let%expect_test "override" =
       ignore
         (Provider.Handler.lookup
            handler
-           ~trait:Test_interfaces.Float_printer.Provider_interface.Float_printer
+           ~trait:Test_interfaces.Float_printer.Provider_interface.float_printer
          : (module Test_interfaces.Float_printer.Provider_interface.S with type t = a)))
       handler;
     require_equal
@@ -74,7 +74,7 @@ let%expect_test "override" =
       (Option.is_some
          (Provider.Handler.lookup_opt
             handler
-            ~trait:Test_interfaces.Int_printer.Provider_interface.Int_printer));
+            ~trait:Test_interfaces.Int_printer.Provider_interface.int_printer));
     require_equal
       [%here]
       (module Cache_state)
@@ -87,7 +87,7 @@ let%expect_test "override" =
       (Option.is_some
          (Provider.Handler.lookup_opt
             handler
-            ~trait:Test_interfaces.Float_printer.Provider_interface.Float_printer));
+            ~trait:Test_interfaces.Float_printer.Provider_interface.float_printer));
     require_equal
       [%here]
       (module Cache_state)
@@ -100,7 +100,7 @@ let%expect_test "override" =
       [%here]
       (Provider.Handler.implements
          handler
-         ~trait:Test_interfaces.Int_printer.Provider_interface.Int_printer);
+         ~trait:Test_interfaces.Int_printer.Provider_interface.int_printer);
     let post_cache_state = cache_state handler in
     require_equal [%here] (module Cache_state) pre_cache_state post_cache_state
   in
@@ -110,7 +110,7 @@ let%expect_test "override" =
       [%here]
       (Provider.Handler.implements
          handler
-         ~trait:Test_interfaces.Float_printer.Provider_interface.Float_printer);
+         ~trait:Test_interfaces.Float_printer.Provider_interface.float_printer);
     let post_cache_state = cache_state handler in
     require_equal [%here] (module Cache_state) pre_cache_state post_cache_state
   in

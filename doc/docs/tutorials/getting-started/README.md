@@ -126,8 +126,14 @@ To use Provider, first we have to create a new tag and a new type constructor th
 ```ocaml
 type reader = [ `Reader ]
 
-type (_, _, _) Provider.Trait.t +=
-  Reader : ('t, (module READER with type t = 't), [> reader ]) Provider.Trait.t
+module Reader : sig
+  val t : ('t, (module READER with type t = 't), [> reader ]) Provider.Trait.t
+end = struct
+  type (_, _, _) Provider.Trait.t +=
+    Reader : ('t, (module READER with type t = 't), [> reader ]) Provider.Trait.t
+
+  let t = Reader
+end
 ```
 
 ### Parametrized Library
@@ -142,11 +148,11 @@ module Show_files2 : sig
 end = struct
 
   let print_files_with_ext (Provider.T { t = reader; handler }) ~path ~ext =
-    let module Reader = (val Provider.Handler.lookup handler ~trait:Reader) in
-    let entries = Reader.readdir reader ~path |> List.sort String.compare in
+    let module R = (val Provider.Handler.lookup handler ~trait:Reader.t) in
+    let entries = R.readdir reader ~path |> List.sort String.compare in
     let files = List.filter (String.ends_with ~suffix:ext) entries in
     files |> List.iter (fun file ->
-      let contents = Reader.load_file reader ~path:(Filename.concat path file) in
+      let contents = R.load_file reader ~path:(Filename.concat path file) in
       let line_count =
         List.length (String.split_on_char '\n' contents)
         - (if String.ends_with ~suffix:"\n" contents then 1 else 0)
@@ -168,8 +174,8 @@ module Show_files3 : sig
 end = struct
 
   let print_files_with_ext (Provider.T { t = reader; handler }) ~path ~ext =
-    let module Reader = (val Provider.Handler.lookup handler ~trait:Reader) in
-    let module M = Show_files (Reader) in
+    let module R = (val Provider.Handler.lookup handler ~trait:Reader.t) in
+    let module M = Show_files (R) in
     M.print_files_with_ext reader ~path ~ext
 
 end
@@ -187,7 +193,7 @@ let sys_reader () : [ `Reader ] Provider.t =
     { t = ()
     ; handler =
         Provider.Handler.make
-          [ Provider.Trait.implement Reader ~impl:(module Sys_reader) ]
+          [ Provider.Trait.implement Reader.t ~impl:(module Sys_reader) ]
     }
 ```
 

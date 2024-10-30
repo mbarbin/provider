@@ -37,33 +37,47 @@ let%expect_test "Eq_opt at runtime" =
 (* Next we'll look at the representation of various Traits. We then go and
    attempt to characterize ways the API may be abused. *)
 
-type ('t, 'module_type, 'tag) Provider.Trait.t +=
-  | No_arg_A : ('t, (module T with type t = 't), [> `T ]) Provider.Trait.t
-  | No_arg_B : ('t, (module T with type t = 't), [> `T ]) Provider.Trait.t
+module No_arg_A : sig
+  val t : ('t, (module T with type t = 't), [> `T ]) Provider.Trait.t
+end = struct
+  type ('t, 'module_type, 'tag) Provider.Trait.t +=
+    | No_arg_A : ('t, (module T with type t = 't), [> `T ]) Provider.Trait.t
+
+  let t = No_arg_A
+end
+
+module No_arg_B : sig
+  val t : ('t, (module T with type t = 't), [> `T ]) Provider.Trait.t
+end = struct
+  type ('t, 'module_type, 'tag) Provider.Trait.t +=
+    | No_arg_B : ('t, (module T with type t = 't), [> `T ]) Provider.Trait.t
+
+  let t = No_arg_B
+end
 
 let () =
-  Provider.Trait.Info.register_name No_arg_A ~name:"No_arg_A";
-  Provider.Trait.Info.register_name No_arg_B ~name:"No_arg_B";
+  Provider.Trait.Info.register_name No_arg_A.t ~name:"No_arg_A";
+  Provider.Trait.Info.register_name No_arg_B.t ~name:"No_arg_B";
   ()
 ;;
 
 let%expect_test "extension_constructor" =
-  print_s [%sexp (Provider.Trait.info No_arg_A : Provider.Trait.Info.t)];
+  print_s [%sexp (Provider.Trait.info No_arg_A.t : Provider.Trait.Info.t)];
   [%expect {|
     ((id   #id)
      (name No_arg_A))
     |}];
-  print_s [%sexp (Provider.Trait.info No_arg_B : Provider.Trait.Info.t)];
+  print_s [%sexp (Provider.Trait.info No_arg_B.t : Provider.Trait.Info.t)];
   [%expect {|
     ((id   #id)
      (name No_arg_B))
     |}];
-  let extension_constructor_A = Obj.Extension_constructor.of_val No_arg_A in
+  let extension_constructor_A = Obj.Extension_constructor.of_val No_arg_A.t in
   print_s [%sexp (Obj.Extension_constructor.name extension_constructor_A : string)];
-  [%expect {| Provider_test.Test__extensible_variant.No_arg_A |}];
-  let extension_constructor_B = Obj.Extension_constructor.of_val No_arg_B in
+  [%expect {| Provider_test.Test__extensible_variant.No_arg_A.No_arg_A |}];
+  let extension_constructor_B = Obj.Extension_constructor.of_val No_arg_B.t in
   print_s [%sexp (Obj.Extension_constructor.name extension_constructor_B : string)];
-  [%expect {| Provider_test.Test__extensible_variant.No_arg_B |}];
+  [%expect {| Provider_test.Test__extensible_variant.No_arg_B.No_arg_B |}];
   (* We do not print the actual runtime ids because it is too brittle. We simply
      characterize that they are different. *)
   let idA = Obj.Extension_constructor.id extension_constructor_A in
@@ -78,7 +92,7 @@ let%expect_test "implement" =
   let handler =
     Provider.Handler.make
       [ Provider.Private.Trait.implement_unsafe
-          No_arg_A
+          No_arg_A.t
           ~impl:
             (module struct
               type t = int
@@ -86,7 +100,7 @@ let%expect_test "implement" =
           ~check_trait:true
       ]
   in
-  let module M = (val Provider.Handler.lookup handler ~trait:No_arg_A) in
+  let module M = (val Provider.Handler.lookup handler ~trait:No_arg_A.t) in
   let x = (0 : M.t) in
   print_s [%sexp (x : int)];
   [%expect {| 0 |}];
@@ -94,34 +108,36 @@ let%expect_test "implement" =
 ;;
 
 let%expect_test "no_arg physical equality" =
-  require [%here] (phys_equal No_arg_A No_arg_A);
+  require [%here] (phys_equal No_arg_A.t No_arg_A.t);
   [%expect {||}];
-  require [%here] (phys_equal No_arg_B No_arg_B);
+  require [%here] (phys_equal No_arg_B.t No_arg_B.t);
   [%expect {||}];
-  require [%here] (not (phys_equal No_arg_A No_arg_B));
+  require [%here] (not (phys_equal No_arg_A.t No_arg_B.t));
   [%expect {||}];
-  let new_A () = No_arg_A in
-  require [%here] (phys_equal (new_A ()) No_arg_A);
+  let new_A () = No_arg_A.t in
+  require [%here] (phys_equal (new_A ()) No_arg_A.t);
   [%expect {||}];
   require [%here] (phys_equal (new_A ()) (new_A ()));
   [%expect {||}];
   ()
 ;;
 
-module Name_override = struct
+module Name_override : sig
+  val t : ('t, (module T with type t = 't), [> `T ]) Provider.Trait.t
+end = struct
   type ('t, 'module_type, 'tag) Provider.Trait.t +=
     | No_arg_A : ('t, (module T with type t = 't), [> `T ]) Provider.Trait.t
+
+  let t = No_arg_A
 end
 
-let () = Provider.Trait.Info.register_name Name_override.No_arg_A ~name:"No_arg_A"
+let () = Provider.Trait.Info.register_name Name_override.t ~name:"No_arg_A"
 
 let%expect_test "name override" =
-  require [%here] (not (phys_equal No_arg_A Name_override.No_arg_A));
+  require [%here] (not (phys_equal No_arg_A.t Name_override.t));
   [%expect {||}];
-  let extension_constructor_A = Obj.Extension_constructor.of_val No_arg_A in
-  let extension_constructor_A' =
-    Obj.Extension_constructor.of_val Name_override.No_arg_A
-  in
+  let extension_constructor_A = Obj.Extension_constructor.of_val No_arg_A.t in
+  let extension_constructor_A' = Obj.Extension_constructor.of_val Name_override.t in
   require_not_equal
     [%here]
     (module Int)
@@ -267,10 +283,10 @@ let%expect_test "with-arg detection" =
     let has_args = not (phys_equal repr (Obj.repr extension_constructor)) in
     print_s [%sexp { name : string; is_block : bool; size : int; has_args : bool }]
   in
-  test (Obj.repr No_arg_A);
+  test (Obj.repr No_arg_A.t);
   [%expect
     {|
-    ((name Provider_test.Test__extensible_variant.No_arg_A)
+    ((name Provider_test.Test__extensible_variant.No_arg_A.No_arg_A)
      (is_block true)
      (size     2)
      (has_args false))

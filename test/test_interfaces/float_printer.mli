@@ -16,7 +16,5 @@ module Provider_interface : sig
   end
 
   val make : (module S with type t = 't) -> ('t, tag) Provider.Handler.t
-
-  type (_, _, _) Provider.Trait.t +=
-    | Float_printer : ('t, (module S with type t = 't), [> tag ]) Provider.Trait.t
+  val float_printer : ('t, (module S with type t = 't), [> tag ]) Provider.Trait.t
 end

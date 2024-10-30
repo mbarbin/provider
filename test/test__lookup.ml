@@ -34,24 +34,65 @@ end
 
 type 'a t = ([> Tag.t ] as 'a) Provider.t
 
-type (_, _, _) Provider.Trait.t +=
-  | A : ('a, (module S with type t = 'a), [> `A ]) Provider.Trait.t
-  | B : ('a, (module S with type t = 'a), [> `B ]) Provider.Trait.t
-  | C : ('a, (module S with type t = 'a), [> `C ]) Provider.Trait.t
-  | D : ('a, (module S with type t = 'a), [> `D ]) Provider.Trait.t
-  | E : ('a, (module S with type t = 'a), [> `E ]) Provider.Trait.t
-  | F : ('a, (module S with type t = 'a), [> `F ]) Provider.Trait.t
+module A = struct
+  type (_, _, _) Provider.Trait.t +=
+    | A : ('a, (module S with type t = 'a), [> `A ]) Provider.Trait.t
+
+  let t = A
+end
+
+module B = struct
+  type (_, _, _) Provider.Trait.t +=
+    | B : ('a, (module S with type t = 'a), [> `B ]) Provider.Trait.t
+
+  let t = B
+end
+
+module C = struct
+  type (_, _, _) Provider.Trait.t +=
+    | C : ('a, (module S with type t = 'a), [> `C ]) Provider.Trait.t
+
+  let t = C
+end
+
+module D = struct
+  type (_, _, _) Provider.Trait.t +=
+    | D : ('a, (module S with type t = 'a), [> `D ]) Provider.Trait.t
+
+  let t = D
+end
+
+module E = struct
+  type (_, _, _) Provider.Trait.t +=
+    | E : ('a, (module S with type t = 'a), [> `E ]) Provider.Trait.t
+
+  let t = E
+end
+
+module F = struct
+  type (_, _, _) Provider.Trait.t +=
+    | F : ('a, (module S with type t = 'a), [> `F ]) Provider.Trait.t
+
+  let t = F
+end
+
+let a : (_, _, [> `A ]) Provider.Trait.t = A.t
+let b : (_, _, [> `B ]) Provider.Trait.t = B.t
+let c : (_, _, [> `C ]) Provider.Trait.t = C.t
+let d : (_, _, [> `D ]) Provider.Trait.t = D.t
+let e : (_, _, [> `E ]) Provider.Trait.t = E.t
+let f : (_, _, [> `F ]) Provider.Trait.t = F.t
 
 module Selector = struct
   type 'a t = T : ('a, (module S with type t = 'a), Tag.t) Provider.Trait.t -> 'a t
 
   let of_tag = function
-    | `A -> T A
-    | `B -> T B
-    | `C -> T C
-    | `D -> T D
-    | `E -> T E
-    | `F -> T F
+    | `A -> T a
+    | `B -> T b
+    | `C -> T c
+    | `D -> T d
+    | `E -> T e
+    | `F -> T f
   ;;
 end
 
@@ -100,12 +141,12 @@ end
 let provider () : _ t =
   let handler =
     Provider.Handler.make
-      [ Provider.Trait.implement A ~impl:(module Impls.A)
-      ; Provider.Trait.implement B ~impl:(module Impls.B)
-      ; Provider.Trait.implement C ~impl:(module Impls.C)
-      ; Provider.Trait.implement D ~impl:(module Impls.D)
-      ; Provider.Trait.implement E ~impl:(module Impls.E)
-      ; Provider.Trait.implement F ~impl:(module Impls.F)
+      [ Provider.Trait.implement a ~impl:(module Impls.A)
+      ; Provider.Trait.implement b ~impl:(module Impls.B)
+      ; Provider.Trait.implement c ~impl:(module Impls.C)
+      ; Provider.Trait.implement d ~impl:(module Impls.D)
+      ; Provider.Trait.implement e ~impl:(module Impls.E)
+      ; Provider.Trait.implement f ~impl:(module Impls.F)
       ]
   in
   Provider.T { t = (); handler }
@@ -133,10 +174,10 @@ let%expect_test "lookup" =
 let provider2 () : _ t =
   let handler =
     Provider.Handler.make
-      [ Provider.Trait.implement A ~impl:(module Impls.A)
-      ; Provider.Trait.implement B ~impl:(module Impls.B)
-      ; Provider.Trait.implement D ~impl:(module Impls.D)
-      ; Provider.Trait.implement F ~impl:(module Impls.F)
+      [ Provider.Trait.implement a ~impl:(module Impls.A)
+      ; Provider.Trait.implement b ~impl:(module Impls.B)
+      ; Provider.Trait.implement d ~impl:(module Impls.D)
+      ; Provider.Trait.implement f ~impl:(module Impls.F)
       ]
   in
   Provider.T { t = (); handler }
@@ -168,10 +209,10 @@ let%expect_test "sub-handler" =
 let provider3 () : _ t =
   let handler =
     Provider.Handler.make
-      [ Provider.Trait.implement A ~impl:(module Impls.A)
-      ; Provider.Trait.implement C ~impl:(module Impls.C)
-      ; Provider.Trait.implement E ~impl:(module Impls.E)
-      ; Provider.Trait.implement F ~impl:(module Impls.F)
+      [ Provider.Trait.implement a ~impl:(module Impls.A)
+      ; Provider.Trait.implement c ~impl:(module Impls.C)
+      ; Provider.Trait.implement e ~impl:(module Impls.E)
+      ; Provider.Trait.implement f ~impl:(module Impls.F)
       ]
   in
   Provider.T { t = (); handler }
