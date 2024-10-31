@@ -4,6 +4,8 @@
 
 ### Changed
 
+- Register custom trait names instead of extensible variant names (PR, @mbarbin).
+
 ### Deprecated
 
 ### Fixed
