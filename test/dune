@@ -16,6 +16,7 @@
   base
   expect_test_helpers_core.expect_test_helpers_base
   provider
+  provider-tests.higher_kinded
   test_interfaces
   test_providers
   unix)
