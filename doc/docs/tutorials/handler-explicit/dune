@@ -2,5 +2,6 @@
  (package provider-dev)
  (deps
   (package provider)
+  (package provider-tests)
   (glob_files *.txt))
  (preludes prelude.txt))
