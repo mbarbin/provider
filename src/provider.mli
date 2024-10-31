@@ -33,10 +33,10 @@ module Trait : sig
   (** {1 Creating traits} *)
 
   module Create0 (X : sig
-      type t
+      type 'a t
       type module_type
     end) : sig
-    val t : (X.t, X.module_type, _) t
+    val t : ('a X.t, X.module_type, _) t
   end
 
   module Create (X : sig
@@ -46,17 +46,17 @@ module Trait : sig
   end
 
   module Create1 (X : sig
-      type !'a t
+      type (!'a, 'b) t
       type 'a module_type
     end) : sig
-    val t : ('a X.t, 'a X.module_type, _) t
+    val t : (('a, 'b) X.t, 'a X.module_type, _) t
   end
 
   module Create2 (X : sig
-      type (!'a, !'b) t
+      type (!'a, !'b, 'c) t
       type ('a, 'b) module_type
     end) : sig
-    val t : (('a, 'b) X.t, ('a, 'b) X.module_type, _) t
+    val t : (('a, 'b, 'c) X.t, ('a, 'b) X.module_type, _) t
   end
 
   (** {1 Dump & debug} *)

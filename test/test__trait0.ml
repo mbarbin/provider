@@ -26,13 +26,13 @@ let%expect_test "Create" =
 let%expect_test "Create0" =
   let module T1 =
     Provider.Trait.Create0 (struct
-      type t = unit
+      type _ t = unit
       type module_type = unit
     end)
   in
   let module T2 =
     Provider.Trait.Create0 (struct
-      type t = unit
+      type _ t = unit
       type module_type = unit
     end)
   in
@@ -44,13 +44,13 @@ let%expect_test "Create0" =
 let%expect_test "Create1" =
   let module T1 =
     Provider.Trait.Create1 (struct
-      type 'a t = 'a
+      type ('a, _) t = 'a
       type 'a module_type = unit
     end)
   in
   let module T2 =
     Provider.Trait.Create1 (struct
-      type 'a t = 'a
+      type ('a, _) t = 'a
       type 'a module_type = unit
     end)
   in
@@ -62,13 +62,13 @@ let%expect_test "Create1" =
 let%expect_test "Create2" =
   let module T1 =
     Provider.Trait.Create2 (struct
-      type ('a, 'b) t = 'a * 'b
+      type ('a, 'b, _) t = 'a * 'b
       type ('a, 'b) module_type = unit
     end)
   in
   let module T2 =
     Provider.Trait.Create2 (struct
-      type ('a, 'b) t = 'a * 'b
+      type ('a, 'b, _) t = 'a * 'b
       type ('a, 'b) module_type = unit
     end)
   in

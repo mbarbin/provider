@@ -20,33 +20,33 @@ This is rejected through injectivity check.
 
 ```ocaml
 module Trait = Provider.Trait.Create1 (struct
-  type 'a t = unit
+  type (_, _) t = unit
   type 'a module_type = 'a
 end)
 ```
 ```mdx-error
 Lines 1-4, characters 16-7:
 Error: Modules do not match:
-       sig type 'a t = unit type 'a module_type = 'a end
-     is not included in sig type !'a t type 'a module_type end
+       sig type (_, _) t = unit type 'a module_type = 'a end
+     is not included in sig type (!'a, 'b) t type 'a module_type end
      Type declarations do not match:
-       type 'a t = unit
+       type (_, _) t = unit
      is not included in
-       type !'a t
+       type (!'a, 'b) t
      Their variances do not agree.
-     File "src/provider.mli", line 49, characters 6-16: Expected declaration
+     File "src/provider.mli", line 73, characters 6-22: Expected declaration
 ```
 
 Trying to force the injectivity won't do either.
 
 ```ocaml
 module Trait = Provider.Trait.Create1 (struct
-  type !'a t = unit
+  type (!'a, _) t = unit
   type 'a module_type = 'a
 end)
 ```
 ```mdx-error
-Line 2, characters 5-22:
+Line 2, characters 5-27:
 Error: In this definition, expected parameter variances are not satisfied.
        The 1st type parameter was expected to be injective invariant,
        but it is unrestricted.
@@ -60,12 +60,12 @@ Replacing `unit` by a record or a variant doesn't make the injectivity annotatio
 type record = { a : string }
 
 module Trait = Provider.Trait.Create1 (struct
-  type !'a t = record
+  type (!'a, _) t = record
   type 'a module_type = 'a
 end)
 ```
 ```mdx-error
-Line 4, characters 5-24:
+Line 4, characters 5-29:
 Error: In this definition, expected parameter variances are not satisfied.
        The 1st type parameter was expected to be injective invariant,
        but it is unrestricted.
@@ -75,12 +75,12 @@ Error: In this definition, expected parameter variances are not satisfied.
 type variant = A
 
 module Trait = Provider.Trait.Create1 (struct
-  type !'a t = variant
+  type (!'a, _) t = variant
   type 'a module_type = 'a
 end)
 ```
 ```mdx-error
-Line 4, characters 5-25:
+Line 4, characters 5-30:
 Error: In this definition, expected parameter variances are not satisfied.
        The 1st type parameter was expected to be injective invariant,
        but it is unrestricted.
@@ -90,7 +90,7 @@ If you bind the `'a` parameter so the annotation pass, the definition of the tra
 
 ```ocaml
 module Trait = Provider.Trait.Create1 (struct
-  type !'a t = 'a
+  type (!'a, _) t = 'a
   type 'a module_type = 'a
 end)
 ```

@@ -276,9 +276,9 @@ module Mappable : sig
         , (module Mappable with type higher_kinded = 'higher_kinded)
         , [> mappable ] )
         Provider.Trait.t
-end = Provider.Trait.Create2 (struct
-  type (!'a, !'higher_kinded) t = ('a -> 'higher_kinded) Higher_kinded.t
-  type ('a, 'higher_kinded) module_type = (module Mappable with type higher_kinded = 'higher_kinded)
+end = Provider.Trait.Create1 (struct
+  type (!'higher_kinded, 'a) t = ('a -> 'higher_kinded) Higher_kinded.t
+  type 'higher_kinded module_type = (module Mappable with type higher_kinded = 'higher_kinded)
 end)
 ```
 
