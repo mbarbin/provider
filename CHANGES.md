@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Change the API to make the library Type-Safe (breaking change). (#PR, @mbarbin, @v-gb).
 - Register custom trait names instead of extensible variant names (#31, @mbarbin).
 
 ### Deprecated
