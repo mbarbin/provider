@@ -23,6 +23,8 @@ Lines 7-10, characters 3-78:
 Error: Type definition Provider.Trait.t is not extensible
 ```
 
+Now that we have to go through the `Trait.Create` functors, there just isn't any way to build a trait with this extra argument.
+
 ## For reference
 
 We're keeping the rest of the test for reference only, it cannot be written with recent versions of the library anymore.
