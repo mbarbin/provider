@@ -121,7 +121,7 @@ If you are not using opam or dune, we'll assume you're an expert and know what t
 To use Provider, first we have to create a new tag and a new type constructor that will be attached to our `READER` Trait. To do this, we:
 
 - Create a tag type with a polymorphic variant that will be dedicated to our Trait.
-- Add dynamically a new constructor to the `Provider.Trait.t` extensible variant. This uses an OCaml Language Extension named [Extensible variant types](https://ocaml.org/manual/5.2/extensiblevariants.html). This one has the particularity that it is also a [GADT](https://ocaml.org/manual/5.2/gadts.html#start-section)!
+- Create a new trait with one of the `Provider.Trait.Create*` functors.
 
 ```ocaml
 type reader = [ `Reader ]
