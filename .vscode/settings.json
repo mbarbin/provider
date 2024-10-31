@@ -7,6 +7,8 @@
         "Doublable",
         "functors",
         "GADT",
+        "injective",
+        "injectivity",
         "janestreet",
         "kinded",
         "odoc",
