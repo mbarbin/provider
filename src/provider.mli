@@ -26,8 +26,8 @@ module Trait : sig
       - ['tag] is the tag (or tags) indicating the supported Trait. It's a
         phantom type designed to make {!val:Handler.lookup} more type-safe.
 
-      ['module_type] is expected to be a module type (Eio supports single
-      functions but this is discouraged through the use of this library). *)
+      ['module_type] is typically expected to be a module type, but it doesn't
+      have too (functions, constants are fine too, etc.). *)
   type ('t, 'module_type, 'tag) t = ('t, 'module_type, 'tag) Trait0.t
 
   (** {1 Creating traits} *)
