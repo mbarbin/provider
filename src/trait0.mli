@@ -31,3 +31,4 @@ end
 val uid : _ t -> int
 
 val same_witness : ('t, 'mt1, _) t -> ('t, 'mt2, _) t -> ('mt1, 'mt2) Type_eq_opt.t
+val same : _ t -> _ t -> bool

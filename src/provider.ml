@@ -9,7 +9,6 @@ let () =
 ;;
 
 let raise_s msg sexp = raise (E (Sexp.List [ Atom msg; sexp ]))
-let phys_same t1 t2 = phys_equal (Obj.repr t1) (Obj.repr t2)
 
 module Trait = struct
   type ('t, 'module_type, 'tag) t = ('t, 'module_type, 'tag) Trait0.t
@@ -57,9 +56,9 @@ module Trait = struct
     let seeded_hash = Int.seeded_hash
   end
 
-  let uid (t : _ t) = Trait0.uid t
-  let compare_by_uid id1 id2 = Uid.compare (uid id1) (uid id2)
-  let same (id1 : _ t) (id2 : _ t) = phys_same id1 id2
+  let uid = Trait0.uid
+  let compare_by_uid t1 t2 = Uid.compare (uid t1) (uid t2)
+  let same = Trait0.same
   let implement = Binding0.implement
 end
 

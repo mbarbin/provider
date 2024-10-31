@@ -1,3 +1,5 @@
+open! Import
+
 type ('t, 'module_type) ext = ..
 
 type ('t, 'module_type, 'tag) t =
@@ -10,6 +12,8 @@ let uid (t : _ t) = Obj.Extension_constructor.id (Obj.Extension_constructor.of_v
 let same_witness : ('t, 'mt1, _) t -> ('t, 'mt2, _) t -> ('mt1, 'mt2) Type_eq_opt.t =
   fun t1 t2 -> t1.same_witness t2.ext
 ;;
+
+let same (t1 : _ t) (t2 : _ t) = phys_equal (Obj.repr t1) (Obj.repr t2)
 
 module Create0 (X : sig
     type t
