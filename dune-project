@@ -106,10 +106,6 @@
    (and
     (>= v0.17)
     (< v0.18)))
-  (higher_kinded
-   (and
-    (>= v0.17)
-    (< v0.18)))
   (mdx
    (>= 2.4))
   (ppx_compare
