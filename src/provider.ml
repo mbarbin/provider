@@ -242,4 +242,5 @@ type -'tags t =
 module Private = struct
   module Import = Import
   module Handler = Handler
+  module Trait0 = Trait0
 end

@@ -287,4 +287,6 @@ module Private : sig
       val of_int : int -> t
     end
   end
+
+  module Trait0 = Trait0
 end
