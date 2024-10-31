@@ -23,26 +23,50 @@ module Trait : sig
 
       - ['t] is the internal state of the provider itself.
       - ['module_type] is the signature of a module implementing the Trait.
-      - ['tag] is the tag (or tags) indicating the supported Trait. It's a
-        phantom type designed to make {!val:Handler.lookup} more type-safe.
+      - ['tag] is the tag (or tags) indicating the supported Trait(s). It's a
+        phantom type designed to help using {!val:Handler.lookup} correctly.
 
       ['module_type] is typically expected to be a module type, but it doesn't
       have too (functions, constants are fine too, etc.). *)
   type ('t, 'module_type, 'tag) t = ('t, 'module_type, 'tag) Trait0.t
 
-  (** {1 Creating traits} *)
+  (** {1 Creating traits}
+
+      Traits are abstract and must be created using the following functors. The
+      most common one is {!module:Create}. It is to be used when the trait is
+      defined by a module type with a single type t. For example:
+
+      {[
+        module type Show = sig
+          type t
+
+          val show : t -> string
+        end
+
+        module Show : sig
+          val t : ('a, (module Show with type t = 'a), [> `Show ]) Provider.Trait.t
+        end = Provider.Trait.Create (struct
+            type 'a module_type = (module Show with type t = 'a)
+          end)
+      ]}
+
+      The other functors are reserved for less common cases. The number suffix
+      indicates the number of parameters of the [module_type] type, each of
+      which must be present and injective in [X.t]. We added one extra parameter
+      to [X.t] to allow for more flexibility in what can be expressed, but not
+      all parameters have to be used. *)
+
+  module Create (X : sig
+      type 'a module_type
+    end) : sig
+    val t : ('a, 'a X.module_type, _) t
+  end
 
   module Create0 (X : sig
       type 'a t
       type module_type
     end) : sig
     val t : ('a X.t, X.module_type, _) t
-  end
-
-  module Create (X : sig
-      type 'a module_type
-    end) : sig
-    val t : ('a, 'a X.module_type, _) t
   end
 
   module Create1 (X : sig
