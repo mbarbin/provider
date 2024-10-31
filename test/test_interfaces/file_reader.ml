@@ -10,6 +10,8 @@ module Provider_interface = struct
 
   type (_, _, _) Provider.Trait.t +=
     | File_reader : ('t, (module S with type t = 't), [> tag ]) Provider.Trait.t
+
+  let () = Provider.Trait.Info.register_name File_reader ~name:"File_reader"
 end
 
 let load (Provider.T { t; handler }) ~path =

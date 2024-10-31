@@ -37,17 +37,19 @@ module Trait : sig
   (** {1 Dump & debug} *)
 
   module Info : sig
-    (** This type is meant to be used for debugging purposes only.
+    (** Displaying debugging information about a trait.
 
-        A [t] value includes the name of the Trait constructor and the module
-        path where it was defined. It may also include the runtime id for the
-        extensible variant of the Trait, but this is not included by default as
-        its value can be brittle (it may depend on the order in which modules
-        are evaluated).
+        This module provides a way to register, retrieve and display detailed
+        information about a Trait, which can be useful for debugging and
+        understanding the structure and behavior of the provider system.
 
-        This type provides a way to retrieve and display detailed information
-        about a Trait, which can be useful for debugging and understanding the
-        structure and behavior of the provider system. *)
+        This is meant for debugging purposes only. *)
+
+    (** A [t] value includes a unique runtime id for the trait, as well as an
+        optional name that may be registered by the user. The id is not shown
+        by [sexp_of_t] by default because its value can be brittle (it may
+        depend on the order in which modules are evaluated). To display ids,
+        see {!val:sexp_of_id}. *)
     type t
 
     val sexp_of_t : t -> Sexp.t
@@ -57,6 +59,10 @@ module Trait : sig
         temporarily change it, e.g. in a test, for example using
         [Ref.set_temporarily]. *)
     val sexp_of_id : (int -> Sexp.t) ref
+
+    (** Register a string mnemonic to attach to the trait for display purposes.
+        By default, trait do not have any name. *)
+    val register_name : _ Trait0.t -> name:string -> unit
   end
 
   val info : _ t -> Info.t

@@ -6,6 +6,10 @@ module Array : sig
   val for_alli : 'a array -> f:(int -> 'a -> bool) -> bool
 end
 
+module Hashtbl : sig
+  include module type of MoreLabels.Hashtbl
+end
+
 module Int : sig
   include module type of Int
 

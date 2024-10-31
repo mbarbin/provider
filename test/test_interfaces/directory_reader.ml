@@ -11,6 +11,8 @@ module Provider_interface = struct
   type (_, _, _) Provider.Trait.t +=
     | Directory_reader : ('t, (module S with type t = 't), [> tag ]) Provider.Trait.t
 
+  let () = Provider.Trait.Info.register_name Directory_reader ~name:"Directory_reader"
+
   let make (type t) (module M : S with type t = t) =
     Provider.Handler.make [ Provider.Trait.implement Directory_reader ~impl:(module M) ]
   ;;

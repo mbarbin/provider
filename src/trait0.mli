@@ -4,3 +4,6 @@ type ('t, 'module_type, 'tag) t = ..
     This function is used to check that, and used to validate traits built by
     the user to detect invalid usage of the library. *)
 val is_valid : _ t -> bool
+
+(** Return a id that is unique to this trait for the lifetime of the program. *)
+val uid : _ t -> int

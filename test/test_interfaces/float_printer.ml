@@ -11,6 +11,8 @@ module Provider_interface = struct
   type (_, _, _) Provider.Trait.t +=
     | Float_printer : ('t, (module S with type t = 't), [> tag ]) Provider.Trait.t
 
+  let () = Provider.Trait.Info.register_name Float_printer ~name:"Float_printer"
+
   let make (type t) (module M : S with type t = t) =
     Provider.Handler.make [ Provider.Trait.implement Float_printer ~impl:(module M) ]
   ;;
