@@ -11,18 +11,24 @@ end
 
 type show = [ `Show ]
 
-type (_, _, _) Provider.Trait.t +=
-  Show : ('t, (module S with type t = 't), [> show ]) Provider.Trait.t
+module Show : sig
+  val t : ('t, (module S with type t = 't), [> show ]) Provider.Trait.t
+end  = struct
+  type (_, _, _) Provider.Trait.t +=
+    | Show : ('t, (module S with type t = 't), [> show ]) Provider.Trait.t
+
+  let t = Show
+end
 
 let print (Provider.T { t; handler }) =
-  let module M = (val Provider.Handler.lookup handler ~trait:Show) in
+  let module M = (val Provider.Handler.lookup handler ~trait:Show.t) in
   print_endline (M.show t)
 
 let string_provider t =
   let handler =
     Provider.Handler.make
-      [ Provider.Trait.implement Show
-          ~impl:(module struct type t = string let show = Fun.id end)
+      [ Provider.Trait.implement Show.t
+          ~impl:(module struct type t = string let show = String.uppercase_ascii end)
       ]
   in
   Provider.T { t; handler }
@@ -30,6 +36,6 @@ let string_provider t =
 
 ```ocaml
 # print (string_provider "Hello World")
-Hello World
+HELLO WORLD
 - : unit = ()
 ```

@@ -8,19 +8,27 @@ module Provider_interface = struct
     val readdir : t -> path:string -> string list
   end
 
-  type (_, _, _) Provider.Trait.t +=
-    | Directory_reader : ('t, (module S with type t = 't), [> tag ]) Provider.Trait.t
+  module Trait = struct
+    type (_, _, _) Provider.Trait.t +=
+      | Directory_reader : ('t, (module S with type t = 't), [> tag ]) Provider.Trait.t
 
-  let () = Provider.Trait.Info.register_name Directory_reader ~name:"Directory_reader"
+    let t = Directory_reader
+  end
+
+  let directory_reader =
+    (Trait.t : ('t, (module S with type t = 't), [> tag ]) Provider.Trait.t)
+  ;;
+
+  let () = Provider.Trait.Info.register_name directory_reader ~name:"Directory_reader"
 
   let make (type t) (module M : S with type t = t) =
-    Provider.Handler.make [ Provider.Trait.implement Directory_reader ~impl:(module M) ]
+    Provider.Handler.make [ Provider.Trait.implement directory_reader ~impl:(module M) ]
   ;;
 end
 
 let readdir (Provider.T { t; handler }) ~path =
   let module M =
-    (val Provider.Handler.lookup handler ~trait:Provider_interface.Directory_reader)
+    (val Provider.Handler.lookup handler ~trait:Provider_interface.directory_reader)
   in
   M.readdir t ~path
 ;;

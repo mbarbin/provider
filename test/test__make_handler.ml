@@ -14,7 +14,7 @@ let%expect_test "int-printer" =
 let%expect_test "make interface" =
   let binding1 =
     Provider.Trait.implement
-      Test_interfaces.Int_printer.Provider_interface.Int_printer
+      Test_interfaces.Int_printer.Provider_interface.int_printer
       ~impl:(module Test_providers.Num_printer.Impl)
   in
   Test_interfaces.Int_printer.print
@@ -34,7 +34,7 @@ let%expect_test "make interface" =
      ());
   let binding2 =
     Provider.Trait.implement
-      Test_interfaces.Float_printer.Provider_interface.Float_printer
+      Test_interfaces.Float_printer.Provider_interface.float_printer
       ~impl:(module Test_providers.Num_printer.Impl)
   in
   (match binding1, binding2 with

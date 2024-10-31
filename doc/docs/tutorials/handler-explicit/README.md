@@ -22,12 +22,18 @@ module type Id = sig type t val id : t -> t end
 
 type id = [ `Id ]
 
-type (_, _, _) Provider.Trait.t +=
-  | Id : ('a, (module Id with type t = 'a), [> id]) Provider.Trait.t
+module Id : sig
+  val t : ('a, (module Id with type t = 'a), [> id]) Provider.Trait.t
+end = struct
+  type (_, _, _) Provider.Trait.t +=
+    | Id : ('a, (module Id with type t = 'a), [> id]) Provider.Trait.t
+
+  let t = Id
+end
 
 let id : type a. (a, [> id]) Provider.Handler.t -> a -> a =
   fun handler x ->
-  let module M = (val Provider.Handler.lookup handler ~trait:Id) in
+  let module M = (val Provider.Handler.lookup handler ~trait:Id.t) in
   M.id x
 ;;
 ```
@@ -59,8 +65,15 @@ We define the expected *Provider* machinery, including a `Provider.Trait` for it
 ```ocaml
 type doublable = [ `Doublable ]
 
-type (_, _, _) Provider.Trait.t +=
-  | Doublable : ('a, (module Doublable with type t = 'a), [> doublable ]) Provider.Trait.t
+module Doublable : sig
+  val t : ('a, (module Doublable with type t = 'a), [> doublable ]) Provider.Trait.t
+end = struct
+
+  type (_, _, _) Provider.Trait.t +=
+    | Doublable : ('a, (module Doublable with type t = 'a), [> doublable ]) Provider.Trait.t
+
+  let t = Doublable
+end
 ```
 
 ### Writing Parametrized Code
@@ -70,7 +83,7 @@ With no dependencies on actual providers, we can define functionality depending 
 ```ocaml
 # let quadruple : type a. (a, [> doublable ]) Provider.Handler.t -> a -> a =
   fun handler t ->
-  let module M = (val Provider.Handler.lookup handler ~trait:Doublable) in
+  let module M = (val Provider.Handler.lookup handler ~trait:Doublable.t) in
   M.double (M.double t)
 val quadruple : ('a, [> doublable ]) Provider.Handler.t -> 'a -> 'a = <fun>
 ```
@@ -98,12 +111,12 @@ We build *handlers* values for these modules:
 ```ocaml
 # let doublable_int () : (int, [> doublable ]) Provider.Handler.t =
   Provider.Handler.make
-    [ Provider.Trait.implement Doublable ~impl:(module Doublable_int) ]
+    [ Provider.Trait.implement Doublable.t ~impl:(module Doublable_int) ]
 val doublable_int : unit -> (int, [> doublable ]) Provider.Handler.t = <fun>
 
 # let doublable_float () : (float, [> doublable ]) Provider.Handler.t =
   Provider.Handler.make
-    [ Provider.Trait.implement Doublable ~impl:(module Doublable_float) ]
+    [ Provider.Trait.implement Doublable.t ~impl:(module Doublable_float) ]
 val doublable_float : unit -> (float, [> doublable ]) Provider.Handler.t =
   <fun>
 ```
@@ -137,8 +150,14 @@ end
 ```ocaml
 type repeatable = [ `Repeatable ]
 
-type (_, _, _) Provider.Trait.t +=
-  | Repeatable : ('a, (module Repeatable with type t = 'a), [> repeatable ]) Provider.Trait.t
+module Repeatable : sig
+  val t : ('a, (module Repeatable with type t = 'a), [> repeatable ]) Provider.Trait.t
+end = struct
+  type (_, _, _) Provider.Trait.t +=
+    | Repeatable : ('a, (module Repeatable with type t = 'a), [> repeatable ]) Provider.Trait.t
+
+  let t = Repeatable
+end
 ```
 
 ### Writing Parametrized Code
@@ -148,9 +167,9 @@ The function below requires both `repeatable` and `doublable` Traits:
 ```ocaml
 # let double_then_repeat : type a. (a, [> doublable | repeatable ]) Provider.Handler.t -> a -> a =
   fun handler t ->
-  let module D = (val Provider.Handler.lookup handler ~trait:Doublable) in
-  let module R = (val Provider.Handler.lookup handler ~trait:Repeatable) in
-  R.repeat (D.double t)
+  let module D = (val Provider.Handler.lookup handler ~trait:Doublable.t) in
+  let module R = (val Provider.Handler.lookup handler ~trait:Repeatable.t) in
+  t |> D.double |> R.repeat
 val double_then_repeat :
   ('a, [> `Doublable | `Repeatable ]) Provider.Handler.t -> 'a -> 'a = <fun>
 ```
@@ -174,8 +193,8 @@ We can now build a *handler* for it:
 ```ocaml
 # let versatile_int () : (int, [> doublable | repeatable ]) Provider.Handler.t =
   Provider.Handler.make
-    [ Provider.Trait.implement Doublable ~impl:(module Versatile_int)
-    ; Provider.Trait.implement Repeatable ~impl:(module Versatile_int)
+    [ Provider.Trait.implement Doublable.t ~impl:(module Versatile_int)
+    ; Provider.Trait.implement Repeatable.t ~impl:(module Versatile_int)
     ]
 val versatile_int :
   unit -> (int, [> `Doublable | `Repeatable ]) Provider.Handler.t = <fun>
@@ -247,23 +266,39 @@ type mappable = [ `Mappable ]
 Note, you cannot write this (the `'a 't` syntax doesn't mean anything):
 
 ```ocaml
-type (_, _, _) Provider.Trait.t +=
-  | Mappable : ('a 't, (module Mappable with type 'a t = 'a 't), [> mappable ]) Provider.Trait.t
+module Mappable : sig
+  val t : ('a 't, (module Mappable with type 'a t = 'a 't), [> mappable ]) Provider.Trait.t
+end = struct
+  type (_, _, _) Provider.Trait.t +=
+    | Mappable : ('a 't, (module Mappable with type 'a t = 'a 't), [> mappable ]) Provider.Trait.t
+
+  let t = Mappable
+end
 ```
 ```mdx-error
-Line 2, characters 22-23:
+Line 2, characters 17-18:
 Error: Syntax error
 ```
 
 This is where `Higher_kinded` comes to the rescue:
 
 ```ocaml
-type (_, _, _) Provider.Trait.t +=
-  | Mappable :
-      ( ('a -> 'higher_kinded) Higher_kinded.t
-        , (module Mappable with type higher_kinded = 'higher_kinded)
-        , [> mappable ] )
-        Provider.Trait.t
+module Mappable : sig
+  val t :
+       ( ('a -> 'higher_kinded) Higher_kinded.t
+          , (module Mappable with type higher_kinded = 'higher_kinded)
+          , [> mappable ] )
+          Provider.Trait.t
+end = struct
+  type (_, _, _) Provider.Trait.t +=
+    | Mappable :
+        ( ('a -> 'higher_kinded) Higher_kinded.t
+          , (module Mappable with type higher_kinded = 'higher_kinded)
+          , [> mappable ] )
+          Provider.Trait.t
+
+  let t = Mappable
+end
 ```
 
 ### Writing Parametrized Code
@@ -280,7 +315,7 @@ let map_n_times
     -> (a -> t) Higher_kinded.t
   =
   fun handler t n ~f ->
-  let module M = (val Provider.Handler.lookup handler ~trait:Mappable) in
+  let module M = (val Provider.Handler.lookup handler ~trait:Mappable.t) in
   let at = M.project t in
   let rec loop n at = if n = 0 then at else loop (n - 1) (M.map f at) in
   M.inject (loop n at)
@@ -321,7 +356,7 @@ We build *handlers* values for these modules:
       Provider.Handler.t
   =
   Provider.Handler.make
-    [ Provider.Trait.implement Mappable ~impl:(module Higher_kinded_list) ]
+    [ Provider.Trait.implement Mappable.t ~impl:(module Higher_kinded_list) ]
 val mappable_list :
   unit ->
   (('a -> Higher_kinded_list.higher_kinded) Higher_kinded.t, [> mappable ])
@@ -333,7 +368,7 @@ val mappable_list :
       Provider.Handler.t
   =
   Provider.Handler.make
-    [ Provider.Trait.implement Mappable ~impl:(module Higher_kinded_array) ]
+    [ Provider.Trait.implement Mappable.t ~impl:(module Higher_kinded_array) ]
 val mappable_array :
   unit ->
   (('a -> Higher_kinded_array.higher_kinded) Higher_kinded.t, [> mappable ])

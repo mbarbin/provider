@@ -47,6 +47,5 @@ module Provider_interface : sig
       interface -- either way works. That's left as a programmer's preference
       depending on the context. When this constructor is exported, you can use
       it in conjunction with {!Provider.Trait.implement}. *)
-  type (_, _, _) Provider.Trait.t +=
-    | Directory_reader : ('t, (module S with type t = 't), [> tag ]) Provider.Trait.t
+  val directory_reader : ('t, (module S with type t = 't), [> tag ]) Provider.Trait.t
 end
