@@ -12,7 +12,12 @@ let raise_s msg sexp = raise (E (Sexp.List [ Atom msg; sexp ]))
 let phys_same t1 t2 = phys_equal (Obj.repr t1) (Obj.repr t2)
 
 module Trait = struct
-  type ('t, 'module_type, 'tag) t = ('t, 'module_type, 'tag) Trait0.t = ..
+  type ('t, 'module_type, 'tag) t = ('t, 'module_type, 'tag) Trait0.t
+
+  module Create = Trait0.Create
+  module Create0 = Trait0.Create0
+  module Create1 = Trait0.Create1
+  module Create2 = Trait0.Create2
 
   let runtime_trait_info = Runtime_trait_info.default
 
@@ -55,41 +60,7 @@ module Trait = struct
   let uid (t : _ t) = Trait0.uid t
   let compare_by_uid id1 id2 = Uid.compare (uid id1) (uid id2)
   let same (id1 : _ t) (id2 : _ t) = phys_same id1 id2
-
-  let check_trait_exn (t : _ t) =
-    if not (Trait0.is_valid t)
-    then
-      raise_s
-        "Invalid usage of [Provider.Trait]: trait is not a valid extensible variant for \
-         this library"
-        (Sexp.List [ List [ Atom "trait"; info t |> Info.sexp_of_t ] ])
-  ;;
-
-  let implement trait ~impl =
-    check_trait_exn trait;
-    Binding0.implement trait ~impl
-  ;;
-
-  module Unsafe_cast : sig
-    type (_, _) eq_opt =
-      | Equal : ('a, 'a) eq_opt
-      | Not_equal : ('a, 'b) eq_opt
-
-    (* We limit unsafe casting to cases where the first parameter is already
-       determined to be the same. *)
-    val same_witness : ('a, 'i1, _) t -> ('a, 'i2, _) t -> ('i1, 'i2) eq_opt
-  end = struct
-    type (_, _) eq_opt =
-      | Equal : ('a, 'a) eq_opt
-      | Not_equal : ('a, 'b) eq_opt
-
-    let same_witness : type a i1 i2. (a, i1, _) t -> (a, i2, _) t -> (i1, i2) eq_opt =
-      fun t1 t2 ->
-      if same t1 t2
-      then (Obj.magic (Obj.repr (Equal : _ eq_opt)) : (i1, i2) eq_opt)
-      else Not_equal
-    ;;
-  end
+  let implement = Binding0.implement
 end
 
 module Binding = struct
@@ -178,7 +149,7 @@ module Handler = struct
       | Greater ->
         binary_search t ~trait ~update_cache ~if_not_found ~if_found ~from ~to_:(mid - 1)
       | Equal ->
-        (match Trait.Unsafe_cast.same_witness elt trait with
+        (match Trait0.same_witness elt trait with
          | Equal ->
            if update_cache then t.(0) <- binding;
            if_found implementation
@@ -207,7 +178,7 @@ module Handler = struct
     then if_not_found ~trait_info:(Trait.info trait)
     else (
       let (Binding.T { trait = cached_id; implementation }) = t.(0) in
-      match Trait.Unsafe_cast.same_witness trait cached_id with
+      match Trait0.same_witness trait cached_id with
       | Equal -> if_found implementation
       | Not_equal ->
         binary_search
@@ -270,13 +241,5 @@ type -'tags t =
 
 module Private = struct
   module Import = Import
-
-  module Trait = struct
-    let implement_unsafe trait ~impl ~check_trait =
-      if check_trait then Trait.check_trait_exn trait;
-      Binding0.implement trait ~impl
-    ;;
-  end
-
   module Handler = Handler
 end

@@ -8,12 +8,9 @@ module Provider_interface = struct
     val string_of_int : t -> int -> string
   end
 
-  module Trait = struct
-    type (_, _, _) Provider.Trait.t +=
-      | Int_printer : ('t, (module S with type t = 't), [> tag ]) Provider.Trait.t
-
-    let t = Int_printer
-  end
+  module Trait = Provider.Trait.Create (struct
+      type 'a module_type = (module S with type t = 'a)
+    end)
 
   let int_printer =
     (Trait.t : ('t, (module S with type t = 't), [> tag ]) Provider.Trait.t)

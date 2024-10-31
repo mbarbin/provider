@@ -1,11 +1,8 @@
 module T : sig
   val t : ('t, (module T with type t = 't), [> `T ]) Provider.Trait.t
-end = struct
-  type (_, _, _) Provider.Trait.t +=
-    | T : ('t, (module T with type t = 't), [> `T ]) Provider.Trait.t
-
-  let t = T
-end
+end = Provider.Trait.Create (struct
+    type 't module_type = (module T with type t = 't)
+  end)
 
 let%expect_test "info" =
   (* By default, id are not shown, and trait do not have names. *)

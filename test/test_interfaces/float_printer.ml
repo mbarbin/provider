@@ -8,12 +8,9 @@ module Provider_interface = struct
     val string_of_float : t -> float -> string
   end
 
-  module Trait = struct
-    type (_, _, _) Provider.Trait.t +=
-      | Float_printer : ('t, (module S with type t = 't), [> tag ]) Provider.Trait.t
-
-    let t = Float_printer
-  end
+  module Trait = Provider.Trait.Create (struct
+      type 'a module_type = (module S with type t = 'a)
+    end)
 
   let float_printer =
     (Trait.t : ('t, (module S with type t = 't), [> tag ]) Provider.Trait.t)

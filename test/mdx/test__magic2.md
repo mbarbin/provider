@@ -16,6 +16,10 @@ type (_, _, _) Provider.Trait.t +=
       'something Base.Type_equal.Id.t
       -> (_, (module S with type t = 'something), [> `A ]) Provider.Trait.t
 ```
+```mdx-error
+Lines 7-10, characters 3-78:
+Error: Type definition Provider.Trait.t is not extensible
+```
 
 ## For reference
 

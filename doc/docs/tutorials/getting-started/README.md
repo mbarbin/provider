@@ -128,12 +128,9 @@ type reader = [ `Reader ]
 
 module Reader : sig
   val t : ('t, (module READER with type t = 't), [> reader ]) Provider.Trait.t
-end = struct
-  type (_, _, _) Provider.Trait.t +=
-    Reader : ('t, (module READER with type t = 't), [> reader ]) Provider.Trait.t
-
-  let t = Reader
-end
+end = Provider.Trait.Create (struct
+  type 't module_type =  (module READER with type t = 't)
+end)
 ```
 
 ### Parametrized Library

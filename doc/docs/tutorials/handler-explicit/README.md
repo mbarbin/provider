@@ -24,12 +24,9 @@ type id = [ `Id ]
 
 module Id : sig
   val t : ('a, (module Id with type t = 'a), [> id]) Provider.Trait.t
-end = struct
-  type (_, _, _) Provider.Trait.t +=
-    | Id : ('a, (module Id with type t = 'a), [> id]) Provider.Trait.t
-
-  let t = Id
-end
+end = Provider.Trait.Create (struct
+  type 'a module_type = (module Id with type t = 'a)
+end)
 
 let id : type a. (a, [> id]) Provider.Handler.t -> a -> a =
   fun handler x ->
@@ -67,13 +64,9 @@ type doublable = [ `Doublable ]
 
 module Doublable : sig
   val t : ('a, (module Doublable with type t = 'a), [> doublable ]) Provider.Trait.t
-end = struct
-
-  type (_, _, _) Provider.Trait.t +=
-    | Doublable : ('a, (module Doublable with type t = 'a), [> doublable ]) Provider.Trait.t
-
-  let t = Doublable
-end
+end = Provider.Trait.Create (struct
+  type 'a module_type = (module Doublable with type t = 'a)
+end)
 ```
 
 ### Writing Parametrized Code
@@ -152,12 +145,9 @@ type repeatable = [ `Repeatable ]
 
 module Repeatable : sig
   val t : ('a, (module Repeatable with type t = 'a), [> repeatable ]) Provider.Trait.t
-end = struct
-  type (_, _, _) Provider.Trait.t +=
-    | Repeatable : ('a, (module Repeatable with type t = 'a), [> repeatable ]) Provider.Trait.t
-
-  let t = Repeatable
-end
+end = Provider.Trait.Create (struct
+  type 'a module_type = (module Repeatable with type t = 'a)
+end)
 ```
 
 ### Writing Parametrized Code
@@ -268,12 +258,9 @@ Note, you cannot write this (the `'a 't` syntax doesn't mean anything):
 ```ocaml
 module Mappable : sig
   val t : ('a 't, (module Mappable with type 'a t = 'a 't), [> mappable ]) Provider.Trait.t
-end = struct
-  type (_, _, _) Provider.Trait.t +=
-    | Mappable : ('a 't, (module Mappable with type 'a t = 'a 't), [> mappable ]) Provider.Trait.t
-
-  let t = Mappable
-end
+end = Provider.Trait.Create (struct
+  type 'a 't module_type =  (module Mappable with type 'a t = 'a 't)
+end)
 ```
 ```mdx-error
 Line 2, characters 17-18:
@@ -285,20 +272,14 @@ This is where `Higher_kinded` comes to the rescue:
 ```ocaml
 module Mappable : sig
   val t :
-       ( ('a -> 'higher_kinded) Higher_kinded.t
-          , (module Mappable with type higher_kinded = 'higher_kinded)
-          , [> mappable ] )
-          Provider.Trait.t
-end = struct
-  type (_, _, _) Provider.Trait.t +=
-    | Mappable :
-        ( ('a -> 'higher_kinded) Higher_kinded.t
-          , (module Mappable with type higher_kinded = 'higher_kinded)
-          , [> mappable ] )
-          Provider.Trait.t
-
-  let t = Mappable
-end
+      ( ('a -> 'higher_kinded) Higher_kinded.t
+        , (module Mappable with type higher_kinded = 'higher_kinded)
+        , [> mappable ] )
+        Provider.Trait.t
+end = Provider.Trait.Create2 (struct
+  type (!'a, !'higher_kinded) t = ('a -> 'higher_kinded) Higher_kinded.t
+  type ('a, 'higher_kinded) module_type = (module Mappable with type higher_kinded = 'higher_kinded)
+end)
 ```
 
 ### Writing Parametrized Code

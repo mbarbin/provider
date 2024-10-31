@@ -28,16 +28,12 @@ module Mappable : sig
         , (module Mappable with type higher_kinded = 'higher_kinded)
         , [> mappable ] )
         Provider.Trait.t
-end = struct
-  type (_, _, _) Provider.Trait.t +=
-    | Mappable :
-        ( ('a -> 'higher_kinded) Higher_kinded.t
-          , (module Mappable with type higher_kinded = 'higher_kinded)
-          , [> mappable ] )
-          Provider.Trait.t
+end = Provider.Trait.Create2 (struct
+    type (!'a, !'higher_kinded) t = ('a -> 'higher_kinded) Higher_kinded.t
 
-  let t = Mappable
-end
+    type ('a, 'higher_kinded) module_type =
+      (module Mappable with type higher_kinded = 'higher_kinded)
+  end)
 
 let map_n_times
   : type a t.

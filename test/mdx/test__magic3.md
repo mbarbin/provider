@@ -5,6 +5,10 @@ This test monitors an example that caused an earlier version of the library to s
 ```ocaml
 type ('a, 'impl, 'tag) Provider.Trait.t += Trait : (unit, 'a, [ `A ]) Provider.Trait.t
 ```
+```mdx-error
+Line 1, characters 1-87:
+Error: Type definition Provider.Trait.t is not extensible
+```
 
 ## For reference
 

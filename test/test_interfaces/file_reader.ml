@@ -8,12 +8,9 @@ module Provider_interface = struct
     val load : t -> path:string -> string
   end
 
-  module Trait = struct
-    type (_, _, _) Provider.Trait.t +=
-      | File_reader : ('t, (module S with type t = 't), [> tag ]) Provider.Trait.t
-
-    let t = File_reader
-  end
+  module Trait = Provider.Trait.Create (struct
+      type 'a module_type = (module S with type t = 'a)
+    end)
 
   let file_reader =
     (Trait.t : ('t, (module S with type t = 't), [> tag ]) Provider.Trait.t)

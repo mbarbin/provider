@@ -34,47 +34,16 @@ end
 
 type 'a t = ([> Tag.t ] as 'a) Provider.t
 
-module A = struct
-  type (_, _, _) Provider.Trait.t +=
-    | A : ('a, (module S with type t = 'a), [> `A ]) Provider.Trait.t
+module C_all () = Provider.Trait.Create (struct
+    type 't module_type = (module S with type t = 't)
+  end)
 
-  let t = A
-end
-
-module B = struct
-  type (_, _, _) Provider.Trait.t +=
-    | B : ('a, (module S with type t = 'a), [> `B ]) Provider.Trait.t
-
-  let t = B
-end
-
-module C = struct
-  type (_, _, _) Provider.Trait.t +=
-    | C : ('a, (module S with type t = 'a), [> `C ]) Provider.Trait.t
-
-  let t = C
-end
-
-module D = struct
-  type (_, _, _) Provider.Trait.t +=
-    | D : ('a, (module S with type t = 'a), [> `D ]) Provider.Trait.t
-
-  let t = D
-end
-
-module E = struct
-  type (_, _, _) Provider.Trait.t +=
-    | E : ('a, (module S with type t = 'a), [> `E ]) Provider.Trait.t
-
-  let t = E
-end
-
-module F = struct
-  type (_, _, _) Provider.Trait.t +=
-    | F : ('a, (module S with type t = 'a), [> `F ]) Provider.Trait.t
-
-  let t = F
-end
+module A = C_all ()
+module B = C_all ()
+module C = C_all ()
+module D = C_all ()
+module E = C_all ()
+module F = C_all ()
 
 let a : (_, _, [> `A ]) Provider.Trait.t = A.t
 let b : (_, _, [> `B ]) Provider.Trait.t = B.t

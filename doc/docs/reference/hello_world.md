@@ -13,12 +13,9 @@ type show = [ `Show ]
 
 module Show : sig
   val t : ('t, (module S with type t = 't), [> show ]) Provider.Trait.t
-end  = struct
-  type (_, _, _) Provider.Trait.t +=
-    | Show : ('t, (module S with type t = 't), [> show ]) Provider.Trait.t
-
-  let t = Show
-end
+end = Provider.Trait.Create (struct
+  type 'a module_type = (module S with type t = 'a)
+end)
 
 let print (Provider.T { t; handler }) =
   let module M = (val Provider.Handler.lookup handler ~trait:Show.t) in
