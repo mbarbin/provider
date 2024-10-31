@@ -16,6 +16,7 @@ type (_, _, _) Provider.Trait.t +=
 
 let id_int = Type_equal.Id.create ~name:"int" [%sexp_of: int]
 let id_string = Type_equal.Id.create ~name:"string" [%sexp_of: string]
+let () = Provider.Trait.Info.register_name (A id_int) ~name:"A"
 
 let impl (type a) id value ~check_trait =
   Provider.Private.Trait.implement_unsafe
@@ -44,7 +45,7 @@ let%expect_test "magic" =
      ((
        trait (
          (id   #id)
-         (name Provider_test.Test__magic.A)))))
+         (name A)))))
     |}];
   let handler = make_handler ~check_trait:false in
   require_does_raise [%here] (fun () ->
@@ -56,7 +57,7 @@ let%expect_test "magic" =
      ((
        trait (
          (id   #id)
-         (name Provider_test.Test__magic.A)))))
+         (name A)))))
     |}];
   ()
 ;;

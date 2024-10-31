@@ -4,3 +4,5 @@ let is_valid (t : _ t) =
   let extension_constructor = Obj.Extension_constructor.of_val t in
   Obj.repr t == Obj.repr extension_constructor
 ;;
+
+let uid (t : _ t) = Obj.Extension_constructor.id (Obj.Extension_constructor.of_val t)

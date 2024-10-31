@@ -41,11 +41,23 @@ type ('t, 'module_type, 'tag) Provider.Trait.t +=
   | No_arg_A : ('t, (module T with type t = 't), [> `T ]) Provider.Trait.t
   | No_arg_B : ('t, (module T with type t = 't), [> `T ]) Provider.Trait.t
 
+let () =
+  Provider.Trait.Info.register_name No_arg_A ~name:"No_arg_A";
+  Provider.Trait.Info.register_name No_arg_B ~name:"No_arg_B";
+  ()
+;;
+
 let%expect_test "extension_constructor" =
   print_s [%sexp (Provider.Trait.info No_arg_A : Provider.Trait.Info.t)];
-  [%expect {| ((id #id) (name Provider_test.Test__extensible_variant.No_arg_A)) |}];
+  [%expect {|
+    ((id   #id)
+     (name No_arg_A))
+    |}];
   print_s [%sexp (Provider.Trait.info No_arg_B : Provider.Trait.Info.t)];
-  [%expect {| ((id #id) (name Provider_test.Test__extensible_variant.No_arg_B)) |}];
+  [%expect {|
+    ((id   #id)
+     (name No_arg_B))
+    |}];
   let extension_constructor_A = Obj.Extension_constructor.of_val No_arg_A in
   print_s [%sexp (Obj.Extension_constructor.name extension_constructor_A : string)];
   [%expect {| Provider_test.Test__extensible_variant.No_arg_A |}];
@@ -100,6 +112,8 @@ module Name_override = struct
   type ('t, 'module_type, 'tag) Provider.Trait.t +=
     | No_arg_A : ('t, (module T with type t = 't), [> `T ]) Provider.Trait.t
 end
+
+let () = Provider.Trait.Info.register_name Name_override.No_arg_A ~name:"No_arg_A"
 
 let%expect_test "name override" =
   require [%here] (not (phys_equal No_arg_A Name_override.No_arg_A));
@@ -172,6 +186,8 @@ type show = [ `Show ]
 type (_, _, _) Provider.Trait.t +=
   | Show : { arg : int } -> ('t, (module S with type t = 't), [> show ]) Provider.Trait.t
 
+let () = Provider.Trait.Info.register_name (Show { arg = 0 }) ~name:"Show"
+
 let%expect_test "ids" =
   let trait1 = Show { arg = 0 } in
   let trait2 = Show { arg = 1 } in
@@ -214,7 +230,7 @@ let%expect_test "invalid_trait" =
      ((
        trait (
          (id   #id)
-         (name Provider_test.Test__extensible_variant.Show)))))
+         (name Show)))))
     |}];
   require_does_raise [%here] (fun () ->
     print (string_provider "Hello World" ~check_trait:false));
@@ -224,7 +240,7 @@ let%expect_test "invalid_trait" =
      ((
        trait (
          (id   #id)
-         (name Provider_test.Test__extensible_variant.Show)))))
+         (name Show)))))
     |}];
   ()
 ;;

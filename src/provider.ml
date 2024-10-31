@@ -14,26 +14,33 @@ let phys_same t1 t2 = phys_equal (Obj.repr t1) (Obj.repr t2)
 module Trait = struct
   type ('t, 'module_type, 'tag) t = ('t, 'module_type, 'tag) Trait0.t = ..
 
-  let extension_constructor =
-    (Obj.Extension_constructor.of_val : _ t -> Obj.Extension_constructor.t)
-  ;;
+  let runtime_trait_info = Runtime_trait_info.default
 
   module Info = struct
-    type t = Obj.Extension_constructor.t
+    type t =
+      { id : int
+      ; name : string option
+      }
 
     let sexp_of_id_default _ = Sexp.Atom "#id"
     let sexp_of_id = ref sexp_of_id_default
 
-    let sexp_of_t t =
+    let sexp_of_t { id; name } =
       let sexp_of_id id = !sexp_of_id id in
       Sexp.List
-        [ List [ Atom "id"; sexp_of_id (Obj.Extension_constructor.id t) ]
-        ; List [ Atom "name"; Atom (Obj.Extension_constructor.name t) ]
+        [ List [ Atom "id"; sexp_of_id id ]
+        ; List [ Atom "name"; Atom (name |> Option.value ~default:"<none>") ]
         ]
+    ;;
+
+    let register_name (t : _ Trait0.t) ~name =
+      Runtime_trait_info.set_name runtime_trait_info t ~name
     ;;
   end
 
-  let info : _ t -> Info.t = extension_constructor
+  let info (t : _ t) =
+    { Info.id = Trait0.uid t; name = Runtime_trait_info.get_name runtime_trait_info t }
+  ;;
 
   module Uid = struct
     type t = int
@@ -45,7 +52,7 @@ module Trait = struct
     let seeded_hash = Int.seeded_hash
   end
 
-  let uid (t : _ t) = Obj.Extension_constructor.id (extension_constructor t)
+  let uid (t : _ t) = Trait0.uid t
   let compare_by_uid id1 id2 = Uid.compare (uid id1) (uid id2)
   let same (id1 : _ t) (id2 : _ t) = phys_same id1 id2
 

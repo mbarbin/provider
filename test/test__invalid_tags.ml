@@ -20,8 +20,8 @@ let%expect_test "invalid tags" =
     {|
     ("Trait not implemented" ((
       trait_info (
-        (id #id)
-        (name Test_interfaces.Int_printer.Provider_interface.Int_printer)))))
+        (id   #id)
+        (name Int_printer)))))
     |}];
   ()
 ;;

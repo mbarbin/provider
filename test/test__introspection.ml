@@ -82,14 +82,16 @@ let%expect_test "introspection" =
   in
   Ref.set_temporarily Provider.Trait.Info.sexp_of_id sexp_of_id ~f:(fun () ->
     print_implemented_traits int_printer;
-    [%expect
-      {| (((id 0) (name Test_interfaces.Int_printer.Provider_interface.Int_printer))) |}];
+    [%expect {|
+      ((
+        (id   0)
+        (name Int_printer)))
+      |}];
     print_implemented_traits num_printer;
     [%expect
       {|
-      (((id 0) (name Test_interfaces.Int_printer.Provider_interface.Int_printer))
-       ((id 1)
-        (name Test_interfaces.Float_printer.Provider_interface.Float_printer)))
+      (((id 0) (name Int_printer))
+       ((id 1) (name Float_printer)))
       |}];
     ());
   ()

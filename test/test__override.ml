@@ -38,9 +38,8 @@ let%expect_test "override" =
   print_implemented_traits num_printer;
   [%expect
     {|
-    (((id #id) (name Test_interfaces.Int_printer.Provider_interface.Int_printer))
-     ((id #id)
-      (name Test_interfaces.Float_printer.Provider_interface.Float_printer)))
+    (((id #id) (name Int_printer))
+     ((id #id) (name Float_printer)))
     |}];
   test num_printer;
   [%expect {|
@@ -50,9 +49,8 @@ let%expect_test "override" =
   print_implemented_traits hum_printer;
   [%expect
     {|
-    (((id #id) (name Test_interfaces.Int_printer.Provider_interface.Int_printer))
-     ((id #id)
-      (name Test_interfaces.Float_printer.Provider_interface.Float_printer)))
+    (((id #id) (name Int_printer))
+     ((id #id) (name Float_printer)))
     |}];
   test hum_printer;
   (* Now there's an additional underscore separator in '1_234'. *)

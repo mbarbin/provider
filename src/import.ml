@@ -11,6 +11,10 @@ module Array = struct
   ;;
 end
 
+module Hashtbl = struct
+  include MoreLabels.Hashtbl
+end
+
 module Int = struct
   include Int
 

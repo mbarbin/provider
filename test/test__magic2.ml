@@ -9,6 +9,8 @@ end
 type (_, _, _) Provider.Trait.t +=
   | A : 'a -> (_, (module S with type t = 'a), [> `A ]) Provider.Trait.t
 
+let () = Provider.Trait.Info.register_name (A ()) ~name:"A"
+
 let impl (type a) arg ~check_trait =
   Provider.Private.Trait.implement_unsafe
     (A arg)
@@ -33,7 +35,7 @@ let%expect_test "magic" =
      ((
        trait (
          (id   #id)
-         (name Provider_test.Test__magic2.A)))))
+         (name A)))))
     |}];
   let handler = make_handler ~check_trait:false in
   require_does_raise [%here] (fun () ->
@@ -45,7 +47,7 @@ let%expect_test "magic" =
      ((
        trait (
          (id   #id)
-         (name Provider_test.Test__magic2.A)))))
+         (name A)))))
     |}];
   ()
 ;;

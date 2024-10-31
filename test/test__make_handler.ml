@@ -46,11 +46,8 @@ let%expect_test "make interface" =
          }];
      [%expect
        {|
-       ((trait1 (
-          (id #id) (name Test_interfaces.Int_printer.Provider_interface.Int_printer)))
-        (trait2 (
-          (id #id)
-          (name Test_interfaces.Float_printer.Provider_interface.Float_printer))))
+       ((trait1 ((id #id) (name Int_printer)))
+        (trait2 ((id #id) (name Float_printer))))
        |}];
      require [%here] (not (Provider.Trait.same t1.trait t2.trait));
      [%expect {||}];
