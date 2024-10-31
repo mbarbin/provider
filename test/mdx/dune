@@ -1,0 +1,6 @@
+(mdx
+ (package provider-dev)
+ (deps
+  (package provider)
+  (package provider-tests))
+ (preludes prelude.txt))
