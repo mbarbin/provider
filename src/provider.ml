@@ -153,14 +153,11 @@ module Handler = struct
            if update_cache then t.(0) <- binding;
            if_found implementation
          | Not_equal ->
-           (* [same_witness a b => (uid a = uid b)] but the converse might not
-              hold. We treat as invalid usages cases where traits (t1, t2) would
-              have the same uids without being physically equal. *)
-           raise_s
-             "Invalid usage of [Provider.Trait]: Extensible variants with the same id \
-              are expected to be physically equal through the use of this library"
-             (Sexp.List
-                [ List [ Atom "trait"; Trait.info trait |> Trait.Info.sexp_of_t ] ])))
+           (* Because [Trait0.t] is abstract, traits are necessarily created
+              through the [Trait0.Create*] functors, which only create 0-arg [T]
+              extensible variants. As a result, for all traits (a, b) the
+              following holds: [(uid a = uid b) => phys_equal a b]. *)
+           assert false))
   ;;
 
   let make_lookup
