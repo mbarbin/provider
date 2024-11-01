@@ -2,3 +2,8 @@ hello:
   label: Hello
   permalink: /hello
   description: Hello tag description
+
+api-changes:
+  label: Api Changes
+  permalink: /api-changes
+  description: User Facing Changes
