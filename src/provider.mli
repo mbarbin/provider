@@ -7,8 +7,11 @@
     The module is divided into several submodules:
     - {!module:Trait}: To identify functionality.
     - {!module:Binding}: Associates a Trait with an implementation for it.
-    - {!module:Handler}: Manages the set of Traits that a provider implements.
     - {!module:Private}: Used for testing purposes.
+
+    The main module provides the following functionalities:
+    - Implement and lookup traits.
+    - Manages the set of Traits that a provider implements.
 
     This module is inspired by the [Eio.Resource] module and provides a way to
     parametrize code when a library either doesn't want to or can't commit to a
@@ -21,10 +24,10 @@ module Trait : sig
       name was inspired from the Rust programming language construct of the
       same name.
 
-      - ['t] is the internal state of the provider itself.
+      - ['t] is the internal type on which the provider traits operate.
       - ['module_type] is the signature of a module implementing the Trait.
       - ['tag] is the tag (or tags) indicating the supported Trait(s). It's a
-        phantom type designed to help using {!val:Handler.lookup} correctly.
+        phantom type designed to help using {!val:lookup} correctly.
 
       ['module_type] is typically expected to be a module type, but it doesn't
       have too (functions, constants are fine too, etc.). *)
@@ -139,17 +142,6 @@ module Trait : sig
   val uid : _ t -> Uid.t
 
   val same : _ t -> _ t -> bool
-
-  (** [implement trait ~impl:(module Impl)] says to implement [trait] with
-      [Impl]. The module [Impl] provided must have the right module type as
-      specified by the type of [trait].
-
-      The tags associated with the [trait] are ignored at this stage. The
-      handling of the tags happens at the handler building stage, not at the
-      granularity of each Trait. This means that the {!val:implement} function
-      focuses solely on creating the implementation, without considering the
-      tags that indicate which Traits are supported by the provider. *)
-  val implement : ('t, 'module_type, _) t -> impl:'module_type -> 't Binding0.t
 end
 
 module Binding : sig
@@ -167,112 +159,121 @@ module Binding : sig
   val info : _ t -> Trait.Info.t
 end
 
-module Handler : sig
-  (** Manipulating the set of Traits implemented by a provider. *)
+(** {1 Implementing Traits} *)
 
-  (** A handler is essentially a collection of bindings, associating each Trait
-      it contains with an implementation for it. Each Trait provides a
-      specific functionality (one Trait implementation = one first-class
-      module with type t = 't).
+(** [implement trait ~impl:(module Impl)] says to implement [trait] with [Impl].
+    The module [Impl] provided must have the right module type as specified by
+    the type of [trait].
 
-      - ['t] is the internal state of the provider.
-      - ['tags] indicate which functionality are supported by the provider. It
-        is a phantom type using polymorphic variants. To give an example, in the
-        tests for this library, we have two modules defining each their own tag:
+    The tags associated with the [trait] are ignored at this stage. The handling
+    of the tags happens at the provider building stage, not at the granularity
+    of each Trait. This means that the {!val:implement} function focuses solely
+    on creating the implementation, without considering the tags that indicate
+    which Traits are supported by the provider. *)
+val implement : ('t, 'module_type, _) Trait.t -> impl:'module_type -> 't Binding.t
 
-      {[
-        module Directory_reader = struct
-          type tag = [ `Directory_reader ]
-        end
+(** {1 Building providers} *)
 
-        module File_reader = struct
-          type tag = [ `File_reader ]
-        end
-      ]}
+(** A provider is essentially a collection of bindings, associating each Trait
+    it contains with an implementation for it. Each Trait provides a
+    specific functionality (one Trait implementation = one first-class
+    module with type t = 't).
 
-      Then, the type of the handler for a provider whose internal state is
-      [state], that would implement both functionalities would be:
+    - ['t] is the internal state of the provider.
+    - ['tags] indicate which functionality are supported by the provider. It is
+      a phantom type using polymorphic variants. To give an example, in the
+      tests for this library, we have two modules defining each their own tag:
 
-      {[
-        (state, [ Directory_reader.tag | File_reader.tag ]) Provider.Handler.t
-      ]} *)
-  type ('t, -'tags) t
+    {[
+      module Directory_reader = struct
+        type tag = [ `Directory_reader ]
+      end
 
-  (** {1 Building handlers} *)
+      module File_reader = struct
+        type tag = [ `File_reader ]
+      end
+    ]}
 
-  (** [make bindings] create a new handler from a list of bindings. It only
-      keeps the last implementation supplied for each Trait, from left to
-      right. This means that the resulting handler will not contain any
-      duplicate Traits, and the order of the bindings in the input list can
-      affect its contents. *)
-  val make : 't Binding.t list -> ('t, _) t
+    Then, the type of a provider whose internal type is [state], implementing
+    both Traits would be:
 
-  (** [bindings t] returns a list of bindings with the Traits that the handler
-      [t] supports. See also {!extend}. *)
-  val bindings : ('t, _) t -> 't Binding.t list
+    {[
+      (state, [ Directory_reader.tag | File_reader.tag ]) Provider.t
+    ]} *)
+type ('t, -'tags) t
 
-  (** [extend t ~with_] extends the handler [t] and returns a new handler that
-      includes both the original and additional bindings. The resulting
-      handler only contains the last occurrence of each Trait, prioritizing
-      the rightmost elements in the combined list [bindings t @ with_]. *)
-  val extend : ('t, _) t -> with_:'t Binding.t list -> ('t, _) t
+(** [make bindings] create a new provider from a list of bindings. It only keeps
+    the last implementation supplied for each Trait, from left to right. This
+    means that the resulting provider will not contain any duplicate Traits,
+    and the order of the bindings in the input list can affect its contents. *)
+val make : 't Binding.t list -> ('t, _) t
 
-  (** {1 Lookup}
+(** [bindings t] returns a list of bindings with the Traits that the provider
+    [t] supports. See also {!extend}. *)
+val bindings : ('t, _) t -> 't Binding.t list
 
-      A lookup operation is used to retrieve the implementation of a specific
-      Trait within an handler. *)
+(** [extend t ~with_] extends the provider [t] and returns a new provider that
+    includes both the original and additional bindings. The resulting provider
+    only contains the last occurrence of each Trait, prioritizing the
+    rightmost elements in the combined list [bindings t @ with_]. *)
+val extend : ('t, _) t -> with_:'t Binding.t list -> ('t, _) t
 
-  (** [is_empty t] checks if an handler [t] implements any Traits. An empty
-      handler may be created using [make []]. It will cause any lookup
-      operation to fail. It can be useful for initializing data structures or
-      providing a base case for algorithms that process handlers. *)
-  val is_empty : ('t, _) t -> bool
+(** {1 Lookup}
 
-  (** [lookup t ~trait] retrieves the implementation for a given [trait] from an
-      handler.
+    A lookup operation is used to retrieve the implementation of a specific
+    Trait implementation from a provider. *)
 
-      If the provider has correctly exported their implementation using the
-      appropriate tags, the compiler will ensure that this function does not
-      fail in user code (a failure of this function would typically indicate a
-      programming error in the provider's setup).
+(** [is_empty t] checks if a provider [t] implements any Traits. An empty
+    provider may be created using [make []]. It will cause any lookup
+    operation to fail. It can be useful for initializing data structures or
+    providing a base case for algorithms that process providers. *)
+val is_empty : ('t, _) t -> bool
 
-      In the rare case where a provider has not correctly exported the tags of
-      their implementation, this function will raise an internal exception. The
-      exception is not exported, because it is not raised assuming a correct
-      usage of the library.
+(** [lookup t ~trait] retrieves the implementation for a given [trait] from a
+    provider.
 
-      You can find examples of incorrect usage in the tests of this library
-      (e.g. "test__invalid_tags.ml"). *)
-  val lookup
-    :  ('t, 'tags) t
-    -> trait:('t, 'implementation, 'tags) Trait.t
-    -> 'implementation
+    If the provider has correctly exported their implementation using the
+    appropriate tags, the compiler will ensure that this function does not fail
+    in user code (a failure of this function would typically indicate a
+    programming error in the provider's setup).
 
-  (** [lookup_opt t ~trait] returns the implementation of the [trait]
-      ([Some implementation]) or indicates that the Trait is not implemented
-      ([None]).
+    In the rare case where a provider has not correctly exported the tags of
+    their implementation, this function will raise an internal exception. The
+    exception is not exported, because it is not raised assuming a correct usage
+    of the library.
 
-      This is particularly useful in scenarios where a part of a program needs
-      to adapt behavior at runtime based on whether certain functionalities are
-      available or not. *)
-  val lookup_opt
-    :  ('t, _) t
-    -> trait:('t, 'implementation, _) Trait.t
-    -> 'implementation option
+    You can find examples of incorrect usage in the tests of this library (e.g.
+    "test__invalid_tags.ml"). *)
+val lookup
+  :  ('t, 'tags) t
+  -> trait:('t, 'implementation, 'tags) Trait.t
+  -> 'implementation
 
-  (** [implements t ~trait] says wether an handler implements a Trait. This
-      is [true] iif [lookup_opt t ~trait] returns [Some _]. *)
-  val implements : ('t, _) t -> trait:('t, _, _) Trait.t -> bool
-end
+(** [lookup_opt t ~trait] returns the implementation of the [trait] if present
+    ([Some implementation]) or indicates that the Trait is not implemented
+    ([None]).
 
-(** A provider is a pair of a value and a set of Traits that the provider
-    implements. *)
-type -'tags t =
+    This is particularly useful in scenarios where a part of a program needs to
+    adapt behavior at runtime based on whether certain functionalities are
+    available or not. *)
+val lookup_opt
+  :  ('t, _) t
+  -> trait:('t, 'implementation, _) Trait.t
+  -> 'implementation option
+
+(** [implements t ~trait] says wether a provider implements a Trait. This is
+    [true] iif [lookup_opt t ~trait] returns [Some _]. *)
+val implements : ('t, _) t -> trait:('t, _, _) Trait.t -> bool
+
+(** A packed provider is a pair of a value and a set of Traits that a provider
+    implements on that value. This is an OCaml value that behaves roughly like
+    an object, but isn't one. *)
+type -'tags packed =
   | T :
       { t : 't
-      ; handler : ('t, 'tags) Handler.t
+      ; provider : ('t, 'tags) t
       }
-      -> 'tags t
+      -> 'tags packed
 
 module Private : sig
   (** This module is exported for testing purposes only.
@@ -280,20 +281,18 @@ module Private : sig
       Its interface may change in breaking ways without requiring a major
       version of the library to be minted. Do not use. *)
 
-  module Handler : sig
-    (** [same_trait_uids i1 i2] checks if the Traits of two handlers are the
-        same and in the same order. *)
-    val same_trait_uids : ('t1, _) Handler.t -> ('t2, _) Handler.t -> bool
+  (** [same_trait_uids i1 i2] checks if the Traits of two providers are the same
+      and in the same order. *)
+  val same_trait_uids : ('t1, _) t -> ('t2, _) t -> bool
 
-    (** Exported to test the caching strategy. Retains the most recently looked
-        up Trait. Currently returns [None] for empty handler, and if the
-        handler is not empty, returns the most recently looked up Trait
-        ([Some uid]) or an arbitrary initial value. *)
-    val cache : _ Handler.t -> Trait.Uid.t option
+  (** Exported to test the caching strategy. Retains the most recently looked up
+      Trait. Currently returns [None] for empty provider, and if the provider
+      is not empty, returns the most recently looked up Trait ([Some uid]) or
+      an arbitrary initial value. *)
+  val cache : _ t -> Trait.Uid.t option
 
-    (** Part of the strategy for [make], [extend], etc. *)
-    val dedup_sorted_keep_last : 'a list -> compare:('a -> 'a -> int) -> 'a list
-  end
+  (** Part of the strategy for [make], [extend], etc. *)
+  val dedup_sorted_keep_last : 'a list -> compare:('a -> 'a -> int) -> 'a list
 
   module Import : sig
     (** Exported things from the import module we'd like to test separately. *)

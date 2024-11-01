@@ -135,17 +135,17 @@ end)
 
 ### Parametrized Library
 
-Now that we're switching to using Provider, our module is no longer a functor. Rather, each of the functions that need provider functionality will take it as an extra parameter. The type `[> reader ] Provider.t` indicates that the provider required needs to implement *at least* the `reader` Trait, but it is allowed to implement other Traits too (the other bindings will be ignored).
+Now that we're switching to using Provider, our module is no longer a functor. Rather, each of the functions that need provider functionality will take it as an extra parameter. The type `[> reader ] Provider.packed` indicates that the provider required needs to implement *at least* the `reader` Trait, but it is allowed to implement other Traits too (the other bindings will be ignored).
 
 ```ocaml
 module Show_files2 : sig
 
-  val print_files_with_ext : [> reader ] Provider.t -> path:string -> ext:string -> unit
+  val print_files_with_ext : [> reader ] Provider.packed -> path:string -> ext:string -> unit
 
 end = struct
 
-  let print_files_with_ext (Provider.T { t = reader; handler }) ~path ~ext =
-    let module R = (val Provider.Handler.lookup handler ~trait:Reader.t) in
+  let print_files_with_ext (Provider.T { t = reader; provider }) ~path ~ext =
+    let module R = (val Provider.lookup provider ~trait:Reader.t) in
     let entries = R.readdir reader ~path |> List.sort String.compare in
     let files = List.filter (String.ends_with ~suffix:ext) entries in
     files |> List.iter (fun file ->
@@ -159,19 +159,19 @@ end = struct
 end
 ```
 
-Notice how we've slightly changed the beginning of the implementation of `print_files_with_ext`. This time around, we are finding the module `Reader` by doing an handler lookup, based on the Trait we are interested in.
+Notice how we've slightly changed the beginning of the implementation of `print_files_with_ext`. This time around, we are finding the module `Reader` by doing a provider lookup, based on the Trait we are interested in.
 
 The rest of the implementation hasn't actually changed one bit compared to our first functor example. You can get further convinced by this last sentence, considering the following tweak:
 
 ```ocaml
 module Show_files3 : sig
 
-  val print_files_with_ext : [> reader ] Provider.t -> path:string -> ext:string -> unit
+  val print_files_with_ext : [> reader ] Provider.packed -> path:string -> ext:string -> unit
 
 end = struct
 
-  let print_files_with_ext (Provider.T { t = reader; handler }) ~path ~ext =
-    let module R = (val Provider.Handler.lookup handler ~trait:Reader.t) in
+  let print_files_with_ext (Provider.T { t = reader; provider }) ~path ~ext =
+    let module R = (val Provider.lookup provider ~trait:Reader.t) in
     let module M = Show_files (R) in
     M.print_files_with_ext reader ~path ~ext
 
@@ -185,12 +185,12 @@ This is a sort of hybrid of the two versions! In a real-world scenario, you woul
 In this section, we are showing what implementing a Trait looks like. This part is simplified, given that we already have implemented a version of our `Reader` Trait when we wrote `Sys_reader`. We're going to be able to re-use it here, and we are showing below really only the provider-specific bits:
 
 ```ocaml
-let sys_reader () : [ `Reader ] Provider.t =
+let sys_reader () : [ `Reader ] Provider.packed =
   Provider.T
     { t = ()
-    ; handler =
-        Provider.Handler.make
-          [ Provider.Trait.implement Reader.t ~impl:(module Sys_reader) ]
+    ; provider =
+        Provider.make
+          [ Provider.implement Reader.t ~impl:(module Sys_reader) ]
     }
 ```
 

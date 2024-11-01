@@ -17,18 +17,18 @@ end = Provider.Trait.Create (struct
   type 'a module_type = (module S with type t = 'a)
 end)
 
-let print (Provider.T { t; handler }) =
-  let module M = (val Provider.Handler.lookup handler ~trait:Show.t) in
+let print (Provider.T { t; provider }) =
+  let module M = (val Provider.lookup provider ~trait:Show.t) in
   print_endline (M.show t)
 
 let string_provider t =
-  let handler =
-    Provider.Handler.make
-      [ Provider.Trait.implement Show.t
+  let provider =
+    Provider.make
+      [ Provider.implement Show.t
           ~impl:(module struct type t = string let show = String.uppercase_ascii end)
       ]
   in
-  Provider.T { t; handler }
+  Provider.T { t; provider }
 ```
 
 ```ocaml

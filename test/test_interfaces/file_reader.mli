@@ -4,7 +4,7 @@
     thus is not documented in details. Refer to {!Directory_reader} for more. *)
 
 type tag = [ `File_reader ]
-type 'a t = ([> tag ] as 'a) Provider.t
+type 'a t = ([> tag ] as 'a) Provider.packed
 
 val load : _ t -> path:string -> string
 

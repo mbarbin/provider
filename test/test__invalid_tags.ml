@@ -10,8 +10,8 @@ let%expect_test "invalid tags" =
   (* Now let's build a provider with an empty interface, that claims however to
      implement the [Int_printer] interface. *)
   let module Invalid_int_printer = struct
-    let make () : [ `Int_printer ] Provider.t =
-      Provider.T { t = (); handler = Provider.Handler.make [] }
+    let make () : [ `Int_printer ] Provider.packed =
+      Provider.T { t = (); provider = Provider.make [] }
     ;;
   end
   in

@@ -3,16 +3,16 @@
    to understand the capabilities of a provider dynamically, as the program is
    running. *)
 
-let print_implemented_traits (Provider.T { t = _; handler }) =
+let print_implemented_traits (Provider.T { t = _; provider }) =
   let info =
-    List.map (Provider.Handler.bindings handler) ~f:(fun binding ->
+    List.map (Provider.bindings provider) ~f:(fun binding ->
       [%sexp (Provider.Binding.info binding : Provider.Trait.Info.t)])
   in
   print_s [%sexp (info : Sexp.t list)]
 ;;
 
-let print_implements (Provider.T { t = _; handler }) =
-  let implements trait = Provider.Handler.implements handler ~trait in
+let print_implements (Provider.T { t = _; provider }) =
+  let implements trait = Provider.implements provider ~trait in
   print_s
     [%sexp
       { implements =
@@ -34,7 +34,7 @@ let print_implements (Provider.T { t = _; handler }) =
 ;;
 
 let%expect_test "introspection" =
-  print_implements (Provider.T { t = (); handler = Provider.Handler.make [] });
+  print_implements (Provider.T { t = (); provider = Provider.make [] });
   [%expect
     {|
     ((

@@ -1,5 +1,5 @@
 type tag = [ `File_reader ]
-type 'a t = ([> tag ] as 'a) Provider.t
+type 'a t = ([> tag ] as 'a) Provider.packed
 
 module Provider_interface = struct
   module type S = sig
@@ -21,9 +21,7 @@ let () =
   Provider.Trait.Info.register_name Provider_interface.file_reader ~name:"File_reader"
 ;;
 
-let load (Provider.T { t; handler }) ~path =
-  let module M =
-    (val Provider.Handler.lookup handler ~trait:Provider_interface.file_reader)
-  in
+let load (Provider.T { t; provider }) ~path =
+  let module M = (val Provider.lookup provider ~trait:Provider_interface.file_reader) in
   M.load t ~path
 ;;

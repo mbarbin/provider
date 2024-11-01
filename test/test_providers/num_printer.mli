@@ -4,19 +4,20 @@
     The structure of this file is very similar to the [Eio_reader] module, thus
     is not documented in details. Refer to [Eio_reader] for more info. *)
 
-(** In this case we decided to expose the type {!type:t} and {!val:handler}, to
+(** In this case we decided to expose the type {!type:t} and {!val:provider}, to
     demonstrate how to override a particular binding. See [test__override.ml]. *)
 type t = unit
 
-val handler
+val provider
   : ( t
       , [ Test_interfaces.Int_printer.tag | Test_interfaces.Float_printer.tag ] )
-      Provider.Handler.t
+      Provider.t
 
 (** If you simply wish to use this provider without overrides, use [make ()]. *)
 val make
   :  t
-  -> [ Test_interfaces.Int_printer.tag | Test_interfaces.Float_printer.tag ] Provider.t
+  -> [ Test_interfaces.Int_printer.tag | Test_interfaces.Float_printer.tag ]
+       Provider.packed
 
 (** In this specific example, we chose to expose the signature of the provider's
     implementation. This is not something that is usually required, since

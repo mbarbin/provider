@@ -26,12 +26,12 @@
 
 **Trait**: A module signature grouping some functionality.
 
-**Implemenation**: A module that implements a Trait signature.
+**Implementation**: A module that implements a Trait signature.
 
 **Parametrized Library**: A library that requires the functionality contained in one or several Traits. It can compile without having access to actual Trait implementations.
 
 **Binding**: The pair of a Trait and an actual implementation for it.
 
-**Handler**: A list of bindings.
+**Provider**: A list of bindings.
 
-**Provider**: A handler coupled with its required internal state (an OCaml value that behaves like an object, but isn't one).
+**Packed Provider**: A provider coupled with its required internal state (an OCaml value that behaves like an object, but isn't one).

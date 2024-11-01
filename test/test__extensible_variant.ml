@@ -83,9 +83,9 @@ let%expect_test "extension_constructor" =
 
 let%expect_test "implement" =
   (* This test covers a case where [implement_unsafe ~check_trait] succeeds. *)
-  let handler =
-    Provider.Handler.make
-      [ Provider.Trait.implement
+  let provider =
+    Provider.make
+      [ Provider.implement
           No_arg_A.t
           ~impl:
             (module struct
@@ -93,7 +93,7 @@ let%expect_test "implement" =
             end)
       ]
   in
-  let module M = (val Provider.Handler.lookup handler ~trait:No_arg_A.t) in
+  let module M = (val Provider.lookup provider ~trait:No_arg_A.t) in
   let x = (0 : M.t) in
   print_s [%sexp (x : int)];
   [%expect {| 0 |}];

@@ -32,7 +32,7 @@ module Tag = struct
   [@@deriving enumerate, sexp_of]
 end
 
-type 'a t = ([> Tag.t ] as 'a) Provider.t
+type 'a t = ([> Tag.t ] as 'a) Provider.packed
 
 module C_all () = Provider.Trait.Create (struct
     type 't module_type = (module S with type t = 't)
@@ -65,10 +65,10 @@ module Selector = struct
   ;;
 end
 
-let print_tag (Provider.T { t; handler } : _ t) ~tag =
+let print_tag (Provider.T { t; provider } : _ t) ~tag =
   match Selector.of_tag tag with
   | T trait ->
-    let module M = (val Provider.Handler.lookup handler ~trait) in
+    let module M = (val Provider.lookup provider ~trait) in
     M.print_tag t
 ;;
 
@@ -108,22 +108,22 @@ module Impls = struct
 end
 
 let provider () : _ t =
-  let handler =
-    Provider.Handler.make
-      [ Provider.Trait.implement a ~impl:(module Impls.A)
-      ; Provider.Trait.implement b ~impl:(module Impls.B)
-      ; Provider.Trait.implement c ~impl:(module Impls.C)
-      ; Provider.Trait.implement d ~impl:(module Impls.D)
-      ; Provider.Trait.implement e ~impl:(module Impls.E)
-      ; Provider.Trait.implement f ~impl:(module Impls.F)
+  let provider =
+    Provider.make
+      [ Provider.implement a ~impl:(module Impls.A)
+      ; Provider.implement b ~impl:(module Impls.B)
+      ; Provider.implement c ~impl:(module Impls.C)
+      ; Provider.implement d ~impl:(module Impls.D)
+      ; Provider.implement e ~impl:(module Impls.E)
+      ; Provider.implement f ~impl:(module Impls.F)
       ]
   in
-  Provider.T { t = (); handler }
+  Provider.T { t = (); provider }
 ;;
 
 let%expect_test "lookup" =
-  let (Provider.T { t = _; handler } as t) = provider () in
-  print_s [%sexp (List.length (Provider.Handler.bindings handler) : int)];
+  let (Provider.T { t = _; provider } as t) = provider () in
+  print_s [%sexp (List.length (Provider.bindings provider) : int)];
   [%expect {| 6 |}];
   List.iter Tag.all ~f:(fun tag -> print_tag t ~tag);
   [%expect {|
@@ -136,20 +136,20 @@ let%expect_test "lookup" =
   ()
 ;;
 
-(* In this section we show how to check at runtime that a handler implements a
+(* In this section we show how to check at runtime that a provider implements a
    subset of another. This demonstrates other possible uses for trait unique
    ids. *)
 
 let provider2 () : _ t =
-  let handler =
-    Provider.Handler.make
-      [ Provider.Trait.implement a ~impl:(module Impls.A)
-      ; Provider.Trait.implement b ~impl:(module Impls.B)
-      ; Provider.Trait.implement d ~impl:(module Impls.D)
-      ; Provider.Trait.implement f ~impl:(module Impls.F)
+  let provider =
+    Provider.make
+      [ Provider.implement a ~impl:(module Impls.A)
+      ; Provider.implement b ~impl:(module Impls.B)
+      ; Provider.implement d ~impl:(module Impls.D)
+      ; Provider.implement f ~impl:(module Impls.F)
       ]
   in
-  Provider.T { t = (); handler }
+  Provider.T { t = (); provider }
 ;;
 
 module Uid = struct
@@ -158,14 +158,14 @@ module Uid = struct
   include Comparable.Make (Provider.Trait.Uid)
 end
 
-let uids (Provider.T { t = _; handler }) =
-  handler
-  |> Provider.Handler.bindings
+let uids (Provider.T { t = _; provider }) =
+  provider
+  |> Provider.bindings
   |> List.map ~f:Provider.Binding.uid
   |> Set.of_list (module Uid)
 ;;
 
-let%expect_test "sub-handler" =
+let%expect_test "sub-provider" =
   let traits1 = provider () |> uids in
   let traits2 = provider2 () |> uids in
   print_s [%sexp (Set.equal traits1 traits2 : bool)];
@@ -176,25 +176,25 @@ let%expect_test "sub-handler" =
 ;;
 
 let provider3 () : _ t =
-  let handler =
-    Provider.Handler.make
-      [ Provider.Trait.implement a ~impl:(module Impls.A)
-      ; Provider.Trait.implement c ~impl:(module Impls.C)
-      ; Provider.Trait.implement e ~impl:(module Impls.E)
-      ; Provider.Trait.implement f ~impl:(module Impls.F)
+  let provider =
+    Provider.make
+      [ Provider.implement a ~impl:(module Impls.A)
+      ; Provider.implement c ~impl:(module Impls.C)
+      ; Provider.implement e ~impl:(module Impls.E)
+      ; Provider.implement f ~impl:(module Impls.F)
       ]
   in
-  Provider.T { t = (); handler }
+  Provider.T { t = (); provider }
 ;;
 
 let%expect_test "same_trait_uids" =
-  (* This exercises the test when the handler arrays have the same length,
+  (* This exercises the test when the provider arrays have the same length,
      otherwise we skip the actual uid comparison branch. *)
   let same_trait_uids
-    (Provider.T { t = _; handler = h1 })
-    (Provider.T { t = _; handler = h2 })
+    (Provider.T { t = _; provider = h1 })
+    (Provider.T { t = _; provider = h2 })
     =
-    print_s [%sexp (Provider.Private.Handler.same_trait_uids h1 h2 : bool)]
+    print_s [%sexp (Provider.Private.same_trait_uids h1 h2 : bool)]
   in
   let p1 = provider () in
   let p2 = provider2 () in

@@ -4,7 +4,7 @@
     thus is not documented in details. Refer to {!Directory_reader} for more. *)
 
 type tag = [ `Float_printer ]
-type 'a t = ([> tag ] as 'a) Provider.t
+type 'a t = ([> tag ] as 'a) Provider.packed
 
 val print : _ t -> float -> unit
 
@@ -15,6 +15,6 @@ module Provider_interface : sig
     val string_of_float : t -> float -> string
   end
 
-  val make : (module S with type t = 't) -> ('t, tag) Provider.Handler.t
+  val make : (module S with type t = 't) -> ('t, tag) Provider.t
   val float_printer : ('t, (module S with type t = 't), [> tag ]) Provider.Trait.t
 end

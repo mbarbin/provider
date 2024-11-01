@@ -18,7 +18,8 @@ type t
     {!module:Test_interfaces.File_reader}. *)
 val make
   :  env:< fs : _ Eio.Path.t ; .. >
-  -> [ Test_interfaces.Directory_reader.tag | Test_interfaces.File_reader.tag ] Provider.t
+  -> [ Test_interfaces.Directory_reader.tag | Test_interfaces.File_reader.tag ]
+       Provider.packed
 
 (** In this specific example, we chose to expose the signature of the provider's
     implementation. This is not something that is usually required, since

@@ -6,12 +6,12 @@ end
 
 include Impl
 
-let handler : (unit, [ `Int_printer ]) Provider.Handler.t =
-  Provider.Handler.make
+let provider : (unit, [ `Int_printer ]) Provider.t =
+  Provider.make
     (List.concat
        [ Test_interfaces.Int_printer.Provider_interface.make (module Impl)
-         |> Provider.Handler.bindings
+         |> Provider.bindings
        ])
 ;;
 
-let make () : [ `Int_printer ] Provider.t = Provider.T { t = (); handler }
+let make () : [ `Int_printer ] Provider.packed = Provider.T { t = (); provider }

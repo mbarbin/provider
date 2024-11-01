@@ -49,14 +49,14 @@ let impl (type a) id value ~check_trait =
 ;;
 
 let%expect_test "magic" =
-  let make_handler ~check_trait =
-    Provider.Handler.make
+  let make_provider ~check_trait =
+    Provider.make
       [ (if true
          then impl id_int 1 ~check_trait
          else impl id_string "" ~check_trait [@coverage off])
       ]
   in
-  require_does_raise [%here] (fun () -> make_handler ~check_trait:true);
+  require_does_raise [%here] (fun () -> make_provider ~check_trait:true);
   [%expect
     {|
     ("Invalid usage of [Provider.Trait]: trait is not a valid extensible variant for this library"
@@ -65,9 +65,9 @@ let%expect_test "magic" =
          (id   #id)
          (name A)))))
     |}];
-  let handler = make_handler ~check_trait:false in
+  let provider = make_provider ~check_trait:false in
   require_does_raise [%here] (fun () ->
-    (let module M = (val Provider.Handler.lookup handler ~trait:(A id_string)) in
+    (let module M = (val Provider.lookup provider ~trait:(A id_string)) in
     print_string M.t) [@coverage off]);
   [%expect
     {|

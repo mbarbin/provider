@@ -8,4 +8,4 @@
 
 type t = unit
 
-val make : t -> Test_interfaces.Int_printer.tag Provider.t
+val make : t -> Test_interfaces.Int_printer.tag Provider.packed

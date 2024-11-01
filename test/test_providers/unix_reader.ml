@@ -8,9 +8,9 @@ end
 
 include Impl
 
-let make () : [ `Directory_reader ] Provider.t =
+let make () : [ `Directory_reader ] Provider.packed =
   Provider.T
     { t = ()
-    ; handler = Test_interfaces.Directory_reader.Provider_interface.make (module Impl)
+    ; provider = Test_interfaces.Directory_reader.Provider_interface.make (module Impl)
     }
 ;;

@@ -10,4 +10,4 @@
 
 type t = unit
 
-val make : t -> Test_interfaces.Directory_reader.tag Provider.t
+val make : t -> Test_interfaces.Directory_reader.tag Provider.packed

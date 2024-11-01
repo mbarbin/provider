@@ -18,7 +18,7 @@ const sidebars: SidebarsConfig = {
       label: 'Tutorials',
       items: [
         { type: 'doc', id: 'tutorials/getting-started/README', label: 'Getting Started' },
-        { type: 'doc', id: 'tutorials/handler-explicit/README', label: 'Handler Explicit' },
+        { type: 'doc', id: 'tutorials/provider-explicit/README', label: 'Provider Explicit' },
       ],
     },
   ],

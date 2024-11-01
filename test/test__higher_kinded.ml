@@ -37,14 +37,14 @@ end = Provider.Trait.Create1 (struct
 
 let map_n_times
   : type a t.
-    ((a -> t) Higher_kinded.t, [> mappable ]) Provider.Handler.t
+    ((a -> t) Higher_kinded.t, [> mappable ]) Provider.t
     -> (a -> t) Higher_kinded.t
     -> int
     -> f:(a -> a)
     -> (a -> t) Higher_kinded.t
   =
-  fun handler t n ~f ->
-  let module M = (val Provider.Handler.lookup handler ~trait:Mappable.t) in
+  fun provider t n ~f ->
+  let module M = (val Provider.lookup provider ~trait:Mappable.t) in
   let at = M.project t in
   let rec loop n at = if n = 0 then at else loop (n - 1) (M.map at ~f) in
   M.inject (loop n at)
@@ -64,21 +64,15 @@ module _ : Mappable with type 'a t = 'a list = Higher_kinded_list
 module _ : Mappable with type 'a t = 'a array = Higher_kinded_array
 
 let mappable_list ()
-  : ( ('a -> Higher_kinded_list.higher_kinded) Higher_kinded.t
-      , [> mappable ] )
-      Provider.Handler.t
+  : (('a -> Higher_kinded_list.higher_kinded) Higher_kinded.t, [> mappable ]) Provider.t
   =
-  Provider.Handler.make
-    [ Provider.Trait.implement Mappable.t ~impl:(module Higher_kinded_list) ]
+  Provider.make [ Provider.implement Mappable.t ~impl:(module Higher_kinded_list) ]
 ;;
 
 let mappable_array ()
-  : ( ('a -> Higher_kinded_array.higher_kinded) Higher_kinded.t
-      , [> mappable ] )
-      Provider.Handler.t
+  : (('a -> Higher_kinded_array.higher_kinded) Higher_kinded.t, [> mappable ]) Provider.t
   =
-  Provider.Handler.make
-    [ Provider.Trait.implement Mappable.t ~impl:(module Higher_kinded_array) ]
+  Provider.make [ Provider.implement Mappable.t ~impl:(module Higher_kinded_array) ]
 ;;
 
 let%expect_test "map_n_times" =

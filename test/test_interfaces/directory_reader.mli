@@ -7,7 +7,7 @@ type tag = [ `Directory_reader ]
 
 (** This library can operate on any provider, as long as it implements at
     least the [`Directory_reader] capability. *)
-type 'a t = ([> tag ] as 'a) Provider.t
+type 'a t = ([> tag ] as 'a) Provider.packed
 
 (** This function will result in calling the method [readdir] implemented by the
     provider. *)
@@ -38,14 +38,14 @@ module Provider_interface : sig
     val readdir : t -> path:string -> string list
   end
 
-  (** [make (module Impl)] creates a provider handler that implements the
-      directory_reader functionality. Another option is to use the constructor
+  (** [make (module Impl)] creates a provider that implements the directory
+      reader functionality. Another option is to use the constructor
       [Directory_reader] below. *)
-  val make : (module S with type t = 't) -> ('t, tag) Provider.Handler.t
+  val make : (module S with type t = 't) -> ('t, tag) Provider.t
 
   (** The actual trait constructor may or may not be exported by the provider
       interface -- either way works. That's left as a programmer's preference
       depending on the context. When this constructor is exported, you can use
-      it in conjunction with {!Provider.Trait.implement}. *)
+      it in conjunction with {!Provider.implement}. *)
   val directory_reader : ('t, (module S with type t = 't), [> tag ]) Provider.Trait.t
 end

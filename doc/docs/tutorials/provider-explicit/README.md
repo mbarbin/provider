@@ -1,4 +1,4 @@
-# Handler Explicit
+# Provider Explicit
 
 In this tutorial, we draw a parallel between a way to use the provider library, and [modular explicit](https://gallium.inria.fr/~remy/ocamod/modular-explicits.pdf).
 
@@ -13,7 +13,7 @@ module type Id = sig type t val id : t -> t end
 let id (module A : Id) (x : A.t) = A.id x
 ```
 
-We called this tutorial *handler-explicit* in reference to this. In the pattern we present here, functions take an additional *handler* argument to achieve a similar type-class style parametrization.
+We called this tutorial *provider-explicit* in reference to this. In the pattern we present here, functions take an additional *provider* argument to achieve a similar type-class style parametrization.
 
 In a nutshell:
 
@@ -28,22 +28,22 @@ end = Provider.Trait.Create (struct
   type 'a module_type = (module Id with type t = 'a)
 end)
 
-let id : type a. (a, [> id]) Provider.Handler.t -> a -> a =
-  fun handler x ->
-  let module M = (val Provider.Handler.lookup handler ~trait:Id.t) in
+let id : type a. (a, [> id]) Provider.t -> a -> a =
+  fun provider x ->
+  let module M = (val Provider.lookup provider ~trait:Id.t) in
   M.id x
 ;;
 ```
 
-In the rest of the tutorial, we cover this pattern in greater details and demonstrate how to use it with handlers that implement multiple traits. We also provide examples where the Trait type is parametrized.
+In the rest of the tutorial, we cover this pattern in greater details and demonstrate how to use it with providers that implement multiple traits. We also provide examples where the Trait type is parametrized.
 
 Let's jump in!
 
-## Functional handlers
+## Functional providers
 
-In the [getting-started](../getting-started/) tutorial, we explored a scenario where handlers were bundled with the value on which the Traits operate. Whether the functions exported by the Traits interfaces mutate the `t` value or not, this approach closely resembles how objects work in Object-Oriented languages.
+In the [getting-started](../getting-started/) tutorial, we explored a scenario where providers were bundled with the value on which the Traits operate. Whether the functions exported by the Traits interfaces mutate the `t` value or not, this approach closely resembles how objects work in Object-Oriented languages.
 
-In contrast, this tutorial focuses on manipulating *handlers* directly, without bundling them with values. This allows us to work with Traits that contain purely functional functions.
+In contrast, this tutorial focuses on manipulating *providers* directly, without bundling them with values. This allows us to work with Traits that contain purely functional functions.
 
 ### Defining Traits
 
@@ -74,11 +74,11 @@ end)
 With no dependencies on actual providers, we can define functionality depending on the Trait interface only. This may look like this:
 
 ```ocaml
-# let quadruple : type a. (a, [> doublable ]) Provider.Handler.t -> a -> a =
-  fun handler t ->
-  let module M = (val Provider.Handler.lookup handler ~trait:Doublable.t) in
+# let quadruple : type a. (a, [> doublable ]) Provider.t -> a -> a =
+  fun provider t ->
+  let module M = (val Provider.lookup provider ~trait:Doublable.t) in
   M.double (M.double t)
-val quadruple : ('a, [> doublable ]) Provider.Handler.t -> 'a -> 'a = <fun>
+val quadruple : ('a, [> doublable ]) Provider.t -> 'a -> 'a = <fun>
 ```
 
 ### Implementing Providers
@@ -99,19 +99,18 @@ module Doublable_float = struct
 end
 ```
 
-We build *handlers* values for these modules:
+We build *providers* values for these modules:
 
 ```ocaml
-# let doublable_int () : (int, [> doublable ]) Provider.Handler.t =
-  Provider.Handler.make
-    [ Provider.Trait.implement Doublable.t ~impl:(module Doublable_int) ]
-val doublable_int : unit -> (int, [> doublable ]) Provider.Handler.t = <fun>
+# let doublable_int () : (int, [> doublable ]) Provider.t =
+  Provider.make
+    [ Provider.implement Doublable.t ~impl:(module Doublable_int) ]
+val doublable_int : unit -> (int, [> doublable ]) Provider.t = <fun>
 
-# let doublable_float () : (float, [> doublable ]) Provider.Handler.t =
-  Provider.Handler.make
-    [ Provider.Trait.implement Doublable.t ~impl:(module Doublable_float) ]
-val doublable_float : unit -> (float, [> doublable ]) Provider.Handler.t =
-  <fun>
+# let doublable_float () : (float, [> doublable ]) Provider.t =
+  Provider.make
+    [ Provider.implement Doublable.t ~impl:(module Doublable_float) ]
+val doublable_float : unit -> (float, [> doublable ]) Provider.t = <fun>
 ```
 
 ### Instantiation
@@ -155,13 +154,13 @@ end)
 The function below requires both `repeatable` and `doublable` Traits:
 
 ```ocaml
-# let double_then_repeat : type a. (a, [> doublable | repeatable ]) Provider.Handler.t -> a -> a =
-  fun handler t ->
-  let module D = (val Provider.Handler.lookup handler ~trait:Doublable.t) in
-  let module R = (val Provider.Handler.lookup handler ~trait:Repeatable.t) in
+# let double_then_repeat : type a. (a, [> doublable | repeatable ]) Provider.t -> a -> a =
+  fun provider t ->
+  let module D = (val Provider.lookup provider ~trait:Doublable.t) in
+  let module R = (val Provider.lookup provider ~trait:Repeatable.t) in
   t |> D.double |> R.repeat
 val double_then_repeat :
-  ('a, [> `Doublable | `Repeatable ]) Provider.Handler.t -> 'a -> 'a = <fun>
+  ('a, [> `Doublable | `Repeatable ]) Provider.t -> 'a -> 'a = <fun>
 ```
 
 ### Implementing Providers
@@ -178,19 +177,19 @@ module Versatile_int = struct
 end
 ```
 
-We can now build a *handler* for it:
+We can now build a *provider* for it:
 
 ```ocaml
-# let versatile_int () : (int, [> doublable | repeatable ]) Provider.Handler.t =
-  Provider.Handler.make
-    [ Provider.Trait.implement Doublable.t ~impl:(module Versatile_int)
-    ; Provider.Trait.implement Repeatable.t ~impl:(module Versatile_int)
+# let versatile_int () : (int, [> doublable | repeatable ]) Provider.t =
+  Provider.make
+    [ Provider.implement Doublable.t ~impl:(module Versatile_int)
+    ; Provider.implement Repeatable.t ~impl:(module Versatile_int)
     ]
-val versatile_int :
-  unit -> (int, [> `Doublable | `Repeatable ]) Provider.Handler.t = <fun>
+val versatile_int : unit -> (int, [> `Doublable | `Repeatable ]) Provider.t =
+  <fun>
 ```
 
-The careful reader will note that this section requires careful handling, as there is no compiler assistance here. When defining handlers, you must tag them correctly, or you may not be able to supply them to the functions you want, some traits may not be found at runtime, etc.
+The careful reader will note that this section requires careful handling, as there is no compiler assistance here. When defining providers, you must tag them correctly, or you may not be able to supply them to the functions you want, some traits may not be found at runtime, etc.
 
 ### Instantiation
 
@@ -289,14 +288,14 @@ That's it, we are on our way to write higher-kinded polymorphic functions:
 ```ocaml
 let map_n_times
   : type a t.
-    ((a -> t) Higher_kinded.t, [> mappable ]) Provider.Handler.t
+    ((a -> t) Higher_kinded.t, [> mappable ]) Provider.t
     -> (a -> t) Higher_kinded.t
     -> int
     -> f:(a -> a)
     -> (a -> t) Higher_kinded.t
   =
-  fun handler t n ~f ->
-  let module M = (val Provider.Handler.lookup handler ~trait:Mappable.t) in
+  fun provider t n ~f ->
+  let module M = (val Provider.lookup provider ~trait:Mappable.t) in
   let at = M.project t in
   let rec loop n at = if n = 0 then at else loop (n - 1) (M.map f at) in
   M.inject (loop n at)
@@ -328,32 +327,32 @@ module _ = (Higher_kinded_list : Mappable with type 'a t = 'a list)
 module _ = (Higher_kinded_array : Mappable with type 'a t = 'a array)
 ```
 
-We build *handlers* values for these modules:
+We build *providers* values for these modules:
 
 ```ocaml
 # let mappable_list ()
   : ( ('a -> Higher_kinded_list.higher_kinded) Higher_kinded.t
       , [> mappable ] )
-      Provider.Handler.t
+      Provider.t
   =
-  Provider.Handler.make
-    [ Provider.Trait.implement Mappable.t ~impl:(module Higher_kinded_list) ]
+  Provider.make
+    [ Provider.implement Mappable.t ~impl:(module Higher_kinded_list) ]
 val mappable_list :
   unit ->
   (('a -> Higher_kinded_list.higher_kinded) Higher_kinded.t, [> mappable ])
-  Provider.Handler.t = <fun>
+  Provider.t = <fun>
 
 # let mappable_array ()
   : ( ('a -> Higher_kinded_array.higher_kinded) Higher_kinded.t
       , [> mappable ] )
-      Provider.Handler.t
+      Provider.t
   =
-  Provider.Handler.make
-    [ Provider.Trait.implement Mappable.t ~impl:(module Higher_kinded_array) ]
+  Provider.make
+    [ Provider.implement Mappable.t ~impl:(module Higher_kinded_array) ]
 val mappable_array :
   unit ->
   (('a -> Higher_kinded_array.higher_kinded) Higher_kinded.t, [> mappable ])
-  Provider.Handler.t = <fun>
+  Provider.t = <fun>
 ```
 
 ### Instantiation
@@ -380,7 +379,7 @@ And, again, time to instantiate our polymorphic code!
 
 ## Conclusion
 
-In this tutorial, we've demonstrated examples using the provider library that go beyond typical object-oriented patterns. We've shown how to write code parametrized by handlers and how to make this work with purely functional functions, as well as with parametrized types.
+In this tutorial, we've demonstrated examples using the provider library that go beyond typical object-oriented patterns. We've shown how to write code parametrized by providers and how to make this work with purely functional functions, as well as with parametrized types.
 
 These techniques should offer convenient ways to parametrize code depending on various needs, and we hope they'll find practical applications in your favorite projects!
 

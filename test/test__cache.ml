@@ -26,92 +26,92 @@ let%expect_test "override" =
     then Cache_state.Float_printer
     else assert false [@coverage off]
   in
-  let cache_state handler =
-    match Provider.Private.Handler.cache handler with
+  let cache_state provider =
+    match Provider.Private.cache provider with
     | None -> Cache_state.None
     | Some uid -> cache_state_of_uid uid
   in
-  let show_cache handler = print_s [%sexp (cache_state handler : Cache_state.t)] in
+  let show_cache provider = print_s [%sexp (cache_state provider : Cache_state.t)] in
   let show_printer_cache () =
-    let (Provider.T { t = _; handler }) = num_printer in
-    show_cache handler
+    let (Provider.T { t = _; provider }) = num_printer in
+    show_cache provider
   in
-  (* An empty handler has no cache. *)
-  show_cache (Provider.Handler.make []);
+  (* An empty provider has no cache. *)
+  show_cache (Provider.make []);
   [%expect {| None |}];
-  let (Provider.T { t = _; handler }) = num_printer in
+  let (Provider.T { t = _; provider }) = num_printer in
   let int_printer_lookup () =
-    (fun (type a) (handler : (a, _) Provider.Handler.t) ->
+    (fun (type a) (provider : (a, _) Provider.t) ->
       ignore
-        (Provider.Handler.lookup
-           handler
+        (Provider.lookup
+           provider
            ~trait:Test_interfaces.Int_printer.Provider_interface.int_printer
          : (module Test_interfaces.Int_printer.Provider_interface.S with type t = a)))
-      handler;
+      provider;
     require_equal
       [%here]
       (module Cache_state)
       Cache_state.Int_printer
-      (cache_state handler)
+      (cache_state provider)
   in
   let float_printer_lookup () =
-    (fun (type a) (handler : (a, _) Provider.Handler.t) ->
+    (fun (type a) (provider : (a, _) Provider.t) ->
       ignore
-        (Provider.Handler.lookup
-           handler
+        (Provider.lookup
+           provider
            ~trait:Test_interfaces.Float_printer.Provider_interface.float_printer
          : (module Test_interfaces.Float_printer.Provider_interface.S with type t = a)))
-      handler;
+      provider;
     require_equal
       [%here]
       (module Cache_state)
       Cache_state.Float_printer
-      (cache_state handler)
+      (cache_state provider)
   in
   let int_printer_lookup_opt () =
     require
       [%here]
       (Option.is_some
-         (Provider.Handler.lookup_opt
-            handler
+         (Provider.lookup_opt
+            provider
             ~trait:Test_interfaces.Int_printer.Provider_interface.int_printer));
     require_equal
       [%here]
       (module Cache_state)
       Cache_state.Int_printer
-      (cache_state handler)
+      (cache_state provider)
   in
   let float_printer_lookup_opt () =
     require
       [%here]
       (Option.is_some
-         (Provider.Handler.lookup_opt
-            handler
+         (Provider.lookup_opt
+            provider
             ~trait:Test_interfaces.Float_printer.Provider_interface.float_printer));
     require_equal
       [%here]
       (module Cache_state)
       Cache_state.Float_printer
-      (cache_state handler)
+      (cache_state provider)
   in
   let int_printer_implements () =
-    let pre_cache_state = cache_state handler in
+    let pre_cache_state = cache_state provider in
     require
       [%here]
-      (Provider.Handler.implements
-         handler
+      (Provider.implements
+         provider
          ~trait:Test_interfaces.Int_printer.Provider_interface.int_printer);
-    let post_cache_state = cache_state handler in
+    let post_cache_state = cache_state provider in
     require_equal [%here] (module Cache_state) pre_cache_state post_cache_state
   in
   let float_printer_implements () =
-    let pre_cache_state = cache_state handler in
+    let pre_cache_state = cache_state provider in
     require
       [%here]
-      (Provider.Handler.implements
-         handler
+      (Provider.implements
+         provider
          ~trait:Test_interfaces.Float_printer.Provider_interface.float_printer);
-    let post_cache_state = cache_state handler in
+    let post_cache_state = cache_state provider in
     require_equal [%here] (module Cache_state) pre_cache_state post_cache_state
   in
   (* At first, the cache is initialized with a brittle value. We don't register

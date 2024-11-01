@@ -34,7 +34,7 @@ Error: Modules do not match:
      is not included in
        type (!'a, 'b) t
      Their variances do not agree.
-     File "src/provider.mli", line 73, characters 6-22: Expected declaration
+     File "src/provider.mli", line 76, characters 6-22: Expected declaration
 ```
 
 Trying to force the injectivity won't do either.
@@ -120,18 +120,18 @@ So, the rest of the test does not apply.
 
 ```ocaml
 let a = (Trait.t : (string, string, [ `A ]) Provider.Trait.t)
-let h = Provider.Handler.make [ Provider.Trait.implement a ~impl:"hello" ]
+let h = Provider.make [ Provider.implement a ~impl:"hello" ]
 let b = (Trait.t : (int, int, [ `A ]) Provider.Trait.t)
 ```
 
 ```ocaml
 let crash () =
-  let (i : int) = Provider.Handler.lookup h ~trait:b in
+  let (i : int) = Provider.lookup h ~trait:b in
   assert (Stdlib.Obj.is_int (Stdlib.Obj.repr i))
 ;;
 ```
 ```mdx-error
-Line 2, characters 54-55:
+Line 2, characters 46-47:
 Error: This expression has type (int, int, [ `A ]) Provider.Trait.t
        but an expression was expected of type
          (string, 'a, 'b) Provider.Trait.t
@@ -145,11 +145,11 @@ We're keeping the rest of the original test for reference only, it cannot be wri
 <!-- $MDX skip -->
 ```ocaml
 let a = (Trait : (unit, string, [ `A ]) Provider.Trait.t)
-let h = Provider.Handler.make [ Provider.Trait.implement a ~impl:"hello" ]
+let h = Provider.make [ Provider.implement a ~impl:"hello" ]
 let b = (Trait : (unit, int, [ `A ]) Provider.Trait.t)
 
 let%expect_test "crash" =
-  let (i : int) = Provider.Handler.lookup h ~trait:b in
+  let (i : int) = Provider.lookup h ~trait:b in
   print_s [%sexp { is_int = (Stdlib.Obj.is_int (Stdlib.Obj.repr i) : bool) }];
   [%expect {| ((is_int false)) |}];
   ()

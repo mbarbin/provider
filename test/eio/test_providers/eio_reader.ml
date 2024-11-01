@@ -11,15 +11,15 @@ end
 
 include Impl
 
-let make ~env : [ `Directory_reader | `File_reader ] Provider.t =
+let make ~env : [ `Directory_reader | `File_reader ] Provider.packed =
   Provider.T
     { t = Impl.T { fs = Eio.Stdenv.fs env }
-    ; handler =
-        Provider.Handler.make
-          [ Provider.Trait.implement
+    ; provider =
+        Provider.make
+          [ Provider.implement
               Test_interfaces.Directory_reader.Provider_interface.directory_reader
               ~impl:(module Impl)
-          ; Provider.Trait.implement
+          ; Provider.implement
               Test_interfaces.File_reader.Provider_interface.file_reader
               ~impl:(module Impl)
           ]
