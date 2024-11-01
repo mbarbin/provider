@@ -26,7 +26,7 @@ We then went on to use Provider as building block for the parametrization of the
 
 ## Implementation
 
-At its core, a provider is just a pair consisting of an internal state and a virtual-table of first-class modules operating on that state. This allows dynamic dispatch, but for example doesn't include open recursion or inheritance in its execution model. This design offers an interesting balance between object-oriented and modular programming.
+At its core, a provider is a pair consisting of an internal state and a virtual-table of first-class modules operating on that state. This allows dynamic dispatch, but for example doesn't include open recursion or inheritance in its execution model. This design offers an interesting balance between object-oriented and modular programming.
 
 ## Experimental Status
 

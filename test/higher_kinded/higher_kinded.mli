@@ -8,8 +8,8 @@
     to add some injectivity annotations to the types, and the higher-kinded
     libraries available do not have them at this time. Proposing this change
     upstream would require more thoughts, and so far we didn't have actual usage
-    for this (outside of tests and tutorials), so we just went with this small
-    kernel instead. *)
+    for this (outside of tests and tutorials), so we went with this small kernel
+    instead. *)
 
 type !'a t
 type !'a hk := 'a t

@@ -77,9 +77,9 @@ let%expect_test "Create2" =
   ()
 ;;
 
-(* Below we add extra tests regarding Marshal, just for added context. They are
-   not directly related to the project but are interesting context to have in
-   mind while working on the representation of traits. *)
+(* Below we add extra tests regarding Marshal, for added context. They are not
+   directly related to the project but are interesting context to have in mind
+   while working on the representation of traits. *)
 
 let%expect_test "Marshal extensible variant" =
   (* Marshalling breaks extensible variant matching, as explained in the OCaml
