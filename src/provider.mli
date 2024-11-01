@@ -146,7 +146,7 @@ end
 
 module Binding : sig
   (** A binding associates a Trait with an implementation for it. *)
-  type 'a t = 'a Binding0.t = private
+  type 'a t = private
     | T :
         { trait : ('t, 'module_type, _) Trait.t
         ; implementation : 'module_type

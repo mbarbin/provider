@@ -62,7 +62,7 @@ module Trait = struct
 end
 
 module Binding = struct
-  type 'a t = 'a Binding0.t = private
+  type 'a t =
     | T :
         { trait : ('t, 'module_type, _) Trait.t
         ; implementation : 'module_type
@@ -74,7 +74,9 @@ module Binding = struct
   let compare_by_uid t1 t2 = Trait.Uid.compare (uid t1) (uid t2)
 end
 
-let implement = Binding0.implement
+let implement (type a i) (trait : (a, i, _) Trait.t) ~impl:(implementation : i) =
+  Binding.T { trait; implementation }
+;;
 
 (* We sort the element by their extension_id in increasing order. Element.(0) is
    a cache of the most recently looked up method. *)
