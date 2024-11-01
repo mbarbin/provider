@@ -1,0 +1,6 @@
+(mdx
+ (package provider-dev)
+ (deps
+  (package provider)
+  (glob_files *.txt))
+ (preludes prelude.txt))

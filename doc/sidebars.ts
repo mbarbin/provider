@@ -51,6 +51,7 @@ const sidebars: SidebarsConfig = {
       label: 'Explanation',
       items: [
         { type: 'doc', id: 'explanation/README', label: 'Introduction' },
+        { type: 'doc', id: 'explanation/lookup-strategy/README', label: 'Lookup Strategy' },
       ],
     },
   ],
