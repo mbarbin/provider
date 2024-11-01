@@ -4,7 +4,8 @@
 
 ### Changed
 
-- Change the API to make the library Type-Safe (breaking change). (#PR, @mbarbin, @v-gb).
+- Simplify the API and remove the term 'handler' from the project (breaking change) (#35, @mbarbin).
+- Change the API to make the library Type-Safe (breaking change) (#34, @mbarbin, @v-gb).
 - Register custom trait names instead of extensible variant names (#31, @mbarbin).
 
 ### Deprecated
