@@ -22,8 +22,8 @@ module Create0 (X : sig
 struct
   type (_, _) ext += T : ('a X.t, X.module_type) ext
 
-  let same_witness (type m2) t2 : (X.module_type, m2) Type_eq_opt.t =
-    match (t2 : (_ X.t, m2) ext) with
+  let same_witness (type a m2) t2 : (X.module_type, m2) Type_eq_opt.t =
+    match (t2 : (a X.t, m2) ext) with
     | T -> Type_eq_opt.Equal
     | _ -> Not_equal
   ;;
@@ -38,8 +38,8 @@ module Create1 (X : sig
 struct
   type (_, _) ext += T : (('a, 'b) X.t, 'a X.module_type) ext
 
-  let same_witness (type a m2) t2 : (a X.module_type, m2) Type_eq_opt.t =
-    match (t2 : ((a, _) X.t, m2) ext) with
+  let same_witness (type a b m2) t2 : (a X.module_type, m2) Type_eq_opt.t =
+    match (t2 : ((a, b) X.t, m2) ext) with
     | T -> Type_eq_opt.Equal
     | _ -> Not_equal
   ;;
@@ -54,8 +54,8 @@ module Create2 (X : sig
 struct
   type (_, _) ext += T : (('a, 'b, 'c) X.t, ('a, 'b) X.module_type) ext
 
-  let same_witness (type a b m2) t2 : ((a, b) X.module_type, m2) Type_eq_opt.t =
-    match (t2 : ((a, b, _) X.t, m2) ext) with
+  let same_witness (type a b c m2) t2 : ((a, b) X.module_type, m2) Type_eq_opt.t =
+    match (t2 : ((a, b, c) X.t, m2) ext) with
     | T -> Type_eq_opt.Equal
     | _ -> Not_equal
   ;;
