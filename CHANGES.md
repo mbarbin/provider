@@ -1,18 +1,10 @@
-## 0.0.11 (unreleased)
-
-### Added
+## 0.0.11 (2024-11-05)
 
 ### Changed
 
 - Simplify the API and remove the term 'handler' from the project (breaking change) (#35, @mbarbin).
 - Change the API to make the library Type-Safe (breaking change) (#34, @mbarbin, @v-gb).
 - Register custom trait names instead of extensible variant names (#31, @mbarbin).
-
-### Deprecated
-
-### Fixed
-
-### Removed
 
 ## 0.0.10 (2024-10-27)
 
