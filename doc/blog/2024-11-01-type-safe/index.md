@@ -25,7 +25,7 @@ module My_trait = struct
     My_trait
      : ('t, (module S with type t = 't), [> `My_trait ]) Provider.Trait.t
 
-  let t = File_reader
+  let t = My_trait
 end
 ```
 
