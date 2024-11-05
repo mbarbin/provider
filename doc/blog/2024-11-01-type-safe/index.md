@@ -20,7 +20,13 @@ In this release, we have redesigned the way traits are defined to remove the nee
 **Previous construct**:
 
 ```ocaml
-module My_trait = struct
+module My_trait : sig
+  val t
+    : ( 't
+      , (module S with type t = 't)
+      , [> `My_trait ]
+      ) Provider.Trait.t
+end = struct
   type (_, _, _) Provider.Trait.t +=
     My_trait
      : ( 't
