@@ -23,7 +23,10 @@ In this release, we have redesigned the way traits are defined to remove the nee
 module My_trait = struct
   type (_, _, _) Provider.Trait.t +=
     My_trait
-     : ('t, (module S with type t = 't), [> `My_trait ]) Provider.Trait.t
+     : ( 't
+       , (module S with type t = 't)
+       , [> `My_trait ]
+       ) Provider.Trait.t
 
   let t = My_trait
 end
@@ -33,7 +36,11 @@ end
 
 ```ocaml
 module My_trait : sig
-  val t : ('t, (module S with type t = 't), [> `My_trait ]) Provider.Trait.t
+  val t
+    : ( 't
+      , (module S with type t = 't)
+      , [> `My_trait ]
+      ) Provider.Trait.t
 end = Provider.Trait.Create (struct
   type 'a module_type = (module S with type t = 'a)
 end)
