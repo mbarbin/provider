@@ -18,6 +18,7 @@ The error above indicates that it is no longer possible to define the trait that
 
 This is rejected through injectivity check.
 
+<!-- $MDX skip -->
 ```ocaml
 module Trait = Provider.Trait.Create1 (struct
   type (_, _) t = unit
