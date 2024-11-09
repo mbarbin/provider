@@ -25,7 +25,10 @@ let string_provider t =
   let provider =
     Provider.make
       [ Provider.implement Show.t
-          ~impl:(module struct type t = string let show = String.uppercase_ascii end)
+          ~impl:(module struct
+              type t = string
+              let show = String.uppercase_ascii
+            end)
       ]
   in
   Provider.T { t; provider }
