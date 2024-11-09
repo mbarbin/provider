@@ -112,7 +112,7 @@ let binary_search_with_cache : lookup_strategy = fun provider trait ->
       match
         Binary_search.binary_search
           provider
-          ~pos:0
+          ~pos:1
           ~length:Array.length
           ~get:(fun t i -> fst t.(i))
           ~compare:Int.compare
