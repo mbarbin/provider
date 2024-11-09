@@ -179,7 +179,7 @@ val implement : ('t, 'module_type, _) Trait.t -> impl:'module_type -> 't Binding
     specific functionality (one Trait implementation = one first-class
     module with type t = 't).
 
-    - ['t] is the internal state of the provider.
+    - ['t] is the internal type the provider operates on.
     - ['tags] indicate which functionality are supported by the provider. It is
       a phantom type using polymorphic variants. To give an example, in the
       tests for this library, we have two modules defining each their own tag:
@@ -223,12 +223,6 @@ val extend : ('t, _) t -> with_:'t Binding.t list -> ('t, _) t
     A lookup operation is used to retrieve the implementation of a specific
     Trait implementation from a provider. *)
 
-(** [is_empty t] checks if a provider [t] implements any Traits. An empty
-    provider may be created using [make []]. It will cause any lookup
-    operation to fail. It can be useful for initializing data structures or
-    providing a base case for algorithms that process providers. *)
-val is_empty : ('t, _) t -> bool
-
 (** [lookup t ~trait] retrieves the implementation for a given [trait] from a
     provider.
 
@@ -264,6 +258,14 @@ val lookup_opt
 (** [implements t ~trait] says wether a provider implements a Trait. This is
     [true] iif [lookup_opt t ~trait] returns [Some _]. *)
 val implements : ('t, _) t -> trait:('t, _, _) Trait.t -> bool
+
+(** [is_empty t] checks if a provider [t] implements any Traits. An empty
+    provider may be created using [make []]. It will cause any lookup
+    operation to fail. It can be useful for initializing data structures or
+    providing a base case for algorithms that process providers. *)
+val is_empty : ('t, _) t -> bool
+
+(** {1 Packed provider} *)
 
 (** A packed provider is a pair of a value and a set of Traits that a provider
     implements on that value. This is an OCaml value that behaves roughly like
