@@ -42,7 +42,8 @@ let%expect_test "override" =
      ((id #id) (name Float_printer)))
     |}];
   test num_printer;
-  [%expect {|
+  [%expect
+    {|
       1234
       1234.5678 |}];
   let hum_printer = Int_hum_printer.make () in
@@ -54,7 +55,8 @@ let%expect_test "override" =
     |}];
   test hum_printer;
   (* Now there's an additional underscore separator in '1_234'. *)
-  [%expect {|
+  [%expect
+    {|
       1_234
       1234.5678 |}];
   ()

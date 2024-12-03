@@ -126,7 +126,8 @@ let%expect_test "lookup" =
   print_s [%sexp (List.length (Provider.bindings provider) : int)];
   [%expect {| 6 |}];
   List.iter Tag.all ~f:(fun tag -> print_tag t ~tag);
-  [%expect {|
+  [%expect
+    {|
     A
     B
     C
@@ -191,8 +192,8 @@ let%expect_test "same_trait_uids" =
   (* This exercises the test when the provider arrays have the same length,
      otherwise we skip the actual uid comparison branch. *)
   let same_trait_uids
-    (Provider.T { t = _; provider = h1 })
-    (Provider.T { t = _; provider = h2 })
+        (Provider.T { t = _; provider = h1 })
+        (Provider.T { t = _; provider = h2 })
     =
     print_s [%sexp (Provider.Private.same_trait_uids h1 h2 : bool)]
   in

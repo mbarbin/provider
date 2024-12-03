@@ -22,12 +22,14 @@ let%expect_test "Eq_opt at runtime" =
     print_s [%sexp { is_int : bool; value = (Obj.obj obj : int) }]
   in
   test (Obj.repr Eq_opt.Equal);
-  [%expect {|
+  [%expect
+    {|
     ((is_int true)
      (value  0))
     |}];
   test (Obj.repr Eq_opt.Not_equal);
-  [%expect {|
+  [%expect
+    {|
     ((is_int true)
      (value  1))
     |}];
@@ -57,12 +59,14 @@ let () =
 
 let%expect_test "extension_constructor" =
   print_s [%sexp (Provider.Trait.info No_arg_A.t : Provider.Trait.Info.t)];
-  [%expect {|
+  [%expect
+    {|
     ((id   #id)
      (name No_arg_A))
     |}];
   print_s [%sexp (Provider.Trait.info No_arg_B.t : Provider.Trait.Info.t)];
-  [%expect {|
+  [%expect
+    {|
     ((id   #id)
      (name No_arg_B))
     |}];

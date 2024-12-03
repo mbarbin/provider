@@ -12,12 +12,14 @@ let%expect_test "dedup_sorted_keep_last" =
   test [ 1, "a"; 1, "b" ];
   [%expect {| ((1 b)) |}];
   test [ 1, "a"; 2, "b" ];
-  [%expect {|
+  [%expect
+    {|
     ((1 a)
      (2 b))
     |}];
   test [ 1, "a"; 2, "b"; 3, "c"; 3, "c'"; 4, "d"; 4, "d'"; 5, "e" ];
-  [%expect {|
+  [%expect
+    {|
     ((1 a)
      (2 b)
      (3 c')

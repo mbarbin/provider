@@ -13,21 +13,24 @@ let%expect_test "info" =
     Provider.Trait.Info.sexp_of_id
     (fun (_ : int) -> Sexp.Atom "#customized-id")
     ~f:(fun () -> print_info ());
-  [%expect {|
+  [%expect
+    {|
     ((id   #customized-id)
      (name <none>))
     |}];
   (* It is also possible to register a name for a trait. *)
   let () = Provider.Trait.Info.register_name T.t ~name:"Hello Name!" in
   print_info ();
-  [%expect {|
+  [%expect
+    {|
     ((id   #id)
      (name "Hello Name!"))
     |}];
   (* The name can be changed. Whether this is desirable is up to the user. *)
   let () = Provider.Trait.Info.register_name T.t ~name:"Goodbye Name!" in
   print_info ();
-  [%expect {|
+  [%expect
+    {|
     ((id   #id)
      (name "Goodbye Name!"))
     |}];

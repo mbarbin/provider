@@ -82,7 +82,8 @@ let%expect_test "introspection" =
   in
   Ref.set_temporarily Provider.Trait.Info.sexp_of_id sexp_of_id ~f:(fun () ->
     print_implemented_traits int_printer;
-    [%expect {|
+    [%expect
+      {|
       ((
         (id   0)
         (name Int_printer)))

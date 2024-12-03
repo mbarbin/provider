@@ -87,14 +87,16 @@ let%expect_test "test" =
     Eio.Path.save
       ~create:(`Or_truncate 0o600)
       Eio.Path.(Eio.Stdenv.fs env / dir / "a.txt")
-      (String.strip {|
+      (String.strip
+         {|
 Hello file a
 With multiple lines
 |});
     Eio.Path.save
       ~create:(`Or_truncate 0o600)
       Eio.Path.(Eio.Stdenv.fs env / dir / "b.txt")
-      (String.strip {|
+      (String.strip
+         {|
 Hello file b
 With even more
  lines
@@ -104,7 +106,8 @@ With even more
     print_all_text_files eio_reader ~path:dir;
     [%expect {| (a.txt b.txt) |}];
     print_all_text_files_with_lines eio_reader ~path:dir;
-    [%expect {|
+    [%expect
+      {|
     ((file  a.txt)
      (lines 2))
     ((file  b.txt)

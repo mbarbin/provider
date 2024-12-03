@@ -15,14 +15,16 @@ end
 let%expect_test "override" =
   let num_printer = Test_providers.Num_printer.make () in
   let cache_state_of_uid uid =
-    if Provider.Trait.Uid.equal
-         uid
-         (Test_interfaces.Int_printer.Provider_interface.int_printer |> Provider.Trait.uid)
+    if
+      Provider.Trait.Uid.equal
+        uid
+        (Test_interfaces.Int_printer.Provider_interface.int_printer |> Provider.Trait.uid)
     then Cache_state.Int_printer
-    else if Provider.Trait.Uid.equal
-              uid
-              (Test_interfaces.Float_printer.Provider_interface.float_printer
-               |> Provider.Trait.uid)
+    else if
+      Provider.Trait.Uid.equal
+        uid
+        (Test_interfaces.Float_printer.Provider_interface.float_printer
+         |> Provider.Trait.uid)
     then Cache_state.Float_printer
     else assert false [@coverage off]
   in
@@ -42,11 +44,11 @@ let%expect_test "override" =
   let (Provider.T { t = _; provider }) = num_printer in
   let int_printer_lookup () =
     (fun (type a) (provider : (a, _) Provider.t) ->
-      ignore
-        (Provider.lookup
-           provider
-           ~trait:Test_interfaces.Int_printer.Provider_interface.int_printer
-         : (module Test_interfaces.Int_printer.Provider_interface.S with type t = a)))
+       ignore
+         (Provider.lookup
+            provider
+            ~trait:Test_interfaces.Int_printer.Provider_interface.int_printer
+          : (module Test_interfaces.Int_printer.Provider_interface.S with type t = a)))
       provider;
     require_equal
       [%here]
@@ -56,11 +58,11 @@ let%expect_test "override" =
   in
   let float_printer_lookup () =
     (fun (type a) (provider : (a, _) Provider.t) ->
-      ignore
-        (Provider.lookup
-           provider
-           ~trait:Test_interfaces.Float_printer.Provider_interface.float_printer
-         : (module Test_interfaces.Float_printer.Provider_interface.S with type t = a)))
+       ignore
+         (Provider.lookup
+            provider
+            ~trait:Test_interfaces.Float_printer.Provider_interface.float_printer
+          : (module Test_interfaces.Float_printer.Provider_interface.S with type t = a)))
       provider;
     require_equal
       [%here]
