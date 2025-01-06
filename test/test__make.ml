@@ -1,8 +1,8 @@
 (* This test is focused on the "make interface" functionality. We are testing
-   that different ways to create an interface -- using [make], [extend], [Trait.
-   implement], or the provider interface supplied maker -- all result in
-   equivalent interfaces. This ensures consistency across different methods of
-   interface creation. *)
+   that different ways to create an interface -- using [make], [extend],
+   [Trait. implement], or the provider interface supplied maker -- all result
+   in equivalent interfaces. This ensures consistency across different methods
+   of interface creation. *)
 
 let%expect_test "int-printer" =
   let printer = Test_providers.Int_printer.make () in
