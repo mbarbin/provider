@@ -366,7 +366,7 @@ And, again, time to instantiate our polymorphic code!
     3
     ~f:(fun x -> x + 1)
   |> Higher_kinded_list.project
-- : int list = List.(::) (3, [4; 5; 6; 7; 8; 9; 10; 11; 12])
+- : int list = [3; 4; 5; 6; 7; 8; 9; 10; 11; 12]
 
 # map_n_times
     (mappable_array ())
