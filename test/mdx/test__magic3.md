@@ -111,7 +111,7 @@ let _ = (Trait.t : (unit, string, [ `A]) Provider.Trait.t) ;;
 ```
 ```mdx-error
 Line 1, characters 10-17:
-Error: This expression has type (unit, unit, 'a) Provider.Trait.t
+Error: The value Trait.t has type (unit, unit, 'a) Provider.Trait.t
        but an expression was expected of type
          (unit, string, [ `A ]) Provider.Trait.t
        Type unit is not compatible with type string
@@ -133,7 +133,7 @@ let crash () =
 ```
 ```mdx-error
 Line 2, characters 46-47:
-Error: This expression has type (int, int, [ `A ]) Provider.Trait.t
+Error: The value b has type (int, int, [ `A ]) Provider.Trait.t
        but an expression was expected of type
          (string, 'a, 'b) Provider.Trait.t
        Type int is not compatible with type string
