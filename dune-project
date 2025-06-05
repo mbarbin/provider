@@ -36,9 +36,7 @@
   (ocaml
    (>= 4.14))
   (sexplib0
-   (and
-    (>= v0.16)
-    (< v0.18)))))
+   (>= v0.16))))
 
 (package
  (name provider-tests)
@@ -47,45 +45,25 @@
   (ocaml
    (>= 4.14))
   (base
-   (and
-    (>= v0.16)
-    (< v0.18)))
+   (>= v0.16))
   (expect_test_helpers_core
-   (and
-    (>= v0.16)
-    (< v0.18)))
+   (>= v0.16))
   (ppx_compare
-   (and
-    (>= v0.16)
-    (< v0.18)))
+   (>= v0.16))
   (ppx_enumerate
-   (and
-    (>= v0.16)
-    (< v0.18)))
+   (>= v0.16))
   (ppx_expect
-   (and
-    (>= v0.16)
-    (< v0.18)))
+   (>= v0.16))
   (ppx_hash
-   (and
-    (>= v0.16)
-    (< v0.18)))
+   (>= v0.16))
   (ppx_here
-   (and
-    (>= v0.16)
-    (< v0.18)))
+   (>= v0.16))
   (ppx_let
-   (and
-    (>= v0.16)
-    (< v0.18)))
+   (>= v0.16))
   (ppx_sexp_conv
-   (and
-    (>= v0.16)
-    (< v0.18)))
+   (>= v0.16))
   (ppx_sexp_value
-   (and
-    (>= v0.16)
-    (< v0.18)))
+   (>= v0.16))
   (ppxlib
    (>= 0.33))
   (provider
@@ -103,9 +81,7 @@
     :with-dev-setup
     (= 0.27.0)))
   (base
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (bisect_ppx
    (and
     :with-dev-setup
@@ -115,48 +91,29 @@
   (eio_main
    (>= 1.0))
   (expect_test_helpers_core
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (mdx
    (>= 2.4))
   (ppx_compare
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_enumerate
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_expect
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_hash
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_here
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_js_style
    (and
     :with-dev-setup
-    (>= v0.17)
-    (< v0.18)))
+    (>= v0.17)))
   (ppx_let
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_sexp_conv
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_sexp_value
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppxlib
    (>= 0.33))
   (provider
