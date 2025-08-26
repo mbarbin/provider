@@ -8,7 +8,7 @@ homepage: "https://github.com/mbarbin/provider"
 doc: "https://mbarbin.github.io/provider/"
 bug-reports: "https://github.com/mbarbin/provider/issues"
 depends: [
-  "dune" {>= "3.17"}
+  "dune" {>= "3.20"}
   "ocaml" {>= "4.14"}
   "sexplib0" {>= "v0.16"}
   "odoc" {with-doc}
