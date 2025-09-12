@@ -1,3 +1,9 @@
+(*********************************************************************************)
+(*  provider - Dynamic Dispatch with Traits                                      *)
+(*  SPDX-FileCopyrightText: 2024-2025 Mathieu Barbin <mathieu.barbin@gmail.com>  *)
+(*  SPDX-License-Identifier: ISC                                                 *)
+(*********************************************************************************)
+
 (* This test demonstrates how to access information about the traits implemented
    by a provider at runtime. This is a key aspect of introspection, allowing you
    to understand the capabilities of a provider dynamically, as the program is

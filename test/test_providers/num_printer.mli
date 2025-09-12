@@ -1,3 +1,9 @@
+(*_********************************************************************************)
+(*_  provider - Dynamic Dispatch with Traits                                      *)
+(*_  SPDX-FileCopyrightText: 2024-2025 Mathieu Barbin <mathieu.barbin@gmail.com>  *)
+(*_  SPDX-License-Identifier: ISC                                                 *)
+(*_********************************************************************************)
+
 (** [Num_printer] is a provider for the {!module:Test_interfaces.Int_printer}
     and {!module:Test_interfaces.Float_printer} interfaces.
 

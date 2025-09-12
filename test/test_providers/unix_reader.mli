@@ -1,3 +1,9 @@
+(*_********************************************************************************)
+(*_  provider - Dynamic Dispatch with Traits                                      *)
+(*_  SPDX-FileCopyrightText: 2024-2025 Mathieu Barbin <mathieu.barbin@gmail.com>  *)
+(*_  SPDX-License-Identifier: ISC                                                 *)
+(*_********************************************************************************)
+
 (** [Unix_reader] is a provider for {!module:Test_interfaces.Directory_reader}
     based on [Unix].
 

@@ -1,3 +1,9 @@
+(*********************************************************************************)
+(*  provider - Dynamic Dispatch with Traits                                      *)
+(*  SPDX-FileCopyrightText: 2024-2025 Mathieu Barbin <mathieu.barbin@gmail.com>  *)
+(*  SPDX-License-Identifier: ISC                                                 *)
+(*********************************************************************************)
+
 (* In this test, we aim at monitoring certain runtime properties related to
    variant and extensible variant in relation to how they're used by the
    library, in an attempt to have some awareness of whether the way we use them

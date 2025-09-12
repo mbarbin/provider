@@ -1,3 +1,9 @@
+(*********************************************************************************)
+(*  provider - Dynamic Dispatch with Traits                                      *)
+(*  SPDX-FileCopyrightText: 2024-2025 Mathieu Barbin <mathieu.barbin@gmail.com>  *)
+(*  SPDX-License-Identifier: ISC                                                 *)
+(*********************************************************************************)
+
 (* In this section we make sure to exercise all available [Create] functors and
    monitor the 2 branches of the [same_witness] functions. *)
 

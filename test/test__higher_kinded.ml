@@ -1,3 +1,9 @@
+(*********************************************************************************)
+(*  provider - Dynamic Dispatch with Traits                                      *)
+(*  SPDX-FileCopyrightText: 2024-2025 Mathieu Barbin <mathieu.barbin@gmail.com>  *)
+(*  SPDX-License-Identifier: ISC                                                 *)
+(*********************************************************************************)
+
 (* In this test we check that the trait system allows to be used with module
    interfaces that are parametrized.
 

@@ -1,3 +1,9 @@
+(*_********************************************************************************)
+(*_  provider - Dynamic Dispatch with Traits                                      *)
+(*_  SPDX-FileCopyrightText: 2024-2025 Mathieu Barbin <mathieu.barbin@gmail.com>  *)
+(*_  SPDX-License-Identifier: ISC                                                 *)
+(*_********************************************************************************)
+
 (** A simplified type for [_ Type.eq option].
 
     Using the option variation can sometimes result in the option being

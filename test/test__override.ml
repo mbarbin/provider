@@ -1,3 +1,9 @@
+(*********************************************************************************)
+(*  provider - Dynamic Dispatch with Traits                                      *)
+(*  SPDX-FileCopyrightText: 2024-2025 Mathieu Barbin <mathieu.barbin@gmail.com>  *)
+(*  SPDX-License-Identifier: ISC                                                 *)
+(*********************************************************************************)
+
 (* Here we verify that it is possible to override an existing trait. *)
 
 module Int_hum_printer = struct

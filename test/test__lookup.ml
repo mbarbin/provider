@@ -1,3 +1,9 @@
+(*********************************************************************************)
+(*  provider - Dynamic Dispatch with Traits                                      *)
+(*  SPDX-FileCopyrightText: 2024-2025 Mathieu Barbin <mathieu.barbin@gmail.com>  *)
+(*  SPDX-License-Identifier: ISC                                                 *)
+(*********************************************************************************)
+
 (* This test exercises the lookup mechanism of the provider library. It includes
    a case with a sufficient number of traits (`A` to `F`) to ensure good test
    coverage of the various branches of the binary search lookup method.

@@ -1,3 +1,9 @@
+(*********************************************************************************)
+(*  provider - Dynamic Dispatch with Traits                                      *)
+(*  SPDX-FileCopyrightText: 2024-2025 Mathieu Barbin <mathieu.barbin@gmail.com>  *)
+(*  SPDX-License-Identifier: ISC                                                 *)
+(*********************************************************************************)
+
 (* This test is focused on the "make interface" functionality. We are testing
    that different ways to create an interface -- using [make], [extend],
    [Trait. implement], or the provider interface supplied maker -- all result

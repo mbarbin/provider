@@ -1,3 +1,9 @@
+(*_********************************************************************************)
+(*_  provider - Dynamic Dispatch with Traits                                      *)
+(*_  SPDX-FileCopyrightText: 2024-2025 Mathieu Barbin <mathieu.barbin@gmail.com>  *)
+(*_  SPDX-License-Identifier: ISC                                                 *)
+(*_********************************************************************************)
+
 (** A mutable data structure to attach names to trait uids.
 
     This is meant to be used in tests only to make the information attached to
