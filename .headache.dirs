@@ -1,0 +1,8 @@
+# List of directories for headache.sh
+# Add new directories below. Lines starting with '#' are ignored.
+src
+test
+test/eio
+test/higher_kinded
+test/test_interfaces
+test/test_providers
