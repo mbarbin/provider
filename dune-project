@@ -61,21 +61,16 @@
 
 (package
  (name provider-dev)
- (synopsis
-  "Package to regroup dev targets for the provider project, documentation, and more")
+ (synopsis "Package to regroup dev targets, documentation, and more")
  (depends
   (ocaml
    (>= 5.2))
   (ocamlformat
-   (and
-    :with-dev-setup
-    (= 0.27.0)))
+   (= 0.27.0))
   (base
    (>= v0.17))
   (bisect_ppx
-   (and
-    :with-dev-setup
-    (>= 2.8.3)))
+   (>= 2.8.3))
   (eio
    (>= 1.0))
   (eio_main
@@ -95,9 +90,7 @@
   (ppx_here
    (>= v0.17))
   (ppx_js_style
-   (and
-    :with-dev-setup
-    (>= v0.17)))
+   (>= v0.17))
   (ppx_let
    (>= v0.17))
   (ppx_sexp_conv
