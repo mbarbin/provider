@@ -43,7 +43,7 @@ At its core, a provider is a pair consisting of an internal state and a virtual-
 
 ## Experimental Status
 
-Please note that this library is highly experimental. The aim is to gain experience and feedback regarding whether this pattern can have larger applications outside of the scope of Eio.
+Please note that this library is highly experimental. The original goal was to to gain experience and feedback regarding whether this pattern could have applications outside of the scope of Eio. However, we're unsure about the project's future at this point.
 
 ## License
 
