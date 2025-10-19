@@ -12,12 +12,18 @@ In essence, it provides a way to handle dynamic dispatch, where the target of a 
 
 The rationale for this design is detailed in the [Eio documentation](https://github.com/ocaml-multicore/eio/blob/main/doc/rationale.md#dynamic-dispatch).
 
-## Implementation
-
-At its core, a Provider is a pair consisting of an internal state and a virtual-table of first-class modules operating on that state. This allows dynamic dispatch, but for example doesn't include open recursion or inheritance in its execution model. This design offers an interesting balance between object-oriented and modular programming.
-
 ## Motivation
 
 The Provider library started as an experimental project that extracted a pattern featured in the [Eio](https://github.com/ocaml-multicore/eio) project. The goal was to make this pattern reusable in other projects.
 
 We then went on to use Provider as building block for the parametrization of the [Vcs](https://mbarbin.github.io/vcs/) project.
+
+However, after some time, we switched Vcs to a design using OCaml objects directly, and didn't make use of Provider after all (see [this vcs pr](https://github.com/mbarbin/vcs/pull/56)).
+
+## Implementation
+
+At its core, a Provider is a pair consisting of an internal state and a virtual-table of first-class modules operating on that state. This allows dynamic dispatch, but for example doesn't include open recursion or inheritance in its execution model. This design offers an interesting balance between object-oriented and modular programming.
+
+## Experimental Status
+
+Please note that this library is highly experimental. The aim is to gain experience and feedback regarding whether this pattern can have larger applications outside of the scope of Eio.
