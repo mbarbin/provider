@@ -1,6 +1,6 @@
 # Explanation
 
-Welcome to the Explanation section of the `provider` documentation. Here, we delve into the details of how `provider` works and its design principles. This section is intended to provide a deeper understanding of the project for developers and contributors.
+Welcome to the Explanation section of the `provider` documentation. This section covers how `provider` works and its design principles.
 
 ## Synopsis
 
