@@ -10,7 +10,7 @@ bug-reports: "https://github.com/mbarbin/provider/issues"
 depends: [
   "dune" {>= "3.20"}
   "ocaml" {>= "5.2"}
-  "ocamlformat" {= "0.27.0"}
+  "ocamlformat" {= "0.28.1"}
   "base" {>= "v0.17"}
   "bisect_ppx" {>= "2.8.3"}
   "eio" {>= "1.0"}
