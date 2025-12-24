@@ -1,6 +1,6 @@
 (library
  (name higher_kinded)
- (public_name provider-tests.higher_kinded)
+ (package provider-tests)
  (flags :standard -w +a-4-40-41-42-44-45-48-66 -warn-error +a)
  (instrumentation
   (backend bisect_ppx))

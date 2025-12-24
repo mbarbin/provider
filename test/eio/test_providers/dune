@@ -1,6 +1,6 @@
 (library
  (name eio_test_providers)
- (public_name provider-dev.eio_test_providers)
+ (package provider-tests)
  (flags :standard -w +a-4-40-41-42-44-45-48-66 -warn-error +a -open Base)
  (libraries base eio provider test_interfaces)
  (instrumentation
