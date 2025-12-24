@@ -10,6 +10,7 @@
 ;; Test lib naming
 (rule
  (cond
+  ((path (glob test/higher_kinded/**)) return)
   ((path (glob test/**))
    (enforce
     (dune
