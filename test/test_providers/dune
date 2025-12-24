@@ -1,6 +1,6 @@
 (library
  (name test_providers)
- (public_name provider-tests.test_providers)
+ (package provider-tests)
  (flags :standard -w +a-4-40-41-42-44-45-48-66 -warn-error +a -open Base)
  (libraries base provider test_interfaces unix)
  (instrumentation

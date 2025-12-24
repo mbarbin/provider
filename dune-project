@@ -60,42 +60,56 @@
    (= :version))))
 
 (package
- (name provider-dev)
- (synopsis "Package to regroup dev targets, documentation, and more")
+ (name provider-eio-tests)
+ (synopsis "Tests for provider using Eio")
  (depends
   (ocaml
    (>= 5.2))
-  (ocamlformat
-   (= 0.28.1))
   (base
-   (>= v0.17))
-  (bisect_ppx
-   (>= 2.8.3))
+   (>= v0.16))
   (eio
    (>= 1.0))
   (eio_main
    (>= 1.0))
   (expect_test_helpers_core
-   (>= v0.17))
+   (>= v0.16))
+  (ppx_compare
+   (>= v0.16))
+  (ppx_enumerate
+   (>= v0.16))
+  (ppx_expect
+   (>= v0.16))
+  (ppx_hash
+   (>= v0.16))
+  (ppx_here
+   (>= v0.16))
+  (ppx_let
+   (>= v0.16))
+  (ppx_sexp_conv
+   (>= v0.16))
+  (ppx_sexp_value
+   (>= v0.16))
+  (ppxlib
+   (>= 0.33))
+  (provider
+   (= :version))
+  (provider-tests
+   (= :version))))
+
+(package
+ (name provider-dev)
+ (synopsis "Package to regroup dev targets, documentation, and more")
+ (allow_empty)
+ (depends
+  (ocaml
+   (>= 5.2))
+  (ocamlformat
+   (= 0.28.1))
+  (bisect_ppx
+   (>= 2.8.3))
   (mdx
    (>= 2.4))
-  (ppx_compare
-   (>= v0.17))
-  (ppx_enumerate
-   (>= v0.17))
-  (ppx_expect
-   (>= v0.17))
-  (ppx_hash
-   (>= v0.17))
-  (ppx_here
-   (>= v0.17))
   (ppx_js_style
-   (>= v0.17))
-  (ppx_let
-   (>= v0.17))
-  (ppx_sexp_conv
-   (>= v0.17))
-  (ppx_sexp_value
    (>= v0.17))
   (ppxlib
    (>= 0.33))
@@ -104,6 +118,4 @@
   (provider-tests
    (= :version))
   (sherlodoc
-   (and
-    :with-doc
-    (>= 0.2)))))
+   (>= 0.2))))
