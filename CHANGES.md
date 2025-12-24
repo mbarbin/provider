@@ -1,3 +1,10 @@
+## 0.0.12 (unreleased)
+
+### Changed
+
+- Split eio tests into their own test package (#48, @mbarbin).
+- Add a dunolint workflow (#48, @mbarbin).
+
 ## 0.0.11 (2024-11-05)
 
 ### Changed
