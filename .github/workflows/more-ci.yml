@@ -61,8 +61,13 @@ jobs:
 
       - name: Environment setup
         run: |
-          echo "PACKAGES=provider,provider-tests" >> "$GITHUB_ENV"
-          echo "OPAM_PACKAGES=./provider.opam ./provider-tests.opam" >> "$GITHUB_ENV"
+          if [ "${{ matrix.ocaml-compiler }}" = "4.14.x" ]; then
+            echo "PACKAGES=provider,provider-tests" >> "$GITHUB_ENV"
+            echo "OPAM_PACKAGES=./provider.opam ./provider-tests.opam" >> "$GITHUB_ENV"
+          else
+            echo "PACKAGES=provider,provider-tests,provider-eio-tests" >> "$GITHUB_ENV"
+            echo "OPAM_PACKAGES=./provider.opam ./provider-tests.opam ./provider-eio-tests.opam" >> "$GITHUB_ENV"
+          fi
 
       # We build and run tests for a subset of packages. More tests are run in
       # the development workflow and as part of the main CI job. These are the
