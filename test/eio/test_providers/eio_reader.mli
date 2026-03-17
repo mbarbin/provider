@@ -1,3 +1,9 @@
+(*_********************************************************************************)
+(*_  provider - Dynamic Dispatch with Traits                                      *)
+(*_  SPDX-FileCopyrightText: 2024-2025 Mathieu Barbin <mathieu.barbin@gmail.com>  *)
+(*_  SPDX-License-Identifier: ISC                                                 *)
+(*_********************************************************************************)
+
 (** [Eio_reader] is a provider for the {!module:Test_interfaces.Directory_reader}
     and {!module:Test_interfaces.File_reader} interfaces, based on [Eio].
 
