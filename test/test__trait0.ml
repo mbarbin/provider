@@ -14,13 +14,11 @@ let same_trait t1 t2 =
 ;;
 
 let%expect_test "Create" =
-  let module T1 =
-    Provider.Trait.Create (struct
+  let module T1 = Provider.Trait.Create (struct
       type 'a module_type = (module T with type t = 'a)
     end)
   in
-  let module T2 =
-    Provider.Trait.Create (struct
+  let module T2 = Provider.Trait.Create (struct
       type 'a module_type = (module T with type t = 'a)
     end)
   in
@@ -30,14 +28,12 @@ let%expect_test "Create" =
 ;;
 
 let%expect_test "Create0" =
-  let module T1 =
-    Provider.Trait.Create0 (struct
+  let module T1 = Provider.Trait.Create0 (struct
       type _ t = unit
       type module_type = unit
     end)
   in
-  let module T2 =
-    Provider.Trait.Create0 (struct
+  let module T2 = Provider.Trait.Create0 (struct
       type _ t = unit
       type module_type = unit
     end)
@@ -48,14 +44,12 @@ let%expect_test "Create0" =
 ;;
 
 let%expect_test "Create1" =
-  let module T1 =
-    Provider.Trait.Create1 (struct
+  let module T1 = Provider.Trait.Create1 (struct
       type ('a, _) t = 'a
       type 'a module_type = unit
     end)
   in
-  let module T2 =
-    Provider.Trait.Create1 (struct
+  let module T2 = Provider.Trait.Create1 (struct
       type ('a, _) t = 'a
       type 'a module_type = unit
     end)
@@ -66,14 +60,12 @@ let%expect_test "Create1" =
 ;;
 
 let%expect_test "Create2" =
-  let module T1 =
-    Provider.Trait.Create2 (struct
+  let module T1 = Provider.Trait.Create2 (struct
       type ('a, 'b, _) t = 'a * 'b
       type ('a, 'b) module_type = unit
     end)
   in
-  let module T2 =
-    Provider.Trait.Create2 (struct
+  let module T2 = Provider.Trait.Create2 (struct
       type ('a, 'b, _) t = 'a * 'b
       type ('a, 'b) module_type = unit
     end)
@@ -121,8 +113,7 @@ let%expect_test "Marshal" =
      they as it relates to marshalling traits.
 
      In short: do not marshall traits. *)
-  let module T =
-    Provider.Trait.Create (struct
+  let module T = Provider.Trait.Create (struct
       type 'a module_type = (module T with type t = 'a)
     end)
   in

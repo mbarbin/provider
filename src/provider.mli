@@ -46,17 +46,17 @@ module Trait : sig
       defined by a module type with a single type t. For example:
 
       {[
-        module type Show = sig
-          type t
+      module type Show = sig
+        type t
 
-          val show : t -> string
-        end
+        val show : t -> string
+      end
 
-        module Show : sig
-          val t : ('a, (module Show with type t = 'a), [> `Show ]) Provider.Trait.t
-        end = Provider.Trait.Create (struct
-            type 'a module_type = (module Show with type t = 'a)
-          end)
+      module Show : sig
+        val t : ('a, (module Show with type t = 'a), [> `Show ]) Provider.Trait.t
+      end = Provider.Trait.Create (struct
+          type 'a module_type = (module Show with type t = 'a)
+        end)
       ]}
 
       The other functors are reserved for less common cases. The number suffix
@@ -191,13 +191,13 @@ val implement : ('t, 'module_type, _) Trait.t -> impl:'module_type -> 't Binding
       tests for this library, we have two modules defining each their own tag:
 
     {[
-      module Directory_reader = struct
-        type tag = [ `Directory_reader ]
-      end
+    module Directory_reader = struct
+      type tag = [ `Directory_reader ]
+    end
 
-      module File_reader = struct
-        type tag = [ `File_reader ]
-      end
+    module File_reader = struct
+      type tag = [ `File_reader ]
+    end
     ]}
 
     Then, the type of a provider whose internal type is [state], implementing
