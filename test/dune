@@ -18,8 +18,7 @@
   provider
   provider-tests.higher_kinded
   test_interfaces
-  test_providers
-  unix)
+  test_providers)
  (instrumentation
   (backend bisect_ppx))
  (lint
