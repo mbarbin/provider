@@ -104,7 +104,7 @@
   (ocaml
    (>= 5.2))
   (ocamlformat
-   (= 0.28.1))
+   (= 0.29.0))
   (bisect_ppx
    (>= 2.8.3))
   (mdx
