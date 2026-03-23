@@ -1,6 +1,59 @@
-(mdx
+(toplevel
+ (name provider_toplevel)
+ (libraries base provider))
+
+(library
+ (name provider_toplevel_test)
  (package provider-dev)
- (deps
-  (package provider)
-  (package provider-tests))
- (preludes prelude.txt))
+ (inline_tests
+  (deps provider_toplevel.exe))
+ (flags :standard -w +a-4-40-41-42-44-45-48-66 -warn-error +a -open Base)
+ (libraries base provider unix)
+ (instrumentation
+  (backend bisect_ppx))
+ (lint
+  (pps ppx_js_style -allow-let-operators -check-doc-comments))
+ (preprocess
+  (pps ppx_expect)))
+
+(rule
+ (target test__magic.md.gen)
+ (deps test__magic.ml)
+ (action
+  (with-stdout-to
+   %{target}
+   (run mdexp pp %{deps}))))
+
+(rule
+ (package provider-dev)
+ (alias runtest)
+ (action
+  (diff test__magic.md test__magic.md.gen)))
+
+(rule
+ (target test__magic2.md.gen)
+ (deps test__magic2.ml)
+ (action
+  (with-stdout-to
+   %{target}
+   (run mdexp pp %{deps}))))
+
+(rule
+ (package provider-dev)
+ (alias runtest)
+ (action
+  (diff test__magic2.md test__magic2.md.gen)))
+
+(rule
+ (target test__magic3.md.gen)
+ (deps test__magic3.ml)
+ (action
+  (with-stdout-to
+   %{target}
+   (run mdexp pp %{deps}))))
+
+(rule
+ (package provider-dev)
+ (alias runtest)
+ (action
+  (diff test__magic3.md test__magic3.md.gen)))

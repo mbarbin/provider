@@ -1,10 +1,13 @@
 # Test magic
 
-This test monitors an example that caused an earlier version of the library to segfault. We keep it as regression test.
+This test monitors an example that caused an earlier version of the library to
+segfault. We keep it as regression test.
 
 This test was originally contributed by @v-gb.
 
-At its heart, it was based on the fact that you could add arguments to the trait constructors. Now, it is no longer possible by design, so the issues associated with this test are no longer applicable.
+At its heart, it was based on the fact that you could add arguments to the
+trait constructors. Now, it is no longer possible by design, so the issues
+associated with this test are no longer applicable.
 
 ```ocaml
 module type S = sig
@@ -17,19 +20,27 @@ type (_, _, _) Provider.Trait.t +=
   | A :
       'something Base.Type_equal.Id.t
       -> (_, (module S with type t = 'something), [> `A ]) Provider.Trait.t
-```
-```mdx-error
-Lines 7-10, characters 3-78:
-Error: Type definition Provider.Trait.t is not extensible
+;;
+
 ```
 
-Now that we have to go through the `Trait.Create` functors, there just isn't any way to build a trait with this extra argument.
+```terminal
+[1mLines 7-10, characters 0-75[0m:
+ 7 | type (_, _, _) Provider.Trait.t +=
+ 8 |   | A :
+ 9 |       'something Base.Type_equal.Id.t
+10 |       -> (_, (module S with type t = 'something), [> `A ]) Provider.Trait.t
+[1;31mError[0m: Type definition [1mProvider.Trait.t[0m is not extensible
+```
+
+Now that we have to go through the `Trait.Create` functors, there just isn't
+any way to build a trait with this extra argument.
 
 ## For reference
 
-We're keeping the rest of the test for reference only, it cannot be written with recent versions of the library anymore.
+We're keeping the rest of the test for reference only, it cannot be written
+with recent versions of the library anymore.
 
-<!-- $MDX skip -->
 ```ocaml
 
 let id_int = Type_equal.Id.create ~name:"int" [%sexp_of: int]
