@@ -12,6 +12,8 @@
   (pps ppx_expect)))
 
 (rule
+ (package provider-dev)
+ (enabled_if %{bin-available:mdexp})
  (target lookup_strategy.md.gen)
  (deps lookup_strategy.ml)
  (action
@@ -21,6 +23,7 @@
 
 (rule
  (package provider-dev)
+ (enabled_if %{bin-available:mdexp})
  (alias runtest)
  (action
   (diff README.md lookup_strategy.md.gen)))

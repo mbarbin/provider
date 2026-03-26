@@ -17,6 +17,8 @@
   (pps ppx_expect)))
 
 (rule
+ (package provider-dev)
+ (enabled_if %{bin-available:mdexp})
  (target test__magic.md.gen)
  (deps test__magic.ml)
  (action
@@ -26,11 +28,14 @@
 
 (rule
  (package provider-dev)
+ (enabled_if %{bin-available:mdexp})
  (alias runtest)
  (action
   (diff test__magic.md test__magic.md.gen)))
 
 (rule
+ (package provider-dev)
+ (enabled_if %{bin-available:mdexp})
  (target test__magic2.md.gen)
  (deps test__magic2.ml)
  (action
@@ -40,11 +45,14 @@
 
 (rule
  (package provider-dev)
+ (enabled_if %{bin-available:mdexp})
  (alias runtest)
  (action
   (diff test__magic2.md test__magic2.md.gen)))
 
 (rule
+ (package provider-dev)
+ (enabled_if %{bin-available:mdexp})
  (target test__magic3.md.gen)
  (deps test__magic3.ml)
  (action
@@ -54,6 +62,7 @@
 
 (rule
  (package provider-dev)
+ (enabled_if %{bin-available:mdexp})
  (alias runtest)
  (action
   (diff test__magic3.md test__magic3.md.gen)))
