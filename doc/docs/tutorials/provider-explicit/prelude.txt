@@ -1,2 +1,0 @@
-#require "provider" ;;
-#require "provider-tests.higher_kinded" ;;
