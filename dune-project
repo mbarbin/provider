@@ -105,10 +105,18 @@
    (>= 5.2))
   (ocamlformat
    (= 0.29.0))
+  (base
+   (>= v0.16))
   (bisect_ppx
    (>= 2.8.3))
+  (dyn
+   (>= 3.20))
   (mdx
    (>= 2.4))
+  (pp
+   (>= 2.0.0))
+  (ppx_expect
+   (>= v0.17))
   (ppx_js_style
    (>= v0.17))
   (ppxlib
