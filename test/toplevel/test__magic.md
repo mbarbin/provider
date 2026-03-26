@@ -21,7 +21,6 @@ type (_, _, _) Provider.Trait.t +=
       'something Base.Type_equal.Id.t
       -> (_, (module S with type t = 'something), [> `A ]) Provider.Trait.t
 ;;
-
 ```
 
 ```terminal

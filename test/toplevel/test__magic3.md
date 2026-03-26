@@ -6,7 +6,6 @@ segfault. We keep it as regression test.
 ```ocaml
 type ('a, 'impl, 'tag) Provider.Trait.t += Trait : (unit, 'a, [ `A ]) Provider.Trait.t
 ;;
-
 ```
 
 ```terminal
@@ -33,7 +32,6 @@ module Trait = Provider.Trait.Create1 (struct
   type 'a module_type = 'a
 end)
 ;;
-
 ```
 
 ```terminal
@@ -61,7 +59,6 @@ module Trait = Provider.Trait.Create1 (struct
   type 'a module_type = 'a
 end)
 ;;
-
 ```
 
 ```terminal
@@ -86,7 +83,6 @@ module Trait = Provider.Trait.Create1 (struct
   type 'a module_type = 'a
 end)
 ;;
-
 ```
 
 ```terminal
@@ -106,7 +102,6 @@ module Trait = Provider.Trait.Create1 (struct
   type 'a module_type = 'a
 end)
 ;;
-
 ```
 
 ```terminal
@@ -146,7 +141,6 @@ module Trait = Provider.Trait.Create1 (struct
 end)
 
 let _ = (Trait.t : (unit, string, [ `A]) Provider.Trait.t) ;;
-
 ```
 
 ```terminal
@@ -184,7 +178,6 @@ let crash () =
   let (i : int) = Provider.lookup h ~trait:b in
   assert (Stdlib.Obj.is_int (Stdlib.Obj.repr i))
 ;;
-
 ```
 
 ```terminal

@@ -14,7 +14,8 @@
 let%expect_test "direct trait extension" =
   Ocaml_toplevel.eval
     ~code:
-      {|type ('a, 'impl, 'tag) Provider.Trait.t += Trait : (unit, 'a, [ `A ]) Provider.Trait.t
+      {|
+type ('a, 'impl, 'tag) Provider.Trait.t += Trait : (unit, 'a, [ `A ]) Provider.Trait.t
 ;;
 |};
   (* @mdexp.snapshot *)
@@ -23,7 +24,6 @@ let%expect_test "direct trait extension" =
     ```ocaml
     type ('a, 'impl, 'tag) Provider.Trait.t += Trait : (unit, 'a, [ `A ]) Provider.Trait.t
     ;;
-
     ```
 
     ```terminal
@@ -51,7 +51,8 @@ let%expect_test "direct trait extension" =
 let%expect_test "create1 unit type" =
   Ocaml_toplevel.eval
     ~code:
-      {|module Trait = Provider.Trait.Create1 (struct
+      {|
+module Trait = Provider.Trait.Create1 (struct
   type (_, _) t = unit
   type 'a module_type = 'a
 end)
@@ -66,7 +67,6 @@ end)
       type 'a module_type = 'a
     end)
     ;;
-
     ```
 
     ```terminal
@@ -95,7 +95,8 @@ end)
 let%expect_test "create1 forced injectivity" =
   Ocaml_toplevel.eval
     ~code:
-      {|module Trait = Provider.Trait.Create1 (struct
+      {|
+module Trait = Provider.Trait.Create1 (struct
   type (!'a, _) t = unit
   type 'a module_type = 'a
 end)
@@ -110,7 +111,6 @@ end)
       type 'a module_type = 'a
     end)
     ;;
-
     ```
 
     ```terminal
@@ -134,7 +134,8 @@ end)
 let%expect_test "create1 record type" =
   Ocaml_toplevel.eval
     ~code:
-      {|type record = { a : string }
+      {|
+type record = { a : string }
 
 module Trait = Provider.Trait.Create1 (struct
   type (!'a, _) t = record
@@ -153,7 +154,6 @@ end)
       type 'a module_type = 'a
     end)
     ;;
-
     ```
 
     ```terminal
@@ -170,7 +170,8 @@ end)
 let%expect_test "create1 variant type" =
   Ocaml_toplevel.eval
     ~code:
-      {|type variant = A
+      {|
+type variant = A
 
 module Trait = Provider.Trait.Create1 (struct
   type (!'a, _) t = variant
@@ -189,7 +190,6 @@ end)
       type 'a module_type = 'a
     end)
     ;;
-
     ```
 
     ```terminal
@@ -237,7 +237,8 @@ let _c = (Trait.t : (int, int, [ `A ]) Provider.Trait.t)
 let%expect_test "trait coercion failure" =
   Ocaml_toplevel.eval
     ~code:
-      {|module Trait = Provider.Trait.Create1 (struct
+      {|
+module Trait = Provider.Trait.Create1 (struct
   type (!'a, _) t = 'a
   type 'a module_type = 'a
 end)
@@ -254,7 +255,6 @@ let _ = (Trait.t : (unit, string, [ `A]) Provider.Trait.t) ;;
     end)
 
     let _ = (Trait.t : (unit, string, [ `A]) Provider.Trait.t) ;;
-
     ```
 
     ```terminal
@@ -287,7 +287,8 @@ let _b = (Trait.t : (int, int, [ `A ]) Provider.Trait.t)
 let%expect_test "lookup type mismatch" =
   Ocaml_toplevel.eval
     ~code:
-      {|module Trait = Provider.Trait.Create1 (struct
+      {|
+module Trait = Provider.Trait.Create1 (struct
   type (!'a, _) t = 'a
   type 'a module_type = 'a
 end)
@@ -318,7 +319,6 @@ let crash () =
       let (i : int) = Provider.lookup h ~trait:b in
       assert (Stdlib.Obj.is_int (Stdlib.Obj.repr i))
     ;;
-
     ```
 
     ```terminal

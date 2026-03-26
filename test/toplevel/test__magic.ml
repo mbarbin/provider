@@ -20,7 +20,8 @@
 let%expect_test "trait extension attempt" =
   Ocaml_toplevel.eval
     ~code:
-      {|module type S = sig
+      {|
+module type S = sig
   type t
 
   val t : t
@@ -47,7 +48,6 @@ type (_, _, _) Provider.Trait.t +=
           'something Base.Type_equal.Id.t
           -> (_, (module S with type t = 'something), [> `A ]) Provider.Trait.t
     ;;
-
     ```
 
     ```terminal

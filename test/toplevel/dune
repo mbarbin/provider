@@ -1,14 +1,14 @@
 (toplevel
  (name provider_toplevel)
- (libraries base provider))
+ (libraries provider))
 
 (library
  (name provider_toplevel_test)
  (package provider-dev)
  (inline_tests
   (deps provider_toplevel.exe))
- (flags :standard -w +a-4-40-41-42-44-45-48-66 -warn-error +a -open Base)
- (libraries base provider unix)
+ (flags :standard -w +a-4-40-41-42-44-45-48-66 -warn-error +a)
+ (libraries provider unix)
  (instrumentation
   (backend bisect_ppx))
  (lint
