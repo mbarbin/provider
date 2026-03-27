@@ -114,23 +114,20 @@ With even more
     print_all_text_files_with_lines eio_reader ~path:dir;
     [%expect
       {|
-    ((file  a.txt)
-     (lines 2))
-    ((file  b.txt)
-     (lines 3)) |}];
+      ((file a.txt) (lines 2))
+      ((file b.txt) (lines 3))
+      |}];
     print_all_text_files_with_lines_if_available unix_reader ~path:dir;
     [%expect
       {|
-      ((file  a.txt)
-       (lines not-available))
-      ((file  b.txt)
-       (lines not-available)) |}];
+      ((file a.txt) (lines not-available))
+      ((file b.txt) (lines not-available))
+      |}];
     print_all_text_files_with_lines_if_available eio_reader ~path:dir;
     [%expect
       {|
-      ((file  a.txt)
-       (lines 2))
-      ((file  b.txt)
-       (lines 3)) |}];
+      ((file a.txt) (lines 2))
+      ((file b.txt) (lines 3))
+      |}];
     ())
 ;;

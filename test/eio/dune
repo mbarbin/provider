@@ -11,15 +11,12 @@
   -open
   Base
   -open
-  Expect_test_helpers_base
-  -open
   Stdlib_for_test)
  (libraries
   base
   eio
   eio_main
   eio_test_providers
-  expect_test_helpers_core.expect_test_helpers_base
   provider
   stdlib_for_test
   test_interfaces

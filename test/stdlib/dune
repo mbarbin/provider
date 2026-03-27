@@ -1,0 +1,19 @@
+(library
+ (name stdlib_for_test_test)
+ (package provider-tests)
+ (flags
+  :standard
+  -w
+  +a-4-40-41-42-44-45-48-66
+  -warn-error
+  +a
+  -open
+  Stdlib_for_test)
+ (libraries stdlib_for_test)
+ (inline_tests)
+ (instrumentation
+  (backend bisect_ppx))
+ (lint
+  (pps ppx_js_style -allow-let-operators -check-doc-comments))
+ (preprocess
+  (pps ppx_expect)))

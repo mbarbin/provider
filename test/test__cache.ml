@@ -15,7 +15,13 @@ module Cache_state = struct
     | None
     | Int_printer
     | Float_printer
-  [@@deriving equal, sexp_of]
+  [@@deriving equal]
+
+  let to_dyn = function
+    | None -> Dyn.Variant ("None", [])
+    | Int_printer -> Dyn.Variant ("Int_printer", [])
+    | Float_printer -> Dyn.Variant ("Float_printer", [])
+  ;;
 end
 
 let%expect_test "override" =
@@ -39,7 +45,7 @@ let%expect_test "override" =
     | None -> Cache_state.None
     | Some uid -> cache_state_of_uid uid
   in
-  let show_cache provider = print_s [%sexp (cache_state provider : Cache_state.t)] in
+  let show_cache provider = print_dyn (Cache_state.to_dyn (cache_state provider)) in
   let show_printer_cache () =
     let (Provider.T { t = _; provider }) = num_printer in
     show_cache provider
@@ -56,11 +62,7 @@ let%expect_test "override" =
             ~trait:Test_interfaces.Int_printer.Provider_interface.int_printer
           : (module Test_interfaces.Int_printer.Provider_interface.S with type t = a)))
       provider;
-    require_equal
-      [%here]
-      (module Cache_state)
-      Cache_state.Int_printer
-      (cache_state provider)
+    require_equal (module Cache_state) Cache_state.Int_printer (cache_state provider)
   in
   let float_printer_lookup () =
     (fun (type a) (provider : (a, _) Provider.t) ->
@@ -70,57 +72,41 @@ let%expect_test "override" =
             ~trait:Test_interfaces.Float_printer.Provider_interface.float_printer
           : (module Test_interfaces.Float_printer.Provider_interface.S with type t = a)))
       provider;
-    require_equal
-      [%here]
-      (module Cache_state)
-      Cache_state.Float_printer
-      (cache_state provider)
+    require_equal (module Cache_state) Cache_state.Float_printer (cache_state provider)
   in
   let int_printer_lookup_opt () =
     require
-      [%here]
       (Option.is_some
          (Provider.lookup_opt
             provider
             ~trait:Test_interfaces.Int_printer.Provider_interface.int_printer));
-    require_equal
-      [%here]
-      (module Cache_state)
-      Cache_state.Int_printer
-      (cache_state provider)
+    require_equal (module Cache_state) Cache_state.Int_printer (cache_state provider)
   in
   let float_printer_lookup_opt () =
     require
-      [%here]
       (Option.is_some
          (Provider.lookup_opt
             provider
             ~trait:Test_interfaces.Float_printer.Provider_interface.float_printer));
-    require_equal
-      [%here]
-      (module Cache_state)
-      Cache_state.Float_printer
-      (cache_state provider)
+    require_equal (module Cache_state) Cache_state.Float_printer (cache_state provider)
   in
   let int_printer_implements () =
     let pre_cache_state = cache_state provider in
     require
-      [%here]
       (Provider.implements
          provider
          ~trait:Test_interfaces.Int_printer.Provider_interface.int_printer);
     let post_cache_state = cache_state provider in
-    require_equal [%here] (module Cache_state) pre_cache_state post_cache_state
+    require_equal (module Cache_state) pre_cache_state post_cache_state
   in
   let float_printer_implements () =
     let pre_cache_state = cache_state provider in
     require
-      [%here]
       (Provider.implements
          provider
          ~trait:Test_interfaces.Float_printer.Provider_interface.float_printer);
     let post_cache_state = cache_state provider in
-    require_equal [%here] (module Cache_state) pre_cache_state post_cache_state
+    require_equal (module Cache_state) pre_cache_state post_cache_state
   in
   (* At first, the cache is initialized with a brittle value. We don't register
      it. Let's start with a lookup. *)

@@ -36,8 +36,6 @@
    (>= v0.16))
   (dyn
    (>= 3.20))
-  (expect_test_helpers_core
-   (>= v0.16))
   (ppx_compare
    (>= v0.16))
   (ppx_enumerate
@@ -59,7 +57,9 @@
   (ppxlib
    (>= 0.33))
   (provider
-   (= :version))))
+   (= :version))
+  (sexplib0
+   (>= v0.16))))
 
 (package
  (name provider-eio-tests)
@@ -73,8 +73,6 @@
    (>= 1.0))
   (eio_main
    (>= 1.0))
-  (expect_test_helpers_core
-   (>= v0.17))
   (ppx_compare
    (>= v0.17))
   (ppx_enumerate

@@ -24,21 +24,13 @@ end
 let%expect_test "Eq_opt at runtime" =
   let test obj =
     let is_int = Obj.is_int obj in
-    require [%here] is_int;
+    require is_int;
     print_s [%sexp { is_int : bool; value = (Obj.obj obj : int) }]
   in
   test (Obj.repr Eq_opt.Equal);
-  [%expect
-    {|
-    ((is_int true)
-     (value  0))
-    |}];
+  [%expect {| ((is_int true) (value 0)) |}];
   test (Obj.repr Eq_opt.Not_equal);
-  [%expect
-    {|
-    ((is_int true)
-     (value  1))
-    |}];
+  [%expect {| ((is_int true) (value 1)) |}];
   ()
 ;;
 
@@ -65,17 +57,9 @@ let () =
 
 let%expect_test "extension_constructor" =
   print_s [%sexp (Provider.Trait.info No_arg_A.t : Provider.Trait.Info.t)];
-  [%expect
-    {|
-    ((id   #id)
-     (name No_arg_A))
-    |}];
+  [%expect {| ((id #id) (name No_arg_A)) |}];
   print_s [%sexp (Provider.Trait.info No_arg_B.t : Provider.Trait.Info.t)];
-  [%expect
-    {|
-    ((id   #id)
-     (name No_arg_B))
-    |}];
+  [%expect {| ((id #id) (name No_arg_B)) |}];
   let extension_constructor_A = Obj.Extension_constructor.of_val No_arg_A.t in
   print_s [%sexp (Obj.Extension_constructor.name extension_constructor_A : string)];
   [%expect {| "Provider__Trait0.Create1(X).T" |}];
@@ -86,7 +70,7 @@ let%expect_test "extension_constructor" =
      characterize that they are different. *)
   let idA = Obj.Extension_constructor.id extension_constructor_A in
   let idB = Obj.Extension_constructor.id extension_constructor_B in
-  require_not_equal [%here] (module Int) idA idB;
+  require_not_equal (module Int) idA idB;
   [%expect {||}];
   ()
 ;;
@@ -111,16 +95,16 @@ let%expect_test "implement" =
 ;;
 
 let%expect_test "no_arg physical equality" =
-  require [%here] (phys_equal No_arg_A.t No_arg_A.t);
+  require (phys_equal No_arg_A.t No_arg_A.t);
   [%expect {||}];
-  require [%here] (phys_equal No_arg_B.t No_arg_B.t);
+  require (phys_equal No_arg_B.t No_arg_B.t);
   [%expect {||}];
-  require [%here] (not (phys_equal No_arg_A.t No_arg_B.t));
+  require (not (phys_equal No_arg_A.t No_arg_B.t));
   [%expect {||}];
   let new_A () = No_arg_A.t in
-  require [%here] (phys_equal (new_A ()) No_arg_A.t);
+  require (phys_equal (new_A ()) No_arg_A.t);
   [%expect {||}];
-  require [%here] (phys_equal (new_A ()) (new_A ()));
+  require (phys_equal (new_A ()) (new_A ()));
   [%expect {||}];
   ()
 ;;

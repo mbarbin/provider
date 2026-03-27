@@ -43,34 +43,25 @@ let%expect_test "introspection" =
   print_implements (Provider.T { t = (); provider = Provider.make [] });
   [%expect
     {|
-    ((
-      implements (
-        (file_reader      false)
-        (directory_reader false)
-        (int_printer      false)
-        (float_printer    false))))
+    ((implements
+      ((file_reader false) (directory_reader false) (int_printer false)
+       (float_printer false))))
     |}];
   let int_printer = Test_providers.Int_printer.make () in
   let num_printer = Test_providers.Num_printer.make () in
   print_implements num_printer;
   [%expect
     {|
-    ((
-      implements (
-        (file_reader      false)
-        (directory_reader false)
-        (int_printer      true)
-        (float_printer    true))))
+    ((implements
+      ((file_reader false) (directory_reader false) (int_printer true)
+       (float_printer true))))
     |}];
   print_implements int_printer;
   [%expect
     {|
-    ((
-      implements (
-        (file_reader      false)
-        (directory_reader false)
-        (int_printer      true)
-        (float_printer    false))))
+    ((implements
+      ((file_reader false) (directory_reader false) (int_printer true)
+       (float_printer false))))
     |}];
   let id_mapping = Hashtbl.create (module Int) in
   let next_id = ref 0 in
@@ -88,18 +79,9 @@ let%expect_test "introspection" =
   in
   Ref.set_temporarily Provider.Trait.Info.sexp_of_id sexp_of_id ~f:(fun () ->
     print_implemented_traits int_printer;
-    [%expect
-      {|
-      ((
-        (id   0)
-        (name Int_printer)))
-      |}];
+    [%expect {| (((id 0) (name Int_printer))) |}];
     print_implemented_traits num_printer;
-    [%expect
-      {|
-      (((id 0) (name Int_printer))
-       ((id 1) (name Float_printer)))
-      |}];
+    [%expect {| (((id 0) (name Int_printer)) ((id 1) (name Float_printer))) |}];
     ());
   ()
 ;;

@@ -22,8 +22,8 @@ let%expect_test "Create" =
       type 'a module_type = (module T with type t = 'a)
     end)
   in
-  require [%here] (same_trait T1.t T1.t : bool);
-  require [%here] (not (same_trait T1.t T2.t : bool));
+  require (same_trait T1.t T1.t : bool);
+  require (not (same_trait T1.t T2.t : bool));
   ()
 ;;
 
@@ -38,8 +38,8 @@ let%expect_test "Create0" =
       type module_type = unit
     end)
   in
-  require [%here] (same_trait T1.t T1.t : bool);
-  require [%here] (not (same_trait T1.t T2.t : bool));
+  require (same_trait T1.t T1.t : bool);
+  require (not (same_trait T1.t T2.t : bool));
   ()
 ;;
 
@@ -54,8 +54,8 @@ let%expect_test "Create1" =
       type 'a module_type = unit
     end)
   in
-  require [%here] (same_trait T1.t T1.t : bool);
-  require [%here] (not (same_trait T1.t T2.t : bool));
+  require (same_trait T1.t T1.t : bool);
+  require (not (same_trait T1.t T2.t : bool));
   ()
 ;;
 
@@ -70,8 +70,8 @@ let%expect_test "Create2" =
       type ('a, 'b) module_type = unit
     end)
   in
-  require [%here] (same_trait T1.t T1.t : bool);
-  require [%here] (not (same_trait T1.t T2.t : bool));
+  require (same_trait T1.t T1.t : bool);
+  require (not (same_trait T1.t T2.t : bool));
   ()
 ;;
 
@@ -88,23 +88,23 @@ let%expect_test "Marshal extensible variant" =
   end
   in
   let open E in
-  require [%here] (phys_equal A A);
-  require [%here] (not (phys_equal A (B 0)));
-  require [%here] (not (phys_equal (B 0) (B 0)));
+  require (phys_equal A A);
+  require (not (phys_equal A (B 0)));
+  require (not (phys_equal (B 0) (B 0)));
   let id (t : t) =
     Stdlib.Obj.Extension_constructor.id (Stdlib.Obj.Extension_constructor.of_val t)
   in
-  require [%here] (id (B 0) = id (B 0));
-  require [%here] (id (B 0) = id (B 2));
+  require (id (B 0) = id (B 0));
+  require (id (B 0) = id (B 2));
   (* Marshalling does not preserve physical equality of extensible variant with
      no arguments. *)
   let marshal = Stdlib.Marshal.to_string A [] in
   let a2 = Stdlib.Marshal.from_string marshal 0 in
-  require [%here] (not (phys_equal A a2));
+  require (not (phys_equal A a2));
   (* Marshalling does not preserve extension constructor ids. *)
   let marshal = Stdlib.Marshal.to_string (B 0) [] in
   let b2 = Stdlib.Marshal.from_string marshal 0 in
-  require [%here] (id (B 0) <> id b2);
+  require (id (B 0) <> id b2);
   ()
 ;;
 
@@ -118,10 +118,10 @@ let%expect_test "Marshal" =
     end)
   in
   let t1 = T.t in
-  require [%here] (same_trait t1 t1 : bool);
+  require (same_trait t1 t1 : bool);
   let marshal = Stdlib.Marshal.to_string T.t [ Closures ] in
   let t2 = Stdlib.Marshal.from_string marshal 0 in
-  require [%here] (same_trait t2 t2 : bool);
-  require [%here] (not (same_trait t1 t2 : bool));
+  require (same_trait t2 t2 : bool);
+  require (not (same_trait t1 t2 : bool));
   ()
 ;;
