@@ -1,19 +1,33 @@
 {
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
     "cSpell.words": [
         "abstr",
         "alli",
+        "Barbin",
         "conv",
         "dedup",
         "Doublable",
+        "endline",
         "functors",
         "GADT",
         "injective",
         "injectivity",
         "janestreet",
         "kinded",
+        "Mathieu",
+        "mdexp",
+        "noprompt",
         "odoc",
         "opam",
         "repr",
-        "uids"
+        "Sexp",
+        "Sexplib",
+        "Stdlib",
+        "toplevel",
+        "uids",
+        "WEXITED",
+        "WSIGNALED",
+        "WSTOPPED"
     ]
 }
