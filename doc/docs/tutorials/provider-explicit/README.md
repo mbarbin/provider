@@ -345,7 +345,7 @@ let map_n_times
   fun provider t n ~f ->
   let module M = (val Provider.lookup provider ~trait:Mappable.t) in
   let at = M.project t in
-  let rec loop n at = if n = 0 then at else loop (n - 1) (M.map at ~f) in
+  let rec loop n at = if Int.equal n 0 then at else loop (n - 1) (M.map at ~f) in
   M.inject (loop n at)
 ;;
 ```

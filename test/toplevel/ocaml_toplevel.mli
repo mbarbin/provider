@@ -4,4 +4,4 @@
 (*_  SPDX-License-Identifier: ISC                                                 *)
 (*_********************************************************************************)
 
-val eval : code:string -> unit
+val eval : ?truncate_after:string -> string -> unit

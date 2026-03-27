@@ -13,8 +13,7 @@
 
 let%expect_test "direct trait extension" =
   Ocaml_toplevel.eval
-    ~code:
-      {|
+    {|
 type ('a, 'impl, 'tag) Provider.Trait.t += Trait : (unit, 'a, [ `A ]) Provider.Trait.t
 ;;
 |};
@@ -50,8 +49,8 @@ type ('a, 'impl, 'tag) Provider.Trait.t += Trait : (unit, 'a, [ `A ]) Provider.T
 
 let%expect_test "create1 unit type" =
   Ocaml_toplevel.eval
-    ~code:
-      {|
+    ~truncate_after:"Their variances do not agree."
+    {|
 module Trait = Provider.Trait.Create1 (struct
   type (_, _) t = unit
   type 'a module_type = 'a
@@ -83,7 +82,6 @@ end)
          is not included in
            type (!'a, 'b) t
          Their variances do not agree.
-         [1mFile "provider.mli", line 82, characters 6-22[0m: Expected declaration
     ```
     |}]
 ;;
@@ -94,8 +92,7 @@ end)
 
 let%expect_test "create1 forced injectivity" =
   Ocaml_toplevel.eval
-    ~code:
-      {|
+    {|
 module Trait = Provider.Trait.Create1 (struct
   type (!'a, _) t = unit
   type 'a module_type = 'a
@@ -133,8 +130,7 @@ end)
 
 let%expect_test "create1 record type" =
   Ocaml_toplevel.eval
-    ~code:
-      {|
+    {|
 type record = { a : string }
 
 module Trait = Provider.Trait.Create1 (struct
@@ -169,8 +165,7 @@ end)
 
 let%expect_test "create1 variant type" =
   Ocaml_toplevel.eval
-    ~code:
-      {|
+    {|
 type variant = A
 
 module Trait = Provider.Trait.Create1 (struct
@@ -236,8 +231,7 @@ let _c = (Trait.t : (int, int, [ `A ]) Provider.Trait.t)
 
 let%expect_test "trait coercion failure" =
   Ocaml_toplevel.eval
-    ~code:
-      {|
+    {|
 module Trait = Provider.Trait.Create1 (struct
   type (!'a, _) t = 'a
   type 'a module_type = 'a
@@ -286,8 +280,7 @@ let _b = (Trait.t : (int, int, [ `A ]) Provider.Trait.t)
 
 let%expect_test "lookup type mismatch" =
   Ocaml_toplevel.eval
-    ~code:
-      {|
+    {|
 module Trait = Provider.Trait.Create1 (struct
   type (!'a, _) t = 'a
   type 'a module_type = 'a

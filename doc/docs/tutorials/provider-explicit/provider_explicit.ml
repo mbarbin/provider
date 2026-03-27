@@ -21,8 +21,7 @@ module Ocaml_toplevel = Provider_toplevel_test.Ocaml_toplevel
 
 let%expect_test "module-dependent function" =
   Ocaml_toplevel.eval
-    ~code:
-      {|
+    {|
 module type Id = sig
   type t
 
@@ -381,8 +380,7 @@ type mappable = [ `Mappable ]
 
 let%expect_test "higher-order hallucination" =
   Ocaml_toplevel.eval
-    ~code:
-      {|
+    {|
 module Mappable : sig
   val t : ('a 't, (module Mappable with type 'a t = 'a 't), [> mappable ]) Provider.Trait.t
 end = Provider.Trait.Create (struct
@@ -448,7 +446,7 @@ let map_n_times
   fun provider t n ~f ->
   let module M = (val Provider.lookup provider ~trait:Mappable.t) in
   let at = M.project t in
-  let rec loop n at = if n = 0 then at else loop (n - 1) (M.map at ~f) in
+  let rec loop n at = if Int.equal n 0 then at else loop (n - 1) (M.map at ~f) in
   M.inject (loop n at)
 ;;
 

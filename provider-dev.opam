@@ -19,7 +19,6 @@ depends: [
   "ppxlib" {>= "0.33"}
   "provider" {= version}
   "provider-tests" {= version}
-  "re" {>= "1.12.0"}
   "sherlodoc" {>= "0.2"}
   "odoc" {with-doc}
 ]

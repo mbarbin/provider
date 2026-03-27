@@ -8,23 +8,34 @@ module Unix = UnixLabels
 
 let toplevel_exe = "./provider_toplevel.exe"
 
-let file_path_re =
-  lazy
-    (Re.compile
-       (Re.seq
-          [ Re.str {|File "|}
-          ; Re.group (Re.rep1 (Re.compl [ Re.char '"' ]))
-          ; Re.str {|"|}
-          ]))
+let string_is_substring s ~substring =
+  let len_s = String.length s in
+  let len_sub = String.length substring in
+  let rec aux i =
+    if i + len_sub > len_s
+    then false
+    else if String.equal (String.sub s ~pos:i ~len:len_sub) substring
+    then true
+    else aux (i + 1)
+  in
+  aux 0
 ;;
 
-let use_basename_in_file_paths s =
-  Re.replace (Lazy.force file_path_re) s ~f:(fun group ->
-    let path = Re.Group.get group 1 in
-    Printf.sprintf {|File "%s"|} (Filename.basename path))
+let truncate_after_line lines ~delimiter =
+  let[@tail_mod_cons] rec aux = function
+    | [] -> ([] [@coverage off])
+    | line :: rest ->
+      if string_is_substring line ~substring:delimiter
+      then [ line ]
+      else
+        (* Coverage is off in the second part of the expression because the
+           instrumentation breaks [@tail_mod_cons], triggering warning 71. *)
+        line :: (aux rest [@coverage off])
+  in
+  aux lines
 ;;
 
-let eval ~code =
+let eval ?truncate_after code =
   let code = String.trim code in
   print_endline "```ocaml";
   print_endline code;
@@ -39,9 +50,16 @@ let eval ~code =
   let stdout_content = In_channel.input_all ic in
   let stderr_content = In_channel.input_all ec in
   let status = Unix.close_process_full (ic, oc, ec) in
-  let stdout_trimmed = String.trim stdout_content |> use_basename_in_file_paths in
+  let stdout_trimmed =
+    String.trim stdout_content
+    |> String.split_lines
+    |> (match truncate_after with
+      | None -> Fun.id
+      | Some delimiter -> truncate_after_line ~delimiter)
+    |> String.concat ~sep:"\n"
+  in
   if String.length stdout_trimmed > 0 then print_endline stdout_trimmed;
-  let stderr_trimmed = String.trim stderr_content |> use_basename_in_file_paths in
+  let stderr_trimmed = String.trim stderr_content in
   if String.length stderr_trimmed > 0 then print_endline stderr_trimmed [@coverage off];
   (match status with
    | WEXITED 0 -> ()

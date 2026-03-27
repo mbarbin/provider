@@ -27,6 +27,7 @@ module With_equal_and_dyn = With_equal_and_dyn0
 val phys_equal : 'a -> 'a -> bool
 val print_dyn : Dyn.t -> unit
 val print_s : Sexp.t -> unit
+val ( = ) : [ `Use_Poly_when_needed ]
 
 (** Expect test helpers. *)
 
