@@ -29,10 +29,6 @@ type impl = string
 type trait = int
 type provider = (trait * impl) array
 
-let provider_to_dyn a =
-  Dyn.array (fun (trait, impl) -> Dyn.Tuple [ Dyn.int trait; Dyn.string impl ]) a
-;;
-
 (* @mdexp
 
    We are interested in defining lookup strategies — functions that return the
@@ -111,6 +107,10 @@ let make_provider bindings =
 ;;
 
 let provider = make_provider [ 99, "Hello"; 7, "World"; 134, "Foo"; 17, "Bar" ]
+
+let provider_to_dyn a =
+  Dyn.array (fun (trait, impl) -> Dyn.Tuple [ Dyn.int trait; Dyn.string impl ]) a
+;;
 
 let%expect_test "sorted provider" =
   print_dyn (provider |> provider_to_dyn);
