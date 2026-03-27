@@ -19,7 +19,7 @@ let run_sh cmd =
   Printf.printf "```sh\n$ %s\n" cmd;
   flush stdout;
   let exit_code = Sys.command (Printf.sprintf "bash -c %s" (Filename.quote cmd)) in
-  if exit_code <> 0 then Printf.printf "[%d]\n" exit_code;
+  if exit_code <> 0 then Printf.printf "[%d]\n" exit_code [@coverage off];
   print_string "```"
 ;;
 
@@ -83,6 +83,11 @@ end
 
    @mdexp.code *)
 
+let line_count contents =
+  List.length (String.split_on_char '\n' contents)
+  - if String.ends_with ~suffix:"\n" contents then 1 else (0 [@coverage off])
+;;
+
 module Show_files (Reader : READER) : sig
   val print_files_with_ext : Reader.t -> path:string -> ext:string -> unit
 end = struct
@@ -92,11 +97,7 @@ end = struct
     files
     |> List.iter (fun file ->
       let contents = Reader.load_file reader ~path:(Filename.concat path file) in
-      let line_count =
-        List.length (String.split_on_char '\n' contents)
-        - if String.ends_with ~suffix:"\n" contents then 1 else 0
-      in
-      Printf.printf "%d %s\n" line_count file)
+      Printf.printf "%d %s\n" (line_count contents) file)
   ;;
 end
 
@@ -210,11 +211,7 @@ end = struct
     files
     |> List.iter (fun file ->
       let contents = R.load_file reader ~path:(Filename.concat path file) in
-      let line_count =
-        List.length (String.split_on_char '\n' contents)
-        - if String.ends_with ~suffix:"\n" contents then 1 else 0
-      in
-      Printf.printf "%d %s\n" line_count file)
+      Printf.printf "%d %s\n" (line_count contents) file)
   ;;
 end
 

@@ -92,7 +92,24 @@ let id : type a. (a, [> id ]) Provider.t -> a -> a =
 
 (* @mdexp.end *)
 
-let _ = (id : (_, [> id ]) Provider.t -> _ -> _)
+let id_provider =
+  Provider.make
+    [ Provider.implement
+        Id.t
+        ~impl:
+          (module struct
+            type t = string
+
+            let id t = t
+          end)
+    ]
+;;
+
+let%expect_test "use id" =
+  print_endline (id id_provider "Hello");
+  [%expect {| Hello |}];
+  ()
+;;
 
 (* @mdexp
 

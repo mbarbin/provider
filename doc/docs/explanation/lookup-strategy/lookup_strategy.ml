@@ -148,7 +148,7 @@ let%expect_test "binary_search" =
 let binary_search_with_cache : lookup_strategy =
   fun provider trait ->
   if Array.length provider = 0
-  then None
+  then None [@coverage off]
   else (
     let cache = provider.(0) in
     if Int.equal (fst cache) trait
@@ -175,7 +175,7 @@ let binary_search_with_cache : lookup_strategy =
 
 let make_provider_with_cache bindings =
   match bindings |> List.sort ~compare:(fun (i, _) (j, _) -> Int.compare i j) with
-  | [] -> [||]
+  | [] -> [||] [@coverage off]
   | hd :: tl ->
     (* Initialize the cache arbitrarily with the smallest trait. *)
     Array.of_list (hd :: hd :: tl)
