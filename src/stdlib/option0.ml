@@ -6,5 +6,4 @@
 
 include Stdlib.Option
 
-let map t ~f = Stdlib.Option.map f t
 let some_if cond value = if cond then Some value else None

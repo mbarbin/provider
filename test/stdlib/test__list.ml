@@ -4,6 +4,18 @@
 (*  SPDX-License-Identifier: ISC                                                 *)
 (*********************************************************************************)
 
-include Ordering
+let%expect_test "hd_exn" =
+  print_dyn (Int.to_dyn (List.hd_exn [ 1; 2; 3 ]));
+  [%expect {| 1 |}];
+  require_does_raise (fun () -> List.hd_exn []);
+  [%expect {| Failure("List.hd_exn") |}];
+  ()
+;;
 
-let of_int n = if n < 0 then Lt else if n = 0 then Eq else Gt
+let%expect_test "is_empty" =
+  require (List.is_empty []);
+  [%expect {| |}];
+  require (not (List.is_empty [ 1 ]));
+  [%expect {| |}];
+  ()
+;;

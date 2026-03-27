@@ -8,5 +8,4 @@ include module type of struct
   include Ordering
 end
 
-val to_dyn : t -> Dyn.t
 val of_int : int -> t

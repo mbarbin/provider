@@ -7,7 +7,6 @@
 include Stdlib.Int
 
 let to_dyn t = Dyn.Int t
-let hash (t : t) = Stdlib.Hashtbl.hash t
 let incr = Stdlib.incr
 let ( + ) = Stdlib.( + )
 let zero = 0

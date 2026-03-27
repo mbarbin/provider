@@ -8,5 +8,4 @@ include module type of struct
   include Stdlib.Option
 end
 
-val map : 'a option -> f:('a -> 'b) -> 'b option
 val some_if : bool -> 'a -> 'a option

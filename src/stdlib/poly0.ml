@@ -5,4 +5,3 @@
 (*********************************************************************************)
 
 let equal = Stdlib.( = )
-let compare a b = Ordering0.of_int (Stdlib.compare a b)

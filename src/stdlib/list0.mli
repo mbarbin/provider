@@ -9,15 +9,8 @@ include module type of struct
 end
 
 val map : 'a list -> f:('a -> 'b) -> 'b list
-val mapi : 'a list -> f:(int -> 'a -> 'b) -> 'b list
 val iter : 'a list -> f:('a -> unit) -> unit
-val iteri : 'a list -> f:(int -> 'a -> unit) -> unit
 val filter : 'a list -> f:('a -> bool) -> 'a list
-val filter_map : 'a list -> f:('a -> 'b option) -> 'b list
-val find_map : 'a list -> f:('a -> 'b option) -> 'b option
-val concat_map : 'a list -> f:('a -> 'b list) -> 'b list
-val for_all : 'a list -> f:('a -> bool) -> bool
-val exists : 'a list -> f:('a -> bool) -> bool
 val init : int -> f:(int -> 'a) -> 'a list
 val sort : 'a list -> compare:('a -> 'a -> Ordering0.t) -> 'a list
 
