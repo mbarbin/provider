@@ -14,7 +14,7 @@ let eval ~code =
   print_endline code;
   print_endline "```";
   print_endline "";
-  print_endline "```terminal";
+  print_endline "```ansi";
   let cmd = toplevel_exe ^ " -noprompt -no-version -color always" in
   let ic, oc, ec = Unix.open_process_full cmd ~env:[||] in
   output_string oc code;

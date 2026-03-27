@@ -8,7 +8,7 @@ type ('a, 'impl, 'tag) Provider.Trait.t += Trait : (unit, 'a, [ `A ]) Provider.T
 ;;
 ```
 
-```terminal
+```ansi
 [1mLine 1, characters 0-86[0m:
 1 | type ('a, 'impl, 'tag) Provider.Trait.t += Trait : (unit, 'a, [ `A ]) Provider.Trait.t
     [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
@@ -34,7 +34,7 @@ end)
 ;;
 ```
 
-```terminal
+```ansi
 [1mLines 1-4, characters 15-4[0m:
 1 | ...............Provider.Trait.Create1 (struct
 2 |   type (_, _) t = unit
@@ -61,7 +61,7 @@ end)
 ;;
 ```
 
-```terminal
+```ansi
 [1mLine 2, characters 2-24[0m:
 2 |   type (!'a, _) t = unit
       [1;31m^^^^^^^^^^^^^^^^^^^^^^[0m
@@ -85,7 +85,7 @@ end)
 ;;
 ```
 
-```terminal
+```ansi
 [1mLine 4, characters 2-26[0m:
 4 |   type (!'a, _) t = record
       [1;31m^^^^^^^^^^^^^^^^^^^^^^^^[0m
@@ -104,7 +104,7 @@ end)
 ;;
 ```
 
-```terminal
+```ansi
 [1mLine 4, characters 2-27[0m:
 4 |   type (!'a, _) t = variant
       [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^[0m
@@ -143,7 +143,7 @@ end)
 let _ = (Trait.t : (unit, string, [ `A]) Provider.Trait.t) ;;
 ```
 
-```terminal
+```ansi
 [1mLine 6, characters 9-16[0m:
 6 | let _ = (Trait.t : (unit, string, [ `A]) Provider.Trait.t) ;;
              [1;31m^^^^^^^[0m
@@ -180,7 +180,7 @@ let crash () =
 ;;
 ```
 
-```terminal
+```ansi
 [1mLine 11, characters 43-44[0m:
 11 |   let (i : int) = Provider.lookup h ~trait:b in
                                                 [1;31m^[0m

@@ -20,7 +20,7 @@ type (_, _, _) Provider.Trait.t +=
 ;;
 ```
 
-```terminal
+```ansi
 [1mLines 7-10, characters 0-75[0m:
  7 | type (_, _, _) Provider.Trait.t +=
  8 |   | A :
