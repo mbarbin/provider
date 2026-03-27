@@ -61,21 +61,22 @@ let id : type a. (a, [> id ]) Provider.t -> a -> a =
 ```
 
 In the rest of the tutorial, we cover this pattern in greater details and
-demonstrate how to use it with providers that implement multiple traits. We also
-provide examples where the Trait type is parametrized.
+demonstrate how to use it with providers that implement multiple traits. We
+also provide examples where the Trait type is parametrized.
 
 Let's jump in!
 
 ## Functional providers
 
-In the [getting-started](../getting-started/) tutorial, we explored a scenario
-where providers were bundled with the value on which the Traits operate. Whether
-the functions exported by the Traits interfaces mutate the `t` value or not,
-this approach closely resembles how objects work in Object-Oriented languages.
+In the [getting-started](../getting-started/) tutorial, we explored a
+scenario where providers were bundled with the value on which the Traits
+operate. Whether the functions exported by the Traits interfaces mutate the
+`t` value or not, this approach closely resembles how objects work in
+Object-Oriented languages.
 
-In contrast, this tutorial focuses on manipulating *providers* directly, without
-bundling them with values. This allows us to work with Traits that contain
-purely functional functions.
+In contrast, this tutorial focuses on manipulating *providers* directly,
+without bundling them with values. This allows us to work with Traits that
+contain purely functional functions.
 
 ### Defining Traits
 
@@ -104,8 +105,8 @@ end = Provider.Trait.Create (struct
 
 ### Writing Parametrized Code
 
-With no dependencies on actual providers, we can define functionality depending
-on the Trait interface only. This may look like this:
+With no dependencies on actual providers, we can define functionality
+depending on the Trait interface only. This may look like this:
 
 ```ocaml
 let quadruple : type a. (a, [> doublable ]) Provider.t -> a -> a =
@@ -222,9 +223,9 @@ let versatile_int () : (int, [> doublable | repeatable ]) Provider.t =
 ```
 
 The careful reader will note that this section requires careful handling, as
-there is no compiler assistance here. When defining providers, you must tag them
-correctly, or you may not be able to supply them to the functions you want, some
-traits may not be found at runtime, etc.
+there is no compiler assistance here. When defining providers, you must tag
+them correctly, or you may not be able to supply them to the functions you
+want, some traits may not be found at runtime, etc.
 
 ### Instantiation
 
@@ -241,8 +242,8 @@ let%expect_test "double_then_repeat" =
 ## Parametrized types
 
 In this part, we'll demonstrate how to write code that is parametrized by an
-interface working on a parametrized type, a concept known as *higher-kinded
-polymorphism*.
+interface working on a parametrized type, a concept known as
+*higher-kinded polymorphism*.
 
 Consider values that can be mapped:
 
@@ -304,9 +305,11 @@ end = Provider.Trait.Create (struct
 end)
 ```
 
-```
-Line 2, characters 17-18:
-Error: Syntax error
+```ansi
+[1mLine 2, characters 14-15[0m:
+2 |   val t : ('a 't, (module Mappable with type 'a t = 'a 't), [> mappable ]) Provider.Trait.t
+                  [1;31m^[0m
+[1;31mError[0m: Syntax error
 ```
 
 This is where `Higher_kinded` comes to the rescue:
