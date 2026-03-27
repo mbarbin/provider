@@ -21,8 +21,7 @@ module Ocaml_toplevel = Provider_toplevel_test.Ocaml_toplevel
 
 let%expect_test "module-dependent function" =
   Ocaml_toplevel.eval
-    ~code:
-      {|
+    {|
 module type Id = sig
   type t
 
@@ -381,8 +380,7 @@ type mappable = [ `Mappable ]
 
 let%expect_test "higher-order hallucination" =
   Ocaml_toplevel.eval
-    ~code:
-      {|
+    {|
 module Mappable : sig
   val t : ('a 't, (module Mappable with type 'a t = 'a 't), [> mappable ]) Provider.Trait.t
 end = Provider.Trait.Create (struct

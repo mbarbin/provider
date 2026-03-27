@@ -16,8 +16,7 @@
 
 let%expect_test "trait extension attempt" =
   Ocaml_toplevel.eval
-    ~code:
-      {|
+    {|
 module type S = sig
   type t
 

@@ -94,7 +94,12 @@ let dedup_sorted_keep_last =
     | [] -> []
     | [ elt ] -> [ elt ]
     | elt1 :: (elt2 :: _ as tl) ->
-      if compare elt1 elt2 = 0 then aux tl ~compare else elt1 :: aux tl ~compare
+      if compare elt1 elt2 = 0
+      then aux tl ~compare
+      else
+        (* Coverage is off in the second part of the expression because the
+           instrumentation breaks [@tail_mod_cons], triggering warning 71. *)
+        elt1 :: (aux tl ~compare [@coverage off])
   in
   aux
 ;;
