@@ -1,9 +1,10 @@
 (library
  (name provider_doc_tutorial_provider_explicit)
  (package provider-dev)
- (inline_tests)
+ (inline_tests
+  (deps provider_toplevel.exe))
  (flags :standard -w +a-4-40-41-42-44-45-48-66 -warn-error +a)
- (libraries provider provider-tests.higher_kinded)
+ (libraries provider provider-tests.higher_kinded provider_toplevel_test)
  (instrumentation
   (backend bisect_ppx))
  (lint
@@ -27,3 +28,11 @@
  (alias runtest)
  (action
   (diff README.md provider_explicit.md.gen)))
+
+(rule
+ (package provider-dev)
+ (target provider_toplevel.exe)
+ (deps
+  (:exe %{project_root}/test/toplevel/provider_toplevel.exe))
+ (action
+  (copy %{exe} %{target})))

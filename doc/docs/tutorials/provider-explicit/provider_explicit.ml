@@ -9,24 +9,62 @@
    # Provider Explicit
 
    In this tutorial, we draw a parallel between a way to use the provider library,
-   and [modular
-   explicit](https://gallium.inria.fr/~remy/ocamod/modular-explicits.pdf).
+   and [modular explicit](https://gallium.inria.fr/~remy/ocamod/modular-explicits.pdf).
 
    ## Introduction
 
    Modular-explicit allows *module-dependent* functions to take a module
-   implementing a Trait signature as an argument and use a type from the module to
-   annotate subsequent arguments. For example:
+   implementing a Trait signature as an argument and use a type from the module
+   to annotate subsequent arguments. For example: *)
 
-   ```ocaml
-   module type Id = sig type t val id : t -> t end
+module Ocaml_toplevel = Provider_toplevel_test.Ocaml_toplevel
 
-   let id (module A : Id) (x : A.t) = A.id x
-   ```
+let%expect_test "module-dependent function" =
+  Ocaml_toplevel.eval
+    ~code:
+      {|
+module type Id = sig
+  type t
 
-   We called this tutorial *provider-explicit* in reference to this. In the pattern
-   we present here, functions take an additional *provider* argument to achieve a
-   similar type-class style parametrization.
+  val id : t -> t
+end
+
+let id (module A : Id) (x : A.t) = A.id x ;;
+|};
+  (* @mdexp.snapshot *)
+  [%expect
+    {|
+    ```ocaml
+    module type Id = sig
+      type t
+
+      val id : t -> t
+    end
+
+    let id (module A : Id) (x : A.t) = A.id x ;;
+    ```
+
+    ```ansi
+    [1mLine 7, characters 23-32[0m:
+    7 | let id (module A : Id) (x : A.t) = A.id x ;;
+                               [1;31m^^^^^^^^^[0m
+    [1;31mError[0m: This pattern matches values of type [1mA.t[0m
+           but a pattern was expected which matches values of type [1m'a[0m
+           The type constructor [1mA.t[0m would escape its scope
+    ```
+    |}];
+  ()
+;;
+
+(* @mdexp
+
+   As you can see above, constructs of these kinds are currently not in the
+   language, but they are introduced in the version `5.5` of OCaml. We'll make
+   sure to update that part of the doc when we migrate to these new features!
+
+   Back to our tutorial: we titled it *provider-explicit* in reference to this.
+   In the pattern we present here, functions take an additional *provider*
+   argument to achieve a similar type-class style parametrization.
 
    In a nutshell:
 
