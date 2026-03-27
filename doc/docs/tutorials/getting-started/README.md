@@ -10,6 +10,7 @@ We'll create a functionality equivalent to the following bash script:
 ```sh
 $ for file in $(ls -1 *.txt | sort) ; do wc -l $file; done
 5 hello.txt
+2 world.txt
 ```
 
 ## Library Requirements
@@ -104,7 +105,8 @@ let%expect_test "functor instantiation" =
   [%expect
     {|
     5 hello.txt
-  |}];
+    2 world.txt
+    |}];
   ()
 ;;
 ```
@@ -242,12 +244,14 @@ let%expect_test "provider instantiation" =
   [%expect
     {|
     5 hello.txt
-  |}];
+    2 world.txt
+    |}];
   Show_files3.print_files_with_ext my_sys_reader ~path:"." ~ext:".txt";
   [%expect
     {|
     5 hello.txt
-  |}];
+    2 world.txt
+    |}];
   ()
 ;;
 ```
