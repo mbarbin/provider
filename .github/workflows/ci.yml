@@ -39,6 +39,12 @@ jobs:
       #     janestreet-bleeding: https://github.com/janestreet/opam-repository.git
       #     janestreet-bleeding-external: https://github.com/janestreet/opam-repository.git#external-packages
 
+      - name: Setup mdexp
+        uses: mbarbin/mdexp-actions/setup-mdexp@42da13e622de9559da363ef5906ffde63a982efd # v1.0.0-alpha.1
+        with:
+          mdexp-version: 0.0.20260315
+          mdexp-digest: sha256:f4fc53bcaa50c9dd979b968804c38322b9b7e6aa699d9d6d2d1f101965332018
+
       - name: Install dependencies
         run: opam install . --deps-only --with-doc --with-test --with-dev-setup
 

@@ -1,6 +1,31 @@
-(mdx
+(library
+ (name provider_doc_tutorial_getting_started)
  (package provider-dev)
- (deps
-  (package provider)
-  (glob_files *.txt))
- (preludes prelude.txt))
+ (inline_tests
+  (deps
+   (glob_files *.txt)))
+ (flags :standard -w +a-4-40-41-42-44-45-48-66 -warn-error +a)
+ (libraries provider)
+ (instrumentation
+  (backend bisect_ppx))
+ (lint
+  (pps ppx_js_style -allow-let-operators -check-doc-comments))
+ (preprocess
+  (pps ppx_expect)))
+
+(rule
+ (package provider-dev)
+ (enabled_if %{bin-available:mdexp})
+ (target getting_started.md.gen)
+ (deps getting_started.ml)
+ (action
+  (with-stdout-to
+   %{target}
+   (run mdexp pp %{deps}))))
+
+(rule
+ (package provider-dev)
+ (enabled_if %{bin-available:mdexp})
+ (alias runtest)
+ (action
+  (diff README.md getting_started.md.gen)))
