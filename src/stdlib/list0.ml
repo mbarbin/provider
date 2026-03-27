@@ -19,7 +19,7 @@ let concat_map l ~f = Stdlib.List.concat_map f l
 let for_all l ~f = Stdlib.List.for_all f l
 let exists l ~f = Stdlib.List.exists f l
 let init n ~f = Stdlib.List.init n f
-let sort l ~compare = Stdlib.List.sort compare l
+let sort l ~compare = Stdlib.List.sort (fun a b -> Ordering.to_int (compare a b)) l
 
 module type Summable = sig
   type t

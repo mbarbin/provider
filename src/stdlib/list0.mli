@@ -19,7 +19,7 @@ val concat_map : 'a list -> f:('a -> 'b list) -> 'b list
 val for_all : 'a list -> f:('a -> bool) -> bool
 val exists : 'a list -> f:('a -> bool) -> bool
 val init : int -> f:(int -> 'a) -> 'a list
-val sort : 'a list -> compare:('a -> 'a -> int) -> 'a list
+val sort : 'a list -> compare:('a -> 'a -> Ordering0.t) -> 'a list
 
 module type Summable = sig
   type t

@@ -13,5 +13,6 @@ val hash : t -> int
 val incr : t ref -> unit
 val ( + ) : t -> t -> t
 val zero : t
+val compare : t -> t -> Ordering0.t
 val to_string_hum : ?delimiter:char -> t -> string
 val sexp_of_t : t -> Sexplib0.Sexp.t

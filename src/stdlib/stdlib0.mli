@@ -16,6 +16,7 @@ module Fn = Fn0
 module Int = Int0
 module List = List0
 module Option = Option0
+module Ordering = Ordering0
 module Poly = Poly0
 module Pp = Pp0
 module Ref = Ref0

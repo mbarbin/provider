@@ -11,6 +11,7 @@ let hash (t : t) = Stdlib.Hashtbl.hash t
 let incr = Stdlib.incr
 let ( + ) = Stdlib.( + )
 let zero = 0
+let compare a b = Ordering0.of_int (Stdlib.Int.compare a b)
 
 let to_string_hum ?(delimiter = '_') t =
   let s = to_string t in

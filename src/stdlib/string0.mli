@@ -8,6 +8,6 @@ include module type of struct
   include Stdlib.StringLabels
 end
 
-val compare : string -> string -> int
+val compare : string -> string -> Ordering0.t
 val ends_with : string -> suffix:string -> bool
 val split_lines : string -> string list

@@ -4,5 +4,12 @@
 (*  SPDX-License-Identifier: ISC                                                 *)
 (*********************************************************************************)
 
-let equal = Stdlib.( = )
-let compare a b = Ordering0.of_int (Stdlib.compare a b)
+include Ordering
+
+let to_dyn = function
+  | Lt -> Dyn.Variant ("Lt", [])
+  | Eq -> Dyn.Variant ("Eq", [])
+  | Gt -> Dyn.Variant ("Gt", [])
+;;
+
+let of_int n = if n < 0 then Lt else if n = 0 then Eq else Gt

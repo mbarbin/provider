@@ -2,7 +2,7 @@
  (name stdlib_for_test)
  (package provider-tests)
  (flags :standard -w +a-4-40-41-42-44-45-48-66 -warn-error +a)
- (libraries dyn pp sexplib0)
+ (libraries dyn ordering pp sexplib0)
  (instrumentation
   (backend bisect_ppx))
  (lint

@@ -6,7 +6,7 @@
 
 include Stdlib.StringLabels
 
-let compare = Stdlib.String.compare
+let compare a b = Ordering0.of_int (Stdlib.String.compare a b)
 let ends_with t ~suffix = Stdlib.String.ends_with ~suffix t
 
 let[@tail_mod_cons] rec drop_last_empty = function

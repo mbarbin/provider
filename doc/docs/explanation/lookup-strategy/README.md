@@ -67,21 +67,18 @@ This is a slight twist on the linear scan.
 ```ocaml
 let binary_search : lookup_strategy =
   fun provider trait ->
-  let len = Array.length provider in
   let rec loop lo hi =
     if lo >= hi
     then None
     else (
       let mid = lo + ((hi - lo) / 2) in
       let key, _ = provider.(mid) in
-      let c = Int.compare key trait in
-      if c = 0
-      then Some (snd provider.(mid))
-      else if c < 0
-      then loop (mid + 1) hi
-      else loop lo mid)
+      match Int.compare key trait with
+      | Eq -> Some (snd provider.(mid))
+      | Lt -> loop (mid + 1) hi
+      | Gt -> loop lo mid)
   in
-  loop 0 len
+  loop 0 (Array.length provider)
 ;;
 ```
 
@@ -144,17 +141,18 @@ let binary_search_with_cache : lookup_strategy =
       print_endline "Hitting the cache!";
       Some (snd cache))
     else (
-      let len = Array.length provider in
       let rec loop lo hi =
         if lo >= hi
         then None
         else (
           let mid = lo + ((hi - lo) / 2) in
           let key, _ = provider.(mid) in
-          let c = Int.compare key trait in
-          if c = 0 then Some mid else if c < 0 then loop (mid + 1) hi else loop lo mid)
+          match Int.compare key trait with
+          | Eq -> Some mid
+          | Lt -> loop (mid + 1) hi
+          | Gt -> loop lo mid)
       in
-      match loop 1 len with
+      match loop 1 (Array.length provider) with
       | None -> None
       | Some i ->
         let impl = snd provider.(i) in

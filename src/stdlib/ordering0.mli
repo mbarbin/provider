@@ -4,5 +4,9 @@
 (*_  SPDX-License-Identifier: ISC                                                 *)
 (*_********************************************************************************)
 
-val equal : 'a -> 'a -> bool
-val compare : 'a -> 'a -> Ordering0.t
+include module type of struct
+  include Ordering
+end
+
+val to_dyn : t -> Dyn.t
+val of_int : int -> t
