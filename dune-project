@@ -72,7 +72,7 @@
  (allow_empty)
  (depends
   (ocaml
-   (>= 5.2))
+   (>= 5.3))
   (ocamlformat
    (= 0.29.0))
   (bisect_ppx
