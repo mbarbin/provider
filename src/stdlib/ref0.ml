@@ -7,11 +7,5 @@
 let set_temporarily r value ~f =
   let old = !r in
   r := value;
-  match f () with
-  | v ->
-    r := old;
-    v
-  | exception e ->
-    r := old;
-    raise e
+  Fun.protect ~finally:(fun () -> r := old) f
 ;;
