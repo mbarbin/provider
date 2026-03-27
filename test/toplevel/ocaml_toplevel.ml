@@ -52,7 +52,7 @@ let eval ?truncate_after code =
   let status = Unix.close_process_full (ic, oc, ec) in
   let stdout_trimmed =
     String.trim stdout_content
-    |> String.split_on_char ~sep:'\n'
+    |> String.split_lines
     |> (match truncate_after with
       | None -> Fun.id
       | Some delimiter -> truncate_after_line ~delimiter)
