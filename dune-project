@@ -91,5 +91,7 @@
    (= :version))
   (provider-tests
    (= :version))
+  (re
+   (>= 1.12.0))
   (sherlodoc
    (>= 0.2))))

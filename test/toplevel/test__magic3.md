@@ -48,7 +48,7 @@ end)
      is not included in
        type (!'a, 'b) t
      Their variances do not agree.
-     [1mFile "src/provider.mli", line 82, characters 6-22[0m: Expected declaration
+     [1mFile "provider.mli", line 82, characters 6-22[0m: Expected declaration
 ```
 
 Trying to force the injectivity won't do either.
