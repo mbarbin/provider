@@ -35,7 +35,17 @@ module Tag = struct
     | `E
     | `F
     ]
-  [@@deriving enumerate, sexp_of]
+
+  let all = [ `A; `B; `C; `D; `E; `F ]
+
+  let to_dyn = function
+    | `A -> Dyn.Variant ("A", [])
+    | `B -> Dyn.Variant ("B", [])
+    | `C -> Dyn.Variant ("C", [])
+    | `D -> Dyn.Variant ("D", [])
+    | `E -> Dyn.Variant ("E", [])
+    | `F -> Dyn.Variant ("F", [])
+  ;;
 end
 
 type 'a t = ([> Tag.t ] as 'a) Provider.packed
@@ -84,7 +94,7 @@ module Impl (M : sig
 struct
   type t = unit
 
-  let print_tag () = print_s (M.tag |> Tag.sexp_of_t)
+  let print_tag () = print_dyn (M.tag |> Tag.to_dyn)
 end
 
 module Impls = struct

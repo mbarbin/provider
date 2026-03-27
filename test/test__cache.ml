@@ -15,7 +15,8 @@ module Cache_state = struct
     | None
     | Int_printer
     | Float_printer
-  [@@deriving equal]
+
+  let equal = Stdlib.( = )
 
   let to_dyn = function
     | None -> Dyn.Variant ("None", [])
