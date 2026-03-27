@@ -35,7 +35,17 @@ module Tag = struct
     | `E
     | `F
     ]
-  [@@deriving enumerate, sexp_of]
+
+  let all = [ `A; `B; `C; `D; `E; `F ]
+
+  let to_dyn = function
+    | `A -> Dyn.Variant ("A", [])
+    | `B -> Dyn.Variant ("B", [])
+    | `C -> Dyn.Variant ("C", [])
+    | `D -> Dyn.Variant ("D", [])
+    | `E -> Dyn.Variant ("E", [])
+    | `F -> Dyn.Variant ("F", [])
+  ;;
 end
 
 type 'a t = ([> Tag.t ] as 'a) Provider.packed
@@ -84,7 +94,7 @@ module Impl (M : sig
 struct
   type t = unit
 
-  let print_tag () = print_s [%sexp (M.tag : Tag.t)]
+  let print_tag () = print_dyn (M.tag |> Tag.to_dyn)
 end
 
 module Impls = struct
@@ -129,7 +139,7 @@ let provider () : _ t =
 
 let%expect_test "lookup" =
   let (Provider.T { t = _; provider } as t) = provider () in
-  print_s [%sexp (List.length (Provider.bindings provider) : int)];
+  print_dyn (List.length (Provider.bindings provider) |> Dyn.int);
   [%expect {| 6 |}];
   List.iter Tag.all ~f:(fun tag -> print_tag t ~tag);
   [%expect
@@ -159,25 +169,18 @@ let provider2 () : _ t =
   Provider.T { t = (); provider }
 ;;
 
-module Uid = struct
-  type t = Provider.Trait.Uid.t
-
-  include Comparable.Make (Provider.Trait.Uid)
-end
+module Uid_set = Set.Make (Provider.Trait.Uid)
 
 let uids (Provider.T { t = _; provider }) =
-  provider
-  |> Provider.bindings
-  |> List.map ~f:Provider.Binding.uid
-  |> Set.of_list (module Uid)
+  provider |> Provider.bindings |> List.map ~f:Provider.Binding.uid |> Uid_set.of_list
 ;;
 
 let%expect_test "sub-provider" =
   let traits1 = provider () |> uids in
   let traits2 = provider2 () |> uids in
-  print_s [%sexp (Set.equal traits1 traits2 : bool)];
+  print_dyn (Uid_set.equal traits1 traits2 |> Dyn.bool);
   [%expect {| false |}];
-  print_s [%sexp (Set.is_subset traits2 ~of_:traits1 : bool)];
+  print_dyn (Uid_set.subset traits2 traits1 |> Dyn.bool);
   [%expect {| true |}];
   ()
 ;;
@@ -201,7 +204,7 @@ let%expect_test "same_trait_uids" =
         (Provider.T { t = _; provider = h1 })
         (Provider.T { t = _; provider = h2 })
     =
-    print_s [%sexp (Provider.Private.same_trait_uids h1 h2 : bool)]
+    print_dyn (Provider.Private.same_trait_uids h1 h2 |> Dyn.bool)
   in
   let p1 = provider () in
   let p2 = provider2 () in

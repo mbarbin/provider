@@ -21,13 +21,7 @@ let%expect_test "invalid tags" =
     ;;
   end
   in
-  require_does_raise [%here] (fun () -> print_42 (Invalid_int_printer.make ()));
-  [%expect
-    {|
-    ("Trait not implemented" ((
-      trait_info (
-        (id   #id)
-        (name Int_printer)))))
-    |}];
+  require_does_raise (fun () -> print_42 (Invalid_int_printer.make ()));
+  [%expect {| ("Trait not implemented" ((trait_info ((id #id) (name Int_printer))))) |}];
   ()
 ;;

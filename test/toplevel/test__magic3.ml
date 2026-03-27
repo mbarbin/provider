@@ -83,7 +83,7 @@ end)
          is not included in
            type (!'a, 'b) t
          Their variances do not agree.
-         [1mFile "src/provider.mli", line 82, characters 6-22[0m: Expected declaration
+         [1mFile "provider.mli", line 82, characters 6-22[0m: Expected declaration
     ```
     |}]
 ;;
@@ -299,7 +299,7 @@ let b = (Trait.t : (int, int, [ `A ]) Provider.Trait.t)
 
 let crash () =
   let (i : int) = Provider.lookup h ~trait:b in
-  assert (Stdlib.Obj.is_int (Stdlib.Obj.repr i))
+  assert (Obj.is_int (Obj.repr i))
 ;;
 |};
   (* @mdexp.snapshot *)
@@ -317,7 +317,7 @@ let crash () =
 
     let crash () =
       let (i : int) = Provider.lookup h ~trait:b in
-      assert (Stdlib.Obj.is_int (Stdlib.Obj.repr i))
+      assert (Obj.is_int (Obj.repr i))
     ;;
     ```
 
@@ -350,8 +350,8 @@ let crash () =
 
    let%expect_test "crash" =
      let (i : int) = Provider.lookup h ~trait:b in
-     print_s [%sexp { is_int = (Stdlib.Obj.is_int (Stdlib.Obj.repr i) : bool) }];
-     [%expect {| ((is_int false)) |}];
+     print_dyn (Dyn.record [ "is_int", Dyn.bool (Obj.is_int (Obj.repr i)) ]);
+     [%expect {| { is_int = false } |}];
      ()
    ;;
    ``` *)

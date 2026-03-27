@@ -12,94 +12,93 @@
 let print_implemented_traits (Provider.T { t = _; provider }) =
   let info =
     List.map (Provider.bindings provider) ~f:(fun binding ->
-      [%sexp (Provider.Binding.info binding : Provider.Trait.Info.t)])
+      Provider.Binding.info binding |> Provider.Trait.Info.sexp_of_t)
   in
-  print_s [%sexp (info : Sexp.t list)]
+  print_s (List info)
 ;;
 
 let print_implements (Provider.T { t = _; provider }) =
   let implements trait = Provider.implements provider ~trait in
-  print_s
-    [%sexp
-      { implements =
-          { file_reader =
-              (implements Test_interfaces.File_reader.Provider_interface.file_reader
-               : bool)
-          ; directory_reader =
-              (implements
-                 Test_interfaces.Directory_reader.Provider_interface.directory_reader
-               : bool)
-          ; int_printer =
-              (implements Test_interfaces.Int_printer.Provider_interface.int_printer
-               : bool)
-          ; float_printer =
-              (implements Test_interfaces.Float_printer.Provider_interface.float_printer
-               : bool)
-          }
-      }]
+  print_dyn
+    (Dyn.record
+       [ ( "implements"
+         , Dyn.record
+             [ ( "file_reader"
+               , Dyn.bool
+                   (implements Test_interfaces.File_reader.Provider_interface.file_reader)
+               )
+             ; ( "directory_reader"
+               , Dyn.bool
+                   (implements
+                      Test_interfaces.Directory_reader.Provider_interface.directory_reader)
+               )
+             ; ( "int_printer"
+               , Dyn.bool
+                   (implements Test_interfaces.Int_printer.Provider_interface.int_printer)
+               )
+             ; ( "float_printer"
+               , Dyn.bool
+                   (implements
+                      Test_interfaces.Float_printer.Provider_interface.float_printer) )
+             ] )
+       ])
 ;;
 
 let%expect_test "introspection" =
   print_implements (Provider.T { t = (); provider = Provider.make [] });
   [%expect
     {|
-    ((
-      implements (
-        (file_reader      false)
-        (directory_reader false)
-        (int_printer      false)
-        (float_printer    false))))
+    { implements =
+        { file_reader = false
+        ; directory_reader = false
+        ; int_printer = false
+        ; float_printer = false
+        }
+    }
     |}];
   let int_printer = Test_providers.Int_printer.make () in
   let num_printer = Test_providers.Num_printer.make () in
   print_implements num_printer;
   [%expect
     {|
-    ((
-      implements (
-        (file_reader      false)
-        (directory_reader false)
-        (int_printer      true)
-        (float_printer    true))))
+    { implements =
+        { file_reader = false
+        ; directory_reader = false
+        ; int_printer = true
+        ; float_printer = true
+        }
+    }
     |}];
   print_implements int_printer;
   [%expect
     {|
-    ((
-      implements (
-        (file_reader      false)
-        (directory_reader false)
-        (int_printer      true)
-        (float_printer    false))))
+    { implements =
+        { file_reader = false
+        ; directory_reader = false
+        ; int_printer = true
+        ; float_printer = false
+        }
+    }
     |}];
-  let id_mapping = Hashtbl.create (module Int) in
+  let id_mapping = Hashtbl.create 16 in
   let next_id = ref 0 in
   let sexp_of_id id =
     let id =
-      match Hashtbl.find id_mapping id with
+      match Hashtbl.find_opt id_mapping id with
       | Some id -> id
       | None ->
         let data = !next_id in
         Int.incr next_id;
-        Hashtbl.set id_mapping ~key:id ~data;
+        Hashtbl.replace id_mapping id data;
         data
     in
     Sexp.Atom (Int.to_string id)
   in
   Ref.set_temporarily Provider.Trait.Info.sexp_of_id sexp_of_id ~f:(fun () ->
     print_implemented_traits int_printer;
-    [%expect
-      {|
-      ((
-        (id   0)
-        (name Int_printer)))
-      |}];
+    [%expect {| (((id 0) (name Int_printer))) |}];
     print_implemented_traits num_printer;
-    [%expect
-      {|
-      (((id 0) (name Int_printer))
-       ((id 1) (name Float_printer)))
-      |}];
+    [%expect {| (((id 0) (name Int_printer)) ((id 1) (name Float_printer))) |}];
     ());
   ()
 ;;

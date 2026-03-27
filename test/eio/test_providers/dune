@@ -1,8 +1,15 @@
 (library
  (name eio_test_providers)
  (package provider-eio-tests)
- (flags :standard -w +a-4-40-41-42-44-45-48-66 -warn-error +a -open Base)
- (libraries base eio provider test_interfaces)
+ (flags
+  :standard
+  -w
+  +a-4-40-41-42-44-45-48-66
+  -warn-error
+  +a
+  -open
+  Stdlib_for_test)
+ (libraries eio provider stdlib_for_test test_interfaces)
  (instrumentation
   (backend bisect_ppx))
  (lint

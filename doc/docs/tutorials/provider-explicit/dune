@@ -3,8 +3,19 @@
  (package provider-dev)
  (inline_tests
   (deps provider_toplevel.exe))
- (flags :standard -w +a-4-40-41-42-44-45-48-66 -warn-error +a)
- (libraries provider provider-tests.higher_kinded provider_toplevel_test)
+ (flags
+  :standard
+  -w
+  +a-4-40-41-42-44-45-48-66
+  -warn-error
+  +a
+  -open
+  Stdlib_for_test)
+ (libraries
+  provider
+  provider-tests.higher_kinded
+  provider_toplevel_test
+  stdlib_for_test)
  (instrumentation
   (backend bisect_ppx))
  (lint

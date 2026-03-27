@@ -8,7 +8,7 @@ module Impl = struct
   type t = unit
 
   let readdir () ~path =
-    Array.to_list (Stdlib.Sys.readdir path) |> List.sort ~compare:String.compare
+    Array.to_list (Sys.readdir path) |> List.sort ~compare:String.compare
   ;;
 end
 

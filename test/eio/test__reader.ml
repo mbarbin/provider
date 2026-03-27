@@ -29,10 +29,9 @@ let with_temp_dir ~env ~path ~f =
 
 (* This function requires the [Directory_reader] capability. *)
 let print_all_text_files t ~path =
-  print_s
-    [%sexp
-      (Test_interfaces.Directory_reader.find_files_with_extension t ~path ~ext:".txt"
-       : string list)]
+  print_dyn
+    (Test_interfaces.Directory_reader.find_files_with_extension t ~path ~ext:".txt"
+     |> Dyn.list Dyn.string)
 ;;
 
 (* This function requires both [Directory_reader] and [File_reader]
@@ -45,7 +44,7 @@ let print_all_text_files_with_lines t ~path =
         let contents = Test_interfaces.File_reader.load t ~path:(path ^ "/" ^ file) in
         List.sum (module Int) (String.split_lines contents) ~f:(Fn.const 1)
       in
-      print_s [%sexp { file : string; lines : int }])
+      print_dyn (Dyn.record [ "file", Dyn.string file; "lines", Dyn.int lines ]))
 ;;
 
 (* This is an example of a function that requires the [Directory_reader]
@@ -68,7 +67,7 @@ let print_all_text_files_with_lines_if_available t ~path =
           List.sum (module Int) (String.split_lines contents) ~f:(Fn.const 1)
           |> Int.to_string_hum
       in
-      print_s [%sexp { file : string; lines : string }])
+      print_dyn (Dyn.record [ "file", Dyn.string file; "lines", Dyn.string lines ]))
 ;;
 
 (* Now let's put it all together in a test. *)
@@ -78,22 +77,22 @@ let%expect_test "test" =
   @@ fun env ->
   let eio_reader = Eio_test_providers.Eio_reader.make ~env in
   with_temp_dir ~env ~path:"test" ~f:(fun dir ->
-    print_s
-      [%sexp
-        (Test_interfaces.Directory_reader.readdir unix_reader ~path:dir : string list)];
-    [%expect {| () |}];
-    print_s
-      [%sexp
-        (Test_interfaces.Directory_reader.readdir eio_reader ~path:dir : string list)];
-    [%expect {| () |}];
+    print_dyn
+      (Test_interfaces.Directory_reader.readdir unix_reader ~path:dir
+       |> Dyn.list Dyn.string);
+    [%expect {| [] |}];
+    print_dyn
+      (Test_interfaces.Directory_reader.readdir eio_reader ~path:dir
+       |> Dyn.list Dyn.string);
+    [%expect {| [] |}];
     print_all_text_files unix_reader ~path:dir;
-    [%expect {| () |}];
+    [%expect {| [] |}];
     print_all_text_files eio_reader ~path:dir;
-    [%expect {| () |}];
+    [%expect {| [] |}];
     Eio.Path.save
       ~create:(`Or_truncate 0o600)
       Eio.Path.(Eio.Stdenv.fs env / dir / "a.txt")
-      (String.strip
+      (String.trim
          {|
 Hello file a
 With multiple lines
@@ -101,36 +100,33 @@ With multiple lines
     Eio.Path.save
       ~create:(`Or_truncate 0o600)
       Eio.Path.(Eio.Stdenv.fs env / dir / "b.txt")
-      (String.strip
+      (String.trim
          {|
 Hello file b
 With even more
  lines
 |});
     print_all_text_files unix_reader ~path:dir;
-    [%expect {| (a.txt b.txt) |}];
+    [%expect {| [ "a.txt"; "b.txt" ] |}];
     print_all_text_files eio_reader ~path:dir;
-    [%expect {| (a.txt b.txt) |}];
+    [%expect {| [ "a.txt"; "b.txt" ] |}];
     print_all_text_files_with_lines eio_reader ~path:dir;
     [%expect
       {|
-    ((file  a.txt)
-     (lines 2))
-    ((file  b.txt)
-     (lines 3)) |}];
+      { file = "a.txt"; lines = 2 }
+      { file = "b.txt"; lines = 3 }
+      |}];
     print_all_text_files_with_lines_if_available unix_reader ~path:dir;
     [%expect
       {|
-      ((file  a.txt)
-       (lines not-available))
-      ((file  b.txt)
-       (lines not-available)) |}];
+      { file = "a.txt"; lines = "not-available" }
+      { file = "b.txt"; lines = "not-available" }
+      |}];
     print_all_text_files_with_lines_if_available eio_reader ~path:dir;
     [%expect
       {|
-      ((file  a.txt)
-       (lines 2))
-      ((file  b.txt)
-       (lines 3)) |}];
+      { file = "a.txt"; lines = "2" }
+      { file = "b.txt"; lines = "3" }
+      |}];
     ())
 ;;

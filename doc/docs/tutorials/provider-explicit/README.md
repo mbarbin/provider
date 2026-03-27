@@ -251,7 +251,7 @@ Consider values that can be mapped:
 module type Mappable = sig
   type 'a t
 
-  val map : ('a -> 'b) -> 'a t -> 'b t
+  val map : 'a t -> f:('a -> 'b) -> 'b t
 end
 ```
 
@@ -280,7 +280,7 @@ We add the *Higher_kinded* machinery to our Trait signature, like so:
 module type Mappable = sig
   type 'a t
 
-  val map : ('a -> 'b) -> 'a t -> 'b t
+  val map : 'a t -> f:('a -> 'b) -> 'b t
 
   type higher_kinded
 
@@ -345,7 +345,7 @@ let map_n_times
   fun provider t n ~f ->
   let module M = (val Provider.lookup provider ~trait:Mappable.t) in
   let at = M.project t in
-  let rec loop n at = if n = 0 then at else loop (n - 1) (M.map f at) in
+  let rec loop n at = if n = 0 then at else loop (n - 1) (M.map at ~f) in
   M.inject (loop n at)
 ;;
 ```
@@ -402,11 +402,11 @@ And, again, time to instantiate our polymorphic code!
 let%expect_test "map_n_times" =
   map_n_times
     (mappable_list ())
-    (List.init 10 Fun.id |> Higher_kinded_list.inject)
+    (List.init 10 ~f:Fun.id |> Higher_kinded_list.inject)
     3
     ~f:(fun x -> x + 1)
   |> Higher_kinded_list.project
-  |> List.iter (fun x -> Printf.printf "%d " x);
+  |> List.iter ~f:(fun x -> Printf.printf "%d " x);
   [%expect {| 3 4 5 6 7 8 9 10 11 12 |}];
   map_n_times
     (mappable_array ())
@@ -414,7 +414,7 @@ let%expect_test "map_n_times" =
     4
     ~f:(fun x -> x ^ x)
   |> Higher_kinded_array.project
-  |> Array.iter (fun x -> Printf.printf "%s " x);
+  |> Array.iter ~f:(fun x -> Printf.printf "%s " x);
   [%expect {| aaaaaaaaaaaaaaaa bbbbbbbbbbbbbbbb |}];
   ()
 ;;

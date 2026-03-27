@@ -9,16 +9,13 @@
   -warn-error
   +a
   -open
-  Base
-  -open
-  Expect_test_helpers_base)
+  Stdlib_for_test)
  (libraries
-  base
   eio
   eio_main
   eio_test_providers
-  expect_test_helpers_core.expect_test_helpers_base
   provider
+  stdlib_for_test
   test_interfaces
   test_providers
   unix)
@@ -27,13 +24,4 @@
  (lint
   (pps ppx_js_style -allow-let-operators -check-doc-comments))
  (preprocess
-  (pps
-   -unused-code-warnings=force
-   ppx_compare
-   ppx_enumerate
-   ppx_expect
-   ppx_hash
-   ppx_here
-   ppx_let
-   ppx_sexp_conv
-   ppx_sexp_value)))
+  (pps ppx_expect)))

@@ -90,8 +90,8 @@ let%expect_test "map_n_times" =
       ~f:(fun x -> x + 1)
     |> Higher_kinded_list.project
   in
-  print_s [%sexp (r : int list)];
-  [%expect {| (3 4 5 6 7 8 9 10 11 12) |}];
+  print_dyn (r |> Dyn.list Dyn.int);
+  [%expect {| [ 3; 4; 5; 6; 7; 8; 9; 10; 11; 12 ] |}];
   let r =
     map_n_times
       (mappable_array ())
@@ -100,7 +100,7 @@ let%expect_test "map_n_times" =
       ~f:(fun x -> x ^ x)
     |> Higher_kinded_array.project
   in
-  print_s [%sexp (r : string array)];
-  [%expect {| (aaaaaaaaaaaaaaaa bbbbbbbbbbbbbbbb) |}];
+  print_dyn (r |> Array.to_list |> Dyn.list Dyn.string);
+  [%expect {| [ "aaaaaaaaaaaaaaaa"; "bbbbbbbbbbbbbbbb" ] |}];
   ()
 ;;

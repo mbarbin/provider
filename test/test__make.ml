@@ -35,7 +35,7 @@ let%expect_test "make interface" =
   [%expect {| 5678 |}];
   (match binding1, List.hd_exn (Provider.bindings num1) with
    | T t, T t' ->
-     require [%here] (Provider.Trait.same t.trait t'.trait);
+     require (Provider.Trait.same t.trait t'.trait);
      [%expect {||}];
      ());
   let binding2 =
@@ -46,37 +46,48 @@ let%expect_test "make interface" =
   (match binding1, binding2 with
    | T t1, T t2 ->
      print_s
-       [%sexp
-         { trait1 = (Provider.Trait.info t1.trait : Provider.Trait.Info.t)
-         ; trait2 = (Provider.Trait.info t2.trait : Provider.Trait.Info.t)
-         }];
+       (List
+          [ List
+              [ Atom "trait1"
+              ; Provider.Trait.info t1.trait |> Provider.Trait.Info.sexp_of_t
+              ]
+          ; List
+              [ Atom "trait2"
+              ; Provider.Trait.info t2.trait |> Provider.Trait.Info.sexp_of_t
+              ]
+          ]);
      [%expect
        {|
        ((trait1 ((id #id) (name Int_printer)))
         (trait2 ((id #id) (name Float_printer))))
        |}];
-     require [%here] (not (Provider.Trait.same t1.trait t2.trait));
+     require (not (Provider.Trait.same t1.trait t2.trait));
      [%expect {||}];
      ());
   (match Provider.bindings num1 with
    | [ c1 ] ->
+     let module Trait_uid = struct
+       include Provider.Trait.Uid
+
+       let to_dyn (t : t) = Dyn.int (t :> int) [@coverage off]
+     end
+     in
      require_equal
-       [%here]
-       (module Provider.Trait.Uid)
+       (module Trait_uid)
        (Provider.Binding.uid c1)
        (Provider.Binding.uid binding1);
      [%expect {||}]
    | _ -> assert false);
   let empty = Provider.make [] in
-  require [%here] (Provider.is_empty empty);
-  require [%here] (List.is_empty (Provider.bindings empty));
+  require (Provider.is_empty empty);
+  require (List.is_empty (Provider.bindings empty));
   let num2 = Provider.make [ binding2 ] in
-  require [%here] (not (Provider.is_empty num2));
-  require [%here] (not (Provider.Private.same_trait_uids empty num2));
+  require (not (Provider.is_empty num2));
+  require (not (Provider.Private.same_trait_uids empty num2));
   [%expect {||}];
   let num3 = Provider.make [ binding1; binding2 ] in
   let num4 = Provider.extend num1 ~with_:(Provider.bindings num2) in
-  require [%here] (Provider.Private.same_trait_uids num3 num4);
+  require (Provider.Private.same_trait_uids num3 num4);
   [%expect {||}];
   ()
 ;;
