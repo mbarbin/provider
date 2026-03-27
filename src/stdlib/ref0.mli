@@ -4,14 +4,4 @@
 (*_  SPDX-License-Identifier: ISC                                                 *)
 (*_********************************************************************************)
 
-include module type of struct
-  include Stdlib.Int
-end
-
-val to_dyn : t -> Dyn.t
-val hash : t -> int
-val incr : t ref -> unit
-val ( + ) : t -> t -> t
-val zero : t
-val to_string_hum : ?delimiter:char -> t -> string
-val sexp_of_t : t -> Sexplib0.Sexp.t
+val set_temporarily : 'a ref -> 'a -> f:(unit -> 'b) -> 'b

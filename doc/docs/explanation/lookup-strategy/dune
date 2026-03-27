@@ -9,10 +9,8 @@
   -warn-error
   +a
   -open
-  Base
-  -open
   Stdlib_for_test)
- (libraries base stdlib_for_test)
+ (libraries stdlib_for_test)
  (instrumentation
   (backend bisect_ppx))
  (lint

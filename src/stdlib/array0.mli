@@ -5,13 +5,10 @@
 (*_********************************************************************************)
 
 include module type of struct
-  include Stdlib.Int
+  include Stdlib.ArrayLabels
 end
 
-val to_dyn : t -> Dyn.t
-val hash : t -> int
-val incr : t ref -> unit
-val ( + ) : t -> t -> t
-val zero : t
-val to_string_hum : ?delimiter:char -> t -> string
-val sexp_of_t : t -> Sexplib0.Sexp.t
+val map : 'a array -> f:('a -> 'b) -> 'b array
+val iter : 'a array -> f:('a -> unit) -> unit
+val init : int -> f:(int -> 'a) -> 'a array
+val find_map : 'a array -> f:('a -> 'b option) -> 'b option

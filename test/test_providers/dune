@@ -8,10 +8,8 @@
   -warn-error
   +a
   -open
-  Base
-  -open
   Stdlib_for_test)
- (libraries base provider stdlib_for_test test_interfaces)
+ (libraries provider stdlib_for_test test_interfaces)
  (instrumentation
   (backend bisect_ppx))
  (lint

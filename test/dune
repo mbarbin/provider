@@ -9,11 +9,8 @@
   -warn-error
   +a
   -open
-  Base
-  -open
   Stdlib_for_test)
  (libraries
-  base
   provider
   provider-tests.higher_kinded
   stdlib_for_test

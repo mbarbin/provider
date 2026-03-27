@@ -80,16 +80,16 @@ let%expect_test "introspection" =
         }
     }
     |}];
-  let id_mapping = Hashtbl.create (module Int) in
+  let id_mapping = Stdlib.Hashtbl.create 16 in
   let next_id = ref 0 in
   let sexp_of_id id =
     let id =
-      match Hashtbl.find id_mapping id with
+      match Stdlib.Hashtbl.find_opt id_mapping id with
       | Some id -> id
       | None ->
         let data = !next_id in
         Int.incr next_id;
-        Hashtbl.set id_mapping ~key:id ~data;
+        Stdlib.Hashtbl.replace id_mapping id data;
         data
     in
     Sexp.Atom (Int.to_string id)

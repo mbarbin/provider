@@ -10,7 +10,6 @@ bug-reports: "https://github.com/mbarbin/provider/issues"
 depends: [
   "dune" {>= "3.20"}
   "ocaml" {>= "5.2"}
-  "base" {>= "v0.17"}
   "eio" {>= "1.0"}
   "eio_main" {>= "1.0"}
   "ppx_expect" {>= "v0.17"}

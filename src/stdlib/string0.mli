@@ -5,13 +5,9 @@
 (*_********************************************************************************)
 
 include module type of struct
-  include Stdlib.Int
+  include Stdlib.StringLabels
 end
 
-val to_dyn : t -> Dyn.t
-val hash : t -> int
-val incr : t ref -> unit
-val ( + ) : t -> t -> t
-val zero : t
-val to_string_hum : ?delimiter:char -> t -> string
-val sexp_of_t : t -> Sexplib0.Sexp.t
+val compare : string -> string -> int
+val ends_with : string -> suffix:string -> bool
+val split_lines : string -> string list

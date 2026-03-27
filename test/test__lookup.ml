@@ -169,25 +169,18 @@ let provider2 () : _ t =
   Provider.T { t = (); provider }
 ;;
 
-module Uid = struct
-  type t = Provider.Trait.Uid.t
-
-  include Comparable.Make (Provider.Trait.Uid)
-end
+module Uid_set = Set.Make (Provider.Trait.Uid)
 
 let uids (Provider.T { t = _; provider }) =
-  provider
-  |> Provider.bindings
-  |> List.map ~f:Provider.Binding.uid
-  |> Set.of_list (module Uid)
+  provider |> Provider.bindings |> List.map ~f:Provider.Binding.uid |> Uid_set.of_list
 ;;
 
 let%expect_test "sub-provider" =
   let traits1 = provider () |> uids in
   let traits2 = provider2 () |> uids in
-  print_dyn (Set.equal traits1 traits2 |> Dyn.bool);
+  print_dyn (Uid_set.equal traits1 traits2 |> Dyn.bool);
   [%expect {| false |}];
-  print_dyn (Set.is_subset traits2 ~of_:traits1 |> Dyn.bool);
+  print_dyn (Uid_set.subset traits2 traits1 |> Dyn.bool);
   [%expect {| true |}];
   ()
 ;;

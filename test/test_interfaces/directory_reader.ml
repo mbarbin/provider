@@ -39,5 +39,5 @@ let readdir (Provider.T { t; provider }) ~path =
    used. *)
 let find_files_with_extension t ~path ~ext =
   let files = readdir t ~path in
-  List.filter files ~f:(fun file -> String.is_suffix file ~suffix:ext)
+  List.filter files ~f:(fun file -> String.ends_with file ~suffix:ext)
 ;;

@@ -32,8 +32,6 @@
  (depends
   (ocaml
    (>= 4.14))
-  (base
-   (>= v0.16))
   (dyn
    (>= 3.20))
   (ppx_expect
@@ -53,8 +51,6 @@
  (depends
   (ocaml
    (>= 5.2))
-  (base
-   (>= v0.17))
   (eio
    (>= 1.0))
   (eio_main
@@ -77,8 +73,6 @@
    (>= 5.2))
   (ocamlformat
    (= 0.29.0))
-  (base
-   (>= v0.16))
   (bisect_ppx
    (>= 2.8.3))
   (dyn

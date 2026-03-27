@@ -10,6 +10,7 @@ let to_dyn t = Dyn.Int t
 let hash (t : t) = Stdlib.Hashtbl.hash t
 let incr = Stdlib.incr
 let ( + ) = Stdlib.( + )
+let zero = 0
 
 let to_string_hum ?(delimiter = '_') t =
   let s = to_string t in

@@ -83,19 +83,15 @@ end
 
    @mdexp.code *)
 
-let line_count contents =
-  List.length (String.split_on_char '\n' contents)
-  - if String.ends_with ~suffix:"\n" contents then 1 else (0 [@coverage off])
-;;
+let line_count contents = List.length (String.split_lines contents)
 
 module Show_files (Reader : READER) : sig
   val print_files_with_ext : Reader.t -> path:string -> ext:string -> unit
 end = struct
   let print_files_with_ext reader ~path ~ext =
-    let entries = Reader.readdir reader ~path |> List.sort String.compare in
-    let files = List.filter (String.ends_with ~suffix:ext) entries in
-    files
-    |> List.iter (fun file ->
+    let entries = Reader.readdir reader ~path |> List.sort ~compare:String.compare in
+    let files = List.filter entries ~f:(String.ends_with ~suffix:ext) in
+    List.iter files ~f:(fun file ->
       let contents = Reader.load_file reader ~path:(Filename.concat path file) in
       Printf.printf "%d %s\n" (line_count contents) file)
   ;;
@@ -206,10 +202,9 @@ module Show_files2 : sig
 end = struct
   let print_files_with_ext (Provider.T { t = reader; provider }) ~path ~ext =
     let module R = (val Provider.lookup provider ~trait:Reader.t) in
-    let entries = R.readdir reader ~path |> List.sort String.compare in
-    let files = List.filter (String.ends_with ~suffix:ext) entries in
-    files
-    |> List.iter (fun file ->
+    let entries = R.readdir reader ~path |> List.sort ~compare:String.compare in
+    let files = List.filter entries ~f:(String.ends_with ~suffix:ext) in
+    List.iter files ~f:(fun file ->
       let contents = R.load_file reader ~path:(Filename.concat path file) in
       Printf.printf "%d %s\n" (line_count contents) file)
   ;;
