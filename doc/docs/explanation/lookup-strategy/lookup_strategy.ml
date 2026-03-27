@@ -53,7 +53,7 @@ let linear_scan : lookup_strategy =
   Array.find_map provider ~f:(fun (t, impl) -> Option.some_if (Int.equal t trait) impl)
 ;;
 
-let print_dyn dyn = Stdlib.Format.printf "%a@." Pp.to_fmt (Dyn.pp dyn)
+let print_dyn dyn = Format.printf "%a@." Pp.to_fmt (Dyn.pp dyn)
 
 let test scan provider trait =
   print_dyn (scan provider trait |> Dyn.option Dyn.string);
@@ -160,7 +160,7 @@ let binary_search_with_cache : lookup_strategy =
     let cache = provider.(0) in
     if Int.equal (fst cache) trait
     then (
-      Stdlib.print_endline "Hitting the cache!";
+      print_endline "Hitting the cache!";
       Some (snd cache))
     else (
       let len = Array.length provider in

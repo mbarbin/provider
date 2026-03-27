@@ -91,19 +91,17 @@ let%expect_test "Marshal extensible variant" =
   require (phys_equal A A);
   require (not (phys_equal A (B 0)));
   require (not (phys_equal (B 0) (B 0)));
-  let id (t : t) =
-    Stdlib.Obj.Extension_constructor.id (Stdlib.Obj.Extension_constructor.of_val t)
-  in
+  let id (t : t) = Obj.Extension_constructor.id (Obj.Extension_constructor.of_val t) in
   require (id (B 0) = id (B 0));
   require (id (B 0) = id (B 2));
   (* Marshalling does not preserve physical equality of extensible variant with
      no arguments. *)
-  let marshal = Stdlib.Marshal.to_string A [] in
-  let a2 = Stdlib.Marshal.from_string marshal 0 in
+  let marshal = Marshal.to_string A [] in
+  let a2 = Marshal.from_string marshal 0 in
   require (not (phys_equal A a2));
   (* Marshalling does not preserve extension constructor ids. *)
-  let marshal = Stdlib.Marshal.to_string (B 0) [] in
-  let b2 = Stdlib.Marshal.from_string marshal 0 in
+  let marshal = Marshal.to_string (B 0) [] in
+  let b2 = Marshal.from_string marshal 0 in
   require (id (B 0) <> id b2);
   ()
 ;;
@@ -119,8 +117,8 @@ let%expect_test "Marshal" =
   in
   let t1 = T.t in
   require (same_trait t1 t1 : bool);
-  let marshal = Stdlib.Marshal.to_string T.t [ Closures ] in
-  let t2 = Stdlib.Marshal.from_string marshal 0 in
+  let marshal = Marshal.to_string T.t [ Closures ] in
+  let t2 = Marshal.from_string marshal 0 in
   require (same_trait t2 t2 : bool);
   require (not (same_trait t1 t2 : bool));
   ()

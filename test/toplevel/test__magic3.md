@@ -176,7 +176,7 @@ let b = (Trait.t : (int, int, [ `A ]) Provider.Trait.t)
 
 let crash () =
   let (i : int) = Provider.lookup h ~trait:b in
-  assert (Stdlib.Obj.is_int (Stdlib.Obj.repr i))
+  assert (Obj.is_int (Obj.repr i))
 ;;
 ```
 
@@ -205,7 +205,7 @@ let b = (Trait : (unit, int, [ `A ]) Provider.Trait.t)
 
 let%expect_test "crash" =
   let (i : int) = Provider.lookup h ~trait:b in
-  print_dyn (Dyn.record [ "is_int", Dyn.bool (Stdlib.Obj.is_int (Stdlib.Obj.repr i)) ]);
+  print_dyn (Dyn.record [ "is_int", Dyn.bool (Obj.is_int (Obj.repr i)) ]);
   [%expect {| { is_int = false } |}];
   ()
 ;;

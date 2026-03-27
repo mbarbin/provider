@@ -8,7 +8,7 @@ let%expect_test "dedup_sorted_keep_last" =
   let dedup = Provider.Private.dedup_sorted_keep_last in
   let test list =
     print_dyn
-      (dedup list ~compare:(fun (a, _) (b, _) -> Int.compare a b)
+      (dedup list ~compare:(fun (a, _) (b, _) -> Stdlib.Int.compare a b)
        |> Dyn.list (fun (i, s) -> Dyn.List [ Dyn.int i; Dyn.string s ]))
   in
   test [];

@@ -26,11 +26,11 @@ let%expect_test "Ordering.of_int" =
   [%expect {||}];
   test (-1) Less;
   [%expect {||}];
-  test (Int.compare 42 42) Equal;
+  test (Stdlib.Int.compare 42 42) Equal;
   [%expect {||}];
-  test (Char.compare 'Z' 'A') Greater;
+  test (Stdlib.Char.compare 'Z' 'A') Greater;
   [%expect {||}];
-  test (String.compare "42" "43") Less;
+  test (Stdlib.String.compare "42" "43") Less;
   [%expect {||}];
   ()
 ;;

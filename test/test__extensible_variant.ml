@@ -9,8 +9,6 @@
    library, in an attempt to have some awareness of whether the way we use them
    is correct. *)
 
-module Obj = Stdlib.Obj
-
 (* First let's characterize the representation of the Eq_opt constructors used
    by the provider implementation. It's a non-extensible GADT with two immediate
    constructors, represented by the integers {0, 1} at runtime. *)
