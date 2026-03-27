@@ -34,6 +34,8 @@
    (>= 4.14))
   (base
    (>= v0.16))
+  (dyn
+   (>= 3.20))
   (expect_test_helpers_core
    (>= v0.16))
   (ppx_compare
@@ -52,6 +54,8 @@
    (>= v0.16))
   (ppx_sexp_value
    (>= v0.16))
+  (pp
+   (>= 2.0.0))
   (ppxlib
    (>= 0.33))
   (provider

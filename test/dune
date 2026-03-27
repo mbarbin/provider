@@ -11,12 +11,15 @@
   -open
   Base
   -open
-  Expect_test_helpers_base)
+  Expect_test_helpers_base
+  -open
+  Stdlib_for_test)
  (libraries
   base
   expect_test_helpers_core.expect_test_helpers_base
   provider
   provider-tests.higher_kinded
+  stdlib_for_test
   test_interfaces
   test_providers)
  (instrumentation

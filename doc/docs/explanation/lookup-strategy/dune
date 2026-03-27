@@ -2,8 +2,17 @@
  (name provider_doc_lookup_strategy)
  (package provider-dev)
  (inline_tests)
- (flags :standard -w +a-4-40-41-42-44-45-48-66 -warn-error +a -open Base)
- (libraries base dyn pp)
+ (flags
+  :standard
+  -w
+  +a-4-40-41-42-44-45-48-66
+  -warn-error
+  +a
+  -open
+  Base
+  -open
+  Stdlib_for_test)
+ (libraries base stdlib_for_test)
  (instrumentation
   (backend bisect_ppx))
  (lint

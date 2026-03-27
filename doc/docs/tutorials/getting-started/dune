@@ -4,8 +4,15 @@
  (inline_tests
   (deps
    (glob_files *.txt)))
- (flags :standard -w +a-4-40-41-42-44-45-48-66 -warn-error +a)
- (libraries provider)
+ (flags
+  :standard
+  -w
+  +a-4-40-41-42-44-45-48-66
+  -warn-error
+  +a
+  -open
+  Stdlib_for_test)
+ (libraries provider stdlib_for_test)
  (instrumentation
   (backend bisect_ppx))
  (lint
