@@ -1,7 +1,7 @@
 <h1 align="center">
   <p align="center">Dynamic Dispatch with Traits</p>
   <img
-    src="./img/provider.png?raw=true"
+    src="/provider/img/provider.png"
     width='256'
     alt="Logo"
   />
