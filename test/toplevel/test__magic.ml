@@ -29,7 +29,7 @@ end
 
 type (_, _, _) Provider.Trait.t +=
   | A :
-      'something Base.Type_equal.Id.t
+      'something Type.Id.t
       -> (_, (module S with type t = 'something), [> `A ]) Provider.Trait.t
 ;;
 |};
@@ -45,7 +45,7 @@ type (_, _, _) Provider.Trait.t +=
 
     type (_, _, _) Provider.Trait.t +=
       | A :
-          'something Base.Type_equal.Id.t
+          'something Type.Id.t
           -> (_, (module S with type t = 'something), [> `A ]) Provider.Trait.t
     ;;
     ```
@@ -54,7 +54,7 @@ type (_, _, _) Provider.Trait.t +=
     [1mLines 7-10, characters 0-75[0m:
      7 | type (_, _, _) Provider.Trait.t +=
      8 |   | A :
-     9 |       'something Base.Type_equal.Id.t
+     9 |       'something Type.Id.t
     10 |       -> (_, (module S with type t = 'something), [> `A ]) Provider.Trait.t
     [1;31mError[0m: Type definition [1mProvider.Trait.t[0m is not extensible
     ```
@@ -73,8 +73,8 @@ type (_, _, _) Provider.Trait.t +=
 
    ```ocaml
 
-   let id_int = Type_equal.Id.create ~name:"int" Int.sexp_of_t
-   let id_string = Type_equal.Id.create ~name:"string" String.sexp_of_t
+   let id_int = Type.Id.make ()
+   let id_string = Type.Id.make ()
    let () = Provider.Trait.Info.register_name (A id_int) ~name:"A"
 
    let impl (type a) id value ~check_trait =
