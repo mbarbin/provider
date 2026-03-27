@@ -36,15 +36,7 @@
    (>= v0.16))
   (dyn
    (>= 3.20))
-  (ppx_compare
-   (>= v0.16))
-  (ppx_enumerate
-   (>= v0.16))
   (ppx_expect
-   (>= v0.16))
-  (ppx_hash
-   (>= v0.16))
-  (ppx_sexp_conv
    (>= v0.16))
   (pp
    (>= 2.0.0))
@@ -67,15 +59,7 @@
    (>= 1.0))
   (eio_main
    (>= 1.0))
-  (ppx_compare
-   (>= v0.17))
-  (ppx_enumerate
-   (>= v0.17))
   (ppx_expect
-   (>= v0.17))
-  (ppx_hash
-   (>= v0.17))
-  (ppx_sexp_conv
    (>= v0.17))
   (ppxlib
    (>= 0.33))
