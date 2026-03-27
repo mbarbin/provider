@@ -15,8 +15,6 @@
 
 (documentation "https://mbarbin.github.io/provider/")
 
-(using mdx 0.4)
-
 (implicit_transitive_deps false-if-hidden-includes-supported)
 
 (package
@@ -111,8 +109,6 @@
    (>= 2.8.3))
   (dyn
    (>= 3.20))
-  (mdx
-   (>= 2.4))
   (pp
    (>= 2.0.0))
   (ppx_expect
