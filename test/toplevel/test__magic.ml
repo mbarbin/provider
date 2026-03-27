@@ -73,8 +73,8 @@ type (_, _, _) Provider.Trait.t +=
 
    ```ocaml
 
-   let id_int = Type_equal.Id.create ~name:"int" [%sexp_of: int]
-   let id_string = Type_equal.Id.create ~name:"string" [%sexp_of: string]
+   let id_int = Type_equal.Id.create ~name:"int" Int.sexp_of_t
+   let id_string = Type_equal.Id.create ~name:"string" String.sexp_of_t
    let () = Provider.Trait.Info.register_name (A id_int) ~name:"A"
 
    let impl (type a) id value ~check_trait =
