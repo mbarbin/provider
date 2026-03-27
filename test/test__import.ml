@@ -8,10 +8,10 @@ module Import = Provider.Private.Import
 
 let%expect_test "Array.for_alli" =
   let t = Array.init 10 ~f:Fn.id in
-  require (Import.Array.for_alli t ~f:(fun i x -> i = x));
+  require (Import.Array.for_alli t ~f:Int.equal);
   [%expect {||}];
   t.(9) <- 0;
-  require (not (Import.Array.for_alli t ~f:(fun i x -> i = x)));
+  require (not (Import.Array.for_alli t ~f:Int.equal));
   [%expect {||}];
   ()
 ;;

@@ -24,6 +24,7 @@ module Sexp = Sexplib0.Sexp
 module String = String0
 module With_equal_and_dyn = With_equal_and_dyn0
 
+let ( = ) = `Use_Poly_when_needed
 let phys_equal = Stdlib.( == )
 let print pp = Format.printf "%a@." Pp.to_fmt pp
 let print_dyn dyn = print (Dyn.pp dyn)

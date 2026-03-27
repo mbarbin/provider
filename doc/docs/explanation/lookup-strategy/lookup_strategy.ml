@@ -151,7 +151,7 @@ let%expect_test "binary_search" =
 
 let binary_search_with_cache : lookup_strategy =
   fun provider trait ->
-  if Array.length provider = 0
+  if Int.equal 0 (Array.length provider)
   then None [@coverage off]
   else (
     let cache = provider.(0) in

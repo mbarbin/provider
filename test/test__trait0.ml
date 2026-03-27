@@ -92,8 +92,8 @@ let%expect_test "Marshal extensible variant" =
   require (not (phys_equal A (B 0)));
   require (not (phys_equal (B 0) (B 0)));
   let id (t : t) = Obj.Extension_constructor.id (Obj.Extension_constructor.of_val t) in
-  require (id (B 0) = id (B 0));
-  require (id (B 0) = id (B 2));
+  require (Int.equal (id (B 0)) (id (B 0)));
+  require (Int.equal (id (B 0)) (id (B 2)));
   (* Marshalling does not preserve physical equality of extensible variant with
      no arguments. *)
   let marshal = Marshal.to_string A [] in
