@@ -12,7 +12,9 @@ end = Provider.Trait.Create (struct
 
 let%expect_test "info" =
   (* By default, id are not shown, and trait do not have names. *)
-  let print_info () = print_s [%sexp (Provider.Trait.info T.t : Provider.Trait.Info.t)] in
+  let print_info () =
+    print_s (Provider.Trait.info T.t |> Provider.Trait.Info.sexp_of_t)
+  in
   [%expect {||}];
   (* It is possible to show the id with custom functions. *)
   Ref.set_temporarily

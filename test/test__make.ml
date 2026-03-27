@@ -46,10 +46,16 @@ let%expect_test "make interface" =
   (match binding1, binding2 with
    | T t1, T t2 ->
      print_s
-       [%sexp
-         { trait1 = (Provider.Trait.info t1.trait : Provider.Trait.Info.t)
-         ; trait2 = (Provider.Trait.info t2.trait : Provider.Trait.Info.t)
-         }];
+       (List
+          [ List
+              [ Atom "trait1"
+              ; Provider.Trait.info t1.trait |> Provider.Trait.Info.sexp_of_t
+              ]
+          ; List
+              [ Atom "trait2"
+              ; Provider.Trait.info t2.trait |> Provider.Trait.Info.sexp_of_t
+              ]
+          ]);
      [%expect
        {|
        ((trait1 ((id #id) (name Int_printer)))

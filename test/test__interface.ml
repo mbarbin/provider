@@ -7,19 +7,19 @@
 let%expect_test "dedup_sorted_keep_last" =
   let dedup = Provider.Private.dedup_sorted_keep_last in
   let test list =
-    print_s
-      [%sexp
-        (dedup list ~compare:(fun (a, _) (b, _) -> Int.compare a b) : (int * string) list)]
+    print_dyn
+      (dedup list ~compare:(fun (a, _) (b, _) -> Int.compare a b)
+       |> Dyn.list (fun (i, s) -> Dyn.List [ Dyn.int i; Dyn.string s ]))
   in
   test [];
-  [%expect {| () |}];
+  [%expect {| [] |}];
   test [ 1, "a" ];
-  [%expect {| ((1 a)) |}];
+  [%expect {| [ [ 1; "a" ] ] |}];
   test [ 1, "a"; 1, "b" ];
-  [%expect {| ((1 b)) |}];
+  [%expect {| [ [ 1; "b" ] ] |}];
   test [ 1, "a"; 2, "b" ];
-  [%expect {| ((1 a) (2 b)) |}];
+  [%expect {| [ [ 1; "a" ]; [ 2; "b" ] ] |}];
   test [ 1, "a"; 2, "b"; 3, "c"; 3, "c'"; 4, "d"; 4, "d'"; 5, "e" ];
-  [%expect {| ((1 a) (2 b) (3 c') (4 d') (5 e)) |}];
+  [%expect {| [ [ 1; "a" ]; [ 2; "b" ]; [ 3; "c'" ]; [ 4; "d'" ]; [ 5; "e" ] ] |}];
   ()
 ;;

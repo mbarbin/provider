@@ -350,8 +350,8 @@ let crash () =
 
    let%expect_test "crash" =
      let (i : int) = Provider.lookup h ~trait:b in
-     print_s [%sexp { is_int = (Stdlib.Obj.is_int (Stdlib.Obj.repr i) : bool) }];
-     [%expect {| ((is_int false)) |}];
+     print_dyn (Dyn.record [ "is_int", Dyn.bool (Stdlib.Obj.is_int (Stdlib.Obj.repr i)) ]);
+     [%expect {| { is_int = false } |}];
      ()
    ;;
    ``` *)

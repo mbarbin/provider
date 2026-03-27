@@ -32,9 +32,9 @@ let%expect_test "override" =
   let print_implemented_traits (Provider.T { t = _; provider }) =
     let info =
       List.map (Provider.bindings provider) ~f:(fun binding ->
-        [%sexp (Provider.Binding.info binding : Provider.Trait.Info.t)])
+        Provider.Binding.info binding |> Provider.Trait.Info.sexp_of_t)
     in
-    print_s [%sexp (info : Sexp.t list)]
+    print_s (List info)
   in
   let test printer =
     Test_interfaces.Int_printer.print printer 1234;

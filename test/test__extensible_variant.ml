@@ -25,12 +25,12 @@ let%expect_test "Eq_opt at runtime" =
   let test obj =
     let is_int = Obj.is_int obj in
     require is_int;
-    print_s [%sexp { is_int : bool; value = (Obj.obj obj : int) }]
+    print_dyn (Dyn.record [ "is_int", Dyn.bool is_int; "value", Dyn.int (Obj.obj obj) ])
   in
   test (Obj.repr Eq_opt.Equal);
-  [%expect {| ((is_int true) (value 0)) |}];
+  [%expect {| { is_int = true; value = 0 } |}];
   test (Obj.repr Eq_opt.Not_equal);
-  [%expect {| ((is_int true) (value 1)) |}];
+  [%expect {| { is_int = true; value = 1 } |}];
   ()
 ;;
 
@@ -56,15 +56,15 @@ let () =
 ;;
 
 let%expect_test "extension_constructor" =
-  print_s [%sexp (Provider.Trait.info No_arg_A.t : Provider.Trait.Info.t)];
+  print_s (Provider.Trait.info No_arg_A.t |> Provider.Trait.Info.sexp_of_t);
   [%expect {| ((id #id) (name No_arg_A)) |}];
-  print_s [%sexp (Provider.Trait.info No_arg_B.t : Provider.Trait.Info.t)];
+  print_s (Provider.Trait.info No_arg_B.t |> Provider.Trait.Info.sexp_of_t);
   [%expect {| ((id #id) (name No_arg_B)) |}];
   let extension_constructor_A = Obj.Extension_constructor.of_val No_arg_A.t in
-  print_s [%sexp (Obj.Extension_constructor.name extension_constructor_A : string)];
+  print_dyn (Dyn.string (Obj.Extension_constructor.name extension_constructor_A));
   [%expect {| "Provider__Trait0.Create1(X).T" |}];
   let extension_constructor_B = Obj.Extension_constructor.of_val No_arg_B.t in
-  print_s [%sexp (Obj.Extension_constructor.name extension_constructor_B : string)];
+  print_dyn (Dyn.string (Obj.Extension_constructor.name extension_constructor_B));
   [%expect {| "Provider__Trait0.Create1(X).T" |}];
   (* We do not print the actual runtime ids because it is too brittle. We simply
      characterize that they are different. *)
@@ -89,7 +89,7 @@ let%expect_test "implement" =
   in
   let module M = (val Provider.lookup provider ~trait:No_arg_A.t) in
   let x = (0 : M.t) in
-  print_s [%sexp (x : int)];
+  print_dyn (Dyn.int x);
   [%expect {| 0 |}];
   ()
 ;;

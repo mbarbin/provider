@@ -84,7 +84,7 @@ module Impl (M : sig
 struct
   type t = unit
 
-  let print_tag () = print_s [%sexp (M.tag : Tag.t)]
+  let print_tag () = print_s (M.tag |> Tag.sexp_of_t)
 end
 
 module Impls = struct
@@ -129,7 +129,7 @@ let provider () : _ t =
 
 let%expect_test "lookup" =
   let (Provider.T { t = _; provider } as t) = provider () in
-  print_s [%sexp (List.length (Provider.bindings provider) : int)];
+  print_dyn (List.length (Provider.bindings provider) |> Dyn.int);
   [%expect {| 6 |}];
   List.iter Tag.all ~f:(fun tag -> print_tag t ~tag);
   [%expect
@@ -175,9 +175,9 @@ let uids (Provider.T { t = _; provider }) =
 let%expect_test "sub-provider" =
   let traits1 = provider () |> uids in
   let traits2 = provider2 () |> uids in
-  print_s [%sexp (Set.equal traits1 traits2 : bool)];
+  print_dyn (Set.equal traits1 traits2 |> Dyn.bool);
   [%expect {| false |}];
-  print_s [%sexp (Set.is_subset traits2 ~of_:traits1 : bool)];
+  print_dyn (Set.is_subset traits2 ~of_:traits1 |> Dyn.bool);
   [%expect {| true |}];
   ()
 ;;
@@ -201,7 +201,7 @@ let%expect_test "same_trait_uids" =
         (Provider.T { t = _; provider = h1 })
         (Provider.T { t = _; provider = h2 })
     =
-    print_s [%sexp (Provider.Private.same_trait_uids h1 h2 : bool)]
+    print_dyn (Provider.Private.same_trait_uids h1 h2 |> Dyn.bool)
   in
   let p1 = provider () in
   let p2 = provider2 () in

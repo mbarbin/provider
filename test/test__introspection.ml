@@ -12,56 +12,73 @@
 let print_implemented_traits (Provider.T { t = _; provider }) =
   let info =
     List.map (Provider.bindings provider) ~f:(fun binding ->
-      [%sexp (Provider.Binding.info binding : Provider.Trait.Info.t)])
+      Provider.Binding.info binding |> Provider.Trait.Info.sexp_of_t)
   in
-  print_s [%sexp (info : Sexp.t list)]
+  print_s (List info)
 ;;
 
 let print_implements (Provider.T { t = _; provider }) =
   let implements trait = Provider.implements provider ~trait in
-  print_s
-    [%sexp
-      { implements =
-          { file_reader =
-              (implements Test_interfaces.File_reader.Provider_interface.file_reader
-               : bool)
-          ; directory_reader =
-              (implements
-                 Test_interfaces.Directory_reader.Provider_interface.directory_reader
-               : bool)
-          ; int_printer =
-              (implements Test_interfaces.Int_printer.Provider_interface.int_printer
-               : bool)
-          ; float_printer =
-              (implements Test_interfaces.Float_printer.Provider_interface.float_printer
-               : bool)
-          }
-      }]
+  print_dyn
+    (Dyn.record
+       [ ( "implements"
+         , Dyn.record
+             [ ( "file_reader"
+               , Dyn.bool
+                   (implements Test_interfaces.File_reader.Provider_interface.file_reader)
+               )
+             ; ( "directory_reader"
+               , Dyn.bool
+                   (implements
+                      Test_interfaces.Directory_reader.Provider_interface.directory_reader)
+               )
+             ; ( "int_printer"
+               , Dyn.bool
+                   (implements Test_interfaces.Int_printer.Provider_interface.int_printer)
+               )
+             ; ( "float_printer"
+               , Dyn.bool
+                   (implements
+                      Test_interfaces.Float_printer.Provider_interface.float_printer) )
+             ] )
+       ])
 ;;
 
 let%expect_test "introspection" =
   print_implements (Provider.T { t = (); provider = Provider.make [] });
   [%expect
     {|
-    ((implements
-      ((file_reader false) (directory_reader false) (int_printer false)
-       (float_printer false))))
+    { implements =
+        { file_reader = false
+        ; directory_reader = false
+        ; int_printer = false
+        ; float_printer = false
+        }
+    }
     |}];
   let int_printer = Test_providers.Int_printer.make () in
   let num_printer = Test_providers.Num_printer.make () in
   print_implements num_printer;
   [%expect
     {|
-    ((implements
-      ((file_reader false) (directory_reader false) (int_printer true)
-       (float_printer true))))
+    { implements =
+        { file_reader = false
+        ; directory_reader = false
+        ; int_printer = true
+        ; float_printer = true
+        }
+    }
     |}];
   print_implements int_printer;
   [%expect
     {|
-    ((implements
-      ((file_reader false) (directory_reader false) (int_printer true)
-       (float_printer false))))
+    { implements =
+        { file_reader = false
+        ; directory_reader = false
+        ; int_printer = true
+        ; float_printer = false
+        }
+    }
     |}];
   let id_mapping = Hashtbl.create (module Int) in
   let next_id = ref 0 in
