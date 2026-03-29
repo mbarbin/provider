@@ -36,10 +36,10 @@
    (>= 3.20))
   (ordering
    (>= 3.20))
-  (ppx_expect
-   (>= v0.16))
   (pp
    (>= 2.0.0))
+  (ppx_expect
+   (>= v0.16))
   (ppxlib
    (>= 0.33))
   (provider
