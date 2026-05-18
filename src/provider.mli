@@ -261,7 +261,7 @@ val lookup_opt
   -> trait:('t, 'implementation, _) Trait.t
   -> 'implementation option
 
-(** [implements t ~trait] says wether a provider implements a Trait. This is
+(** [implements t ~trait] says whether a provider implements a Trait. This is
     [true] iif [lookup_opt t ~trait] returns [Some _]. *)
 val implements : ('t, _) t -> trait:('t, _, _) Trait.t -> bool
 
