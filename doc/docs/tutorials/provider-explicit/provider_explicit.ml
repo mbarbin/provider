@@ -232,9 +232,7 @@ module type Repeatable = sig
   val repeat : t -> t
 end
 
-(* @mdexp.end *)
-
-(* @mdexp
+(* @mdexp.end
 
    @mdexp.code *)
 
@@ -331,9 +329,9 @@ end
    Imagine you want to write a function that applies the same mapping function
    multiple times for some reason.
 
-   This kind of higher-kinded polymorphism is achievable using modular explicit: *)
+   This kind of higher-kinded polymorphism is achievable using modular explicit:
 
-(* @mdexp.code *)
+   @mdexp.code *)
 
 let _map_n_times (type a) (module A : Mappable0) (x : a A.t) ~(f : a -> a) ~n : a A.t =
   let rec loop n x = if Int.equal n 0 then x else loop (n - 1) (A.map x ~f) in

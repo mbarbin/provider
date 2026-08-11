@@ -168,7 +168,6 @@ module type Repeatable = sig
 end
 ```
 
-
 ```ocaml
 type repeatable = [ `Repeatable ]
 
