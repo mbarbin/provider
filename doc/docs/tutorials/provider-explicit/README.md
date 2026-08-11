@@ -20,12 +20,8 @@ let id (module A : Id) (x : A.t) = A.id x ;;
 ```
 
 ```ansi
-[1mLine 7, characters 23-32[0m:
-7 | let id (module A : Id) (x : A.t) = A.id x ;;
-                           [1;31m^^^^^^^^^[0m
-[1;31mError[0m: This pattern matches values of type [1mA.t[0m
-       but a pattern was expected which matches values of type [1m'a[0m
-       The type constructor [1mA.t[0m would escape its scope
+module type Id = sig type t val id : t -> t end
+val id : (module A : Id) -> A.t -> A.t = <fun>
 ```
 
 As you can see above, constructs of these kinds are currently not in the
@@ -306,9 +302,9 @@ end)
 ```
 
 ```ansi
-[1mLine 2, characters 14-15[0m:
+[1mLine 2, characters 16-17[0m:
 2 |   val t : ('a 't, (module Mappable with type 'a t = 'a 't), [> mappable ]) Provider.Trait.t
-                  [1;31m^[0m
+                    [1;31m^[0m
 [1;31mError[0m: Syntax error
 ```
 
