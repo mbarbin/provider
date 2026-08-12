@@ -333,9 +333,18 @@ end
 
    @mdexp.code *)
 
-let _map_n_times (type a) (module A : Mappable0) (x : a A.t) ~(f : a -> a) ~n : a A.t =
+let map_n_times (type a) (module A : Mappable0) (x : a A.t) ~(f : a -> a) ~n : a A.t =
   let rec loop n x = if Int.equal n 0 then x else loop (n - 1) (A.map x ~f) in
   loop n x
+;;
+
+(* @mdexp.end
+   @mdexp.code *)
+
+let%expect_test "map n times" =
+  let result = map_n_times (module List) [ 0; 1; 2 ] ~f:Int.succ ~n:10 in
+  print_dyn (result |> Dyn.list Dyn.int);
+  [%expect {| [ 10; 11; 12 ] |}]
 ;;
 
 (* @mdexp
