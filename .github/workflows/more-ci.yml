@@ -31,6 +31,7 @@ jobs:
           - macos-latest
           - ubuntu-latest
         ocaml-compiler:
+          - 5.5.x
           - 5.4.x
           - 5.3.x
           - 5.2.x
@@ -38,7 +39,7 @@ jobs:
         exclude:
           # We exclude the combination already tested in the 'ci' workflow.
           - os: ubuntu-latest
-            ocaml-compiler: 5.4.x
+            ocaml-compiler: 5.5.x
 
     runs-on: ${{ matrix.os }}
 

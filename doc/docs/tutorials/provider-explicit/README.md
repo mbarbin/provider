@@ -20,17 +20,11 @@ let id (module A : Id) (x : A.t) = A.id x ;;
 ```
 
 ```ansi
-[1mLine 7, characters 23-32[0m:
-7 | let id (module A : Id) (x : A.t) = A.id x ;;
-                           [1;31m^^^^^^^^^[0m
-[1;31mError[0m: This pattern matches values of type [1mA.t[0m
-       but a pattern was expected which matches values of type [1m'a[0m
-       The type constructor [1mA.t[0m would escape its scope
+module type Id = sig type t val id : t -> t end
+val id : (module A : Id) -> A.t -> A.t = <fun>
 ```
 
-As you can see above, constructs of these kinds are currently not in the
-language, but they are introduced in the version `5.5` of OCaml. We'll make
-sure to update that part of the doc when we migrate to these new features!
+Constructs of these kinds were introduced in the version `5.5` of OCaml.
 
 Back to our tutorial: we titled it *provider-explicit* in reference to this.
 In the pattern we present here, functions take an additional *provider*
@@ -174,7 +168,6 @@ module type Repeatable = sig
 end
 ```
 
-
 ```ocaml
 type repeatable = [ `Repeatable ]
 
@@ -248,7 +241,7 @@ interface working on a parametrized type, a concept known as
 Consider values that can be mapped:
 
 ```ocaml
-module type Mappable = sig
+module type Mappable0 = sig
   type 'a t
 
   val map : 'a t -> f:('a -> 'b) -> 'b t
@@ -258,15 +251,21 @@ end
 Imagine you want to write a function that applies the same mapping function
 multiple times for some reason.
 
-This kind of higher-kinded polymorphism will be achievable using modular
-explicit. It might look something like this in the future:
+This kind of higher-kinded polymorphism is achievable using modular explicit:
 
 ```ocaml
-let map_n_times (type a) (module A : Mappable) (x : a A.t) ~(f : a -> a) ~n =
-  let rec loop n x = if n = 0 then x else loop (n - 1) (A.map f x) in
+let map_n_times (type a) (module A : Mappable0) (x : a A.t) ~(f : a -> a) ~n : a A.t =
+  let rec loop n x = if Int.equal n 0 then x else loop (n - 1) (A.map x ~f) in
   loop n x
 ;;
-val map_n_times : (module A : Mappable) -> 'a A.t -> f:('a -> 'a) -> n:int -> 'a = <fun>
+```
+
+```ocaml
+let%expect_test "map n times" =
+  let result = map_n_times (module List) [ 0; 1; 2 ] ~f:Int.succ ~n:10 in
+  print_dyn (result |> Dyn.list Dyn.int);
+  [%expect {| [ 10; 11; 12 ] |}]
+;;
 ```
 
 In this section we show how to do this with the *provider* library, leveraging
@@ -306,9 +305,9 @@ end)
 ```
 
 ```ansi
-[1mLine 2, characters 14-15[0m:
+[1mLine 2, characters 16-17[0m:
 2 |   val t : ('a 't, (module Mappable with type 'a t = 'a 't), [> mappable ]) Provider.Trait.t
-                  [1;31m^[0m
+                    [1;31m^[0m
 [1;31mError[0m: Syntax error
 ```
 
