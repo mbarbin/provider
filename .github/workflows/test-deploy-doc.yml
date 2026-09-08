@@ -14,6 +14,16 @@ jobs:
   test-deploy:
     name: Test deployment
     runs-on: ubuntu-latest
+
+    # Keep Git maintenance in the foreground to avoid a race in opam 2.5.
+    # See https://github.com/ocaml/opam/issues/7031.
+    env:
+      GIT_CONFIG_COUNT: "2"
+      GIT_CONFIG_KEY_0: gc.autoDetach
+      GIT_CONFIG_VALUE_0: "false"
+      GIT_CONFIG_KEY_1: maintenance.autoDetach
+      GIT_CONFIG_VALUE_1: "false"
+
     defaults:
       run:
         shell: bash
